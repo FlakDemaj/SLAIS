@@ -1,9 +1,24 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
-        <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="Authentication\" />
+      <Folder Include="Common\" />
+      <Folder Include="Courses\" />
+      <Folder Include="DependencyInjection\" />
+      <Folder Include="Institutes\" />
+      <Folder Include="Modules\" />
+      <Folder Include="Prompts\" />
+      <Folder Include="Settings\" />
+      <Folder Include="Simulations\" />
+      <Folder Include="Tasks\" />
+      <Folder Include="Units\" />
+      <Folder Include="Users\" />
+    </ItemGroup>
 
 </Project>

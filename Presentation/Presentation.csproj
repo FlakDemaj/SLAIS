@@ -6,4 +6,19 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="Controllers\" />
+      <Folder Include="DTOs\" />
+      <Folder Include="Middlewares\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Sentry.AspNetCore" Version="6.1.0" />
+      <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.4" />
+    </ItemGroup>
+
 </Project>
