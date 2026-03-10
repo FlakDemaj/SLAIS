@@ -1,7 +1,0 @@
-{
-  "Database": 
-  {
-    "connection_string": "jdbc:postgresql://localhost:5432/sais",
-    "connection_password": "SAIS2026"
-  }
-}

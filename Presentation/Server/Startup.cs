@@ -1,4 +1,5 @@
 using Application.Utils.Logger;
+using Infrastructure.Configurations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SAIS.Infrastructure.DependencyInjection;
@@ -11,6 +12,8 @@ public static class Startup
     public static void ConfigureServices(WebApplicationBuilder builder)
     {
         ConfigureSentry(builder);
+        ConfigureInfrastructureConfig(builder);
+
         ConfigurePresentation(builder.Services);
         ConfigureLayers(builder.Services);
     }
@@ -62,5 +65,11 @@ public static class Startup
     {
         var logger = app.Services.GetRequiredService<ISAISLogger>();
         StaticLogger.Initialize(logger);
+    }
+
+    private static void ConfigureInfrastructureConfig(WebApplicationBuilder builder)
+    {
+        builder.Services.Configure<DatabaseOptions>(
+            builder.Configuration.GetSection("Database"));
     }
 }

@@ -10,7 +10,7 @@ public static class StaticLogger
     {
         if (_logger != null)
         {
-            throw new InvalidOperationException("Logger is already initialized");
+            throw new InvalidOperationException("Logger is already initialized!");
         }
         
         _logger = logger;
@@ -22,7 +22,7 @@ public static class StaticLogger
         {
             if (_logger == null)
             {
-                throw new InvalidOperationException("Logger is not initialized");
+                throw new InvalidOperationException("Logger is not initialized!");
             }
         
             return _logger;
