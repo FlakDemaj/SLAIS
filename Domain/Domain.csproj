@@ -9,7 +9,6 @@
     <ItemGroup>
       <Folder Include="Audit\" />
       <Folder Include="Courses\" />
-      <Folder Include="Institutes\" />
       <Folder Include="Modules\" />
       <Folder Include="Prompts\" />
       <Folder Include="Settings\" />

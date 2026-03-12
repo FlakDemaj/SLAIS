@@ -1,3 +1,4 @@
+using Domain.Institutes;
 using SAIS.Domain.Commom;
 using SAIS.Domain.Commom.Enums;
 
@@ -24,5 +25,10 @@ public class UserEntity : BaseIdEntity
     public States State { get; private set; }
     
     public Guid InstituteUuid { get; private set; }
-
+    
+    // Navigation Property for created Users
+    public ICollection<UserEntity>? CreatedUsers { get; private set; } = new List<UserEntity>();
+    
+    //Navigation Property to the institute
+    public InstituteEntity Institute { get; private set; }
 }

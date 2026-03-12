@@ -1,6 +1,6 @@
 namespace SAIS.Domain.Commom;
 
-public class BaseIdEntity : DeleteByBaseEntity
+public class BaseIdEntity : BaseDeleteByEntity
 {
-    public int Id { get; private set; }
+    public int? Id { get; set; }
 }

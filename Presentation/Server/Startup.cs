@@ -29,7 +29,7 @@ public static class Startup
         builder.WebHost.UseSentry(options =>
         {
             options.Dsn = builder.Configuration["Sentry:Dsn"];
-            options.Debug = true;
+            options.Debug = false;
             options.TracesSampleRate = 1.0;
             options.MinimumEventLevel = LogLevel.Warning;
         });

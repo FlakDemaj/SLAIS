@@ -1,8 +1,6 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=2cb16076_002Ddfa2_002D4327_002D9b3a_002D356ecaada37b/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Domain_Should_Not_Have_Dependencies_On_Other_Projects" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::86550782-E412-4FC6-975D-54B31609F3EA::net8.0::Unit.Architecture.ArchitectureTests.Application_ShouldHaveNoDependenceExceptDomain&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::86550782-E412-4FC6-975D-54B31609F3EA::net8.0::Unit.Architecture.ArchitectureTests.Infrastructure_ShouldJustHaveDependencyWithApplicationAndDomain&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::86550782-E412-4FC6-975D-54B31609F3EA::net8.0::Unit.Architecture.ArchitectureTests.Infrastructure_ShouldHaveDependencyWithApplication&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::2BBE5FAA-5FCE-4D35-A7CC-F0B2A2B82FDF::net10.0::Integration.Tests.Test1&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

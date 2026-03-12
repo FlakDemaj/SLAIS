@@ -9,14 +9,13 @@
     <ItemGroup>
       <Folder Include="BackroundJobs\" />
       <Folder Include="ExternalServices\" />
-      <Folder Include="Persistence\EntityConfigurations\" />
       <Folder Include="Persistence\Migrations\" />
-      <Folder Include="Repositorys\" />
       <Folder Include="Services\" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Application\Application.csproj" />
+      <ProjectReference Include="..\Domain\Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>
