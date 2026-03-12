@@ -13,13 +13,9 @@ public static class SAISContextExtensions
     {
         try
         {
-            if (saveData is BaseGuidEntity baseGuidEntity)
-            {
-                baseGuidEntity.Guid = Guid.CreateVersion7();
-            }
+            saveData.Guid = Guid.CreateVersion7();
             
             var result = context.Add(saveData);
-            await context.SaveChangesAsync();
             return result.Entity;
         }
         finally

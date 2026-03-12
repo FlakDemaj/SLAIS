@@ -1,9 +1,11 @@
-using Application.Utils.Logger;
+using Application;
+using Application.DependencyInjection;
+using Application.Users.Handlers;
+using Application.Utils;
 using Infrastructure.Configurations;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using Infrastructure.Transaction;
+using MediatR;
 using SAIS.Infrastructure.DependencyInjection;
-using SAIS.Infrastructure.InternalServices.Logging;
 
 namespace Presentation.Server;
 
@@ -11,41 +13,72 @@ public static class Startup
 {
     public static void ConfigureServices(WebApplicationBuilder builder)
     {
+        EnableCors(builder.Services);
+        EnableMediatr(builder.Services);
         ConfigureSentry(builder);
-        ConfigureInfrastructureConfig(builder);
-
-        ConfigurePresentation(builder.Services);
-        ConfigureLayers(builder.Services);
+        ConfigureLogger(builder);
+        ConfigureLayers(builder);
     }
 
     public static void ConfigurePipeline(WebApplication app)
     {
         ConfigureMiddleware(app);
-        ConfigureStaticLogger(app);
-    }
-
-    private static void ConfigureSentry(WebApplicationBuilder builder)
-    {
-        builder.WebHost.UseSentry(options =>
-        {
-            options.Dsn = builder.Configuration["Sentry:Dsn"];
-            options.Debug = false;
-            options.TracesSampleRate = 1.0;
-            options.MinimumEventLevel = LogLevel.Warning;
-        });
     }
     
-    private static void ConfigurePresentation(IServiceCollection services)
+    private static void ConfigureLayers(WebApplicationBuilder builder)
+    {
+        AddPresentationLayer(builder.Services);
+        AddApplicationLayer(builder.Services);
+        AddInfrastructureLayer(builder);
+    }
+    
+    private static void AddPresentationLayer(IServiceCollection services)
     {
         services.AddControllers();
         services.AddSwaggerGen();
     }
 
-    private static void ConfigureLayers(IServiceCollection services)
+    private static void AddApplicationLayer(IServiceCollection service)
     {
-        services.AddInfrastructure();
+        service.AddApplicationLayer();
+        
+        service.AddScoped<IUnitOfWork, UnitOfWork>();
+        service.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
     }
 
+    private static void AddInfrastructureLayer(WebApplicationBuilder builder)
+    {
+        builder.Services.AddInfrastructure();
+        
+        builder.Services.Configure<DatabaseOptions>(
+            builder.Configuration.GetSection("Database"));
+    }
+    
+    private static void ConfigureSentry(WebApplicationBuilder builder)
+    {
+        if (!builder.Environment.IsDevelopment())
+        {
+            builder.WebHost.UseSentry(options =>
+            {
+                options.Dsn = builder.Configuration["Sentry:Dsn"];
+                options.Debug = false;
+                options.TracesSampleRate = 0.10;
+                options.MinimumEventLevel = LogLevel.Warning;
+            });
+        }
+    }
+    
+    private static void ConfigureLogger(WebApplicationBuilder builder)
+    {
+            builder.Logging.ClearProviders(); 
+            builder.Logging.AddConsole(options =>
+            {
+                options.TimestampFormat = "[yyyy-MM-dd HH:mm:ss] "; 
+                options.IncludeScopes = true;                          
+            });
+            
+     }
+    
     private static void ConfigureMiddleware(WebApplication app)
     {
         if (app.Environment.IsDevelopment())
@@ -61,15 +94,23 @@ public static class Startup
         app.MapControllers();
     }
 
-    private static void ConfigureStaticLogger(WebApplication app)
+    private static void EnableCors(IServiceCollection service)
     {
-        var logger = app.Services.GetRequiredService<ISAISLogger>();
-        StaticLogger.Initialize(logger);
+        service.AddCors(option =>
+        {
+            option.AddPolicy("AllowOrigin",
+                policy =>
+                {
+                    policy.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });
+        });
     }
 
-    private static void ConfigureInfrastructureConfig(WebApplicationBuilder builder)
+    private static void EnableMediatr(IServiceCollection service)
     {
-        builder.Services.Configure<DatabaseOptions>(
-            builder.Configuration.GetSection("Database"));
+        service.AddMediatR(cfg =>
+            cfg.RegisterServicesFromAssembly(typeof(ApplicationAssemblyMarker).Assembly));
     }
 }

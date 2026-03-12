@@ -9,5 +9,6 @@ public class InstituteEntity : BaseIdEntity
     
     public string Branch { get; private set; }
     
+    //Navigation Property to Users
     public ICollection<UserEntity> Users { get; private set; } = new List<UserEntity>();
 }

@@ -4,9 +4,9 @@ namespace SAIS.Domain.Commom;
 
 public class BaseUpdatedByEntity : BaseCreatedByEntity
 {
-    public Guid? UpdateByUserGuid { get; private set; }
+    public Guid? UpdatedByUserGuid { get; private set; }
     public DateTime? UpdateDate { get; private set; }
     
     // Navigation property
-    public UserEntity? UpdateByUser { get; private set; }
+    public UserEntity? UpdatedByUser { get; private set; }
 }

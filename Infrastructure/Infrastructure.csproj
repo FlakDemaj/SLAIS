@@ -9,6 +9,7 @@
     <ItemGroup>
       <Folder Include="BackroundJobs\" />
       <Folder Include="ExternalServices\" />
+      <Folder Include="InternalServices\" />
       <Folder Include="Persistence\Migrations\" />
       <Folder Include="Services\" />
     </ItemGroup>

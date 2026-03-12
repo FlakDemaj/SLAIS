@@ -32,7 +32,6 @@ public class SAISDbContext : DbContext
             _connectionString,
             o =>
             {
-                o.EnableRetryOnFailure();
                 o.CommandTimeout(120);
             });
 

@@ -13,10 +13,10 @@ public class BaseDeletedByEntityConfig<T> : BaseUpdatedByEntityConfig<T>
 
         builder
             .Property(p => p.DeleteDate)
-            .HasColumnName("deletion_date");
+            .HasColumnName("deleted_at");
 
         builder
-            .Property(p => p.DeleteByUser)
-            .HasColumnName("deletion_by_user_uuid");
+            .Property(p => p.DeletedByUserGuid)
+            .HasColumnName("deleted_by_user_guid");
     }
 }

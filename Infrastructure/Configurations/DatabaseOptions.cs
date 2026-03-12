@@ -1,9 +1,9 @@
-using System.Text.Json.Serialization;
+using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.Configurations;
 
 public class DatabaseOptions
 {
-    [JsonPropertyName("Connection_String")]
+    [ConfigurationKeyName("Connection_String")]
     public string ConnectionString { get; set; } = "";
 }

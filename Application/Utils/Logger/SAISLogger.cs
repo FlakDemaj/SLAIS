@@ -4,12 +4,12 @@ using Microsoft.Extensions.Logging;
 
 namespace SAIS.Infrastructure.InternalServices.Logging;
 
-public class SentryAppLogger : ISAISLogger
+public class SAISLogger : ISAISLogger
 {
-    private readonly ILogger<SentryAppLogger> _logger;
+    private readonly ILogger<SAISLogger> _logger;
     private readonly IHub _sentryHub;
 
-    public SentryAppLogger(ILogger<SentryAppLogger> logger, IHub sentryHub)
+    public SAISLogger(ILogger<SAISLogger> logger, IHub sentryHub)
     {
         _logger = logger;
         _sentryHub = sentryHub;

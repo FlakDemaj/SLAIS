@@ -17,7 +17,7 @@ public class BaseUpdatedByEntityConfig<T> : BaseCreatedByEntityConfig<T>
             .HasColumnName("updated_at");
         
         builder
-            .Property(p => p.UpdateByUserGuid)
-            .HasColumnName("update_by_user_uuid");
+            .Property(p => p.UpdatedByUserGuid)
+            .HasColumnName("updated_by_user_guid");
     }
 }

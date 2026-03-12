@@ -7,8 +7,6 @@ namespace Infrastructure.Repositorys;
 public class BaseRepository<T> : SAISRepository, IBaseRepository<T>
     where T : BaseGuidEntity
 {
-    protected readonly SAISDbContext _context;
-
     protected BaseRepository(SAISDbContext context)
         : base(context)
     {

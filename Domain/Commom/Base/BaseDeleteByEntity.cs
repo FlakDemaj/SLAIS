@@ -4,9 +4,9 @@ namespace SAIS.Domain.Commom;
 
 public class BaseDeleteByEntity : BaseUpdatedByEntity
 {
-    public Guid? DeleteByUserGuid { get; private set; }
+    public Guid? DeletedByUserGuid { get; private set; }
     public DateTime? DeleteDate { get; private set; }
     
     // Navigation property
-    public UserEntity? DeleteByUser { get; private set; }
+    public UserEntity? DeletedByUser { get; private set; }
 }

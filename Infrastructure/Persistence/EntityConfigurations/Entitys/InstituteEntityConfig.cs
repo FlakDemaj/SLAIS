@@ -19,24 +19,42 @@ public class InstituteEntityConfig : BaseIdEntityConfig<InstituteEntity>
 
     public override void Configure(EntityTypeBuilder<InstituteEntity> builder)
     {
-       builder.ToTable(Schema, Table);
+       builder.ToTable(Table, Schema);
         
        base.Configure(builder);
         
        builder
-           .Property(e => e.Name)
+           .Property(i => i.Name)
            .HasColumnName("name")
            .IsRequired();
        
        builder
-           .Property(p => p.Branch)
+           .Property(i => i.Branch)
            .HasColumnName("branch")
            .IsRequired();
        
        builder
-           .HasMany(p => p.Users)
-           .WithOne(p => p.Institute)
-           .HasForeignKey(p => p.InstituteUuid)
+           .HasOne(u => u.CreatedByUser)           
+           .WithMany(u => u.CreatedInstitutes)
+           .HasForeignKey(u => u.CreatedByUserGuid)
+           .OnDelete(DeleteBehavior.Restrict);
+        
+       builder
+           .HasOne(u => u.UpdatedByUser)
+           .WithMany(u => u.UpdatedInstitute)
+           .HasForeignKey(u => u.UpdatedByUserGuid)
+           .OnDelete(DeleteBehavior.Restrict);
+        
+       builder
+           .HasOne(u => u.DeletedByUser)
+           .WithMany(u => u.DeletedInstitute)
+           .HasForeignKey(u => u.DeletedByUserGuid)
+           .OnDelete(DeleteBehavior.Restrict);
+       
+       builder
+           .HasMany(i => i.Users)
+           .WithOne(u => u.Institute)
+           .HasForeignKey(u => u.InstituteUuid)
            .OnDelete(DeleteBehavior.Restrict);
     }
 }

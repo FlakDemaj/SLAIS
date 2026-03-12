@@ -17,7 +17,7 @@ public class BaseCreatedByEntityConfig<T> : BaseGuidEntityConfiguration<T>
             .HasColumnName("created_at");
         
         builder
-            .Property(p => p.CreatedByUser)
-            .HasColumnName("created_by_user_uuid");
+            .Property(p => p.CreatedByUserGuid)
+            .HasColumnName("created_by_user_guid");
     }
 }
