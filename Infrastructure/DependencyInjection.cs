@@ -1,5 +1,6 @@
 using Application.Interfaces;
 using Application.Utils.Logger;
+using Infrastructure.Persistence;
 using Infrastructure.Persistence.Context;
 using Infrastructure.Repositorys;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,8 +12,8 @@ public static class DependencyInjection
 {
     public static void AddInfrastructure(this IServiceCollection services)
     {
+        services.AddScoped<MigrationManager>();
         services.AddDbContext<SAISDbContext>();
-        services.AddSingleton<ISAISLogger, SAISLogger>();
         services.AddRepositories();
     }
 

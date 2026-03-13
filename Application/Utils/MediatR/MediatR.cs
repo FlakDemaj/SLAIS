@@ -8,11 +8,11 @@ public class MediatR : IMediatR
 {
     private readonly IServiceProvider _serviceProvider;
     
-    private readonly ISAISLogger _logger;
+    private readonly ISAISLogger<MediatR> _logger;
 
     public MediatR(
         IServiceProvider serviceProvider,
-        ISAISLogger logger)
+        ISAISLogger<MediatR> logger)
     {
         _serviceProvider = serviceProvider;
         _logger = logger;

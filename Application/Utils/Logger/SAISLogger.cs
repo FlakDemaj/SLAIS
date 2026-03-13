@@ -3,11 +3,12 @@ using Microsoft.Extensions.Logging;
 
 namespace SAIS.Infrastructure.InternalServices.Logging;
 
-public class SAISLogger : ISAISLogger
+public class SAISLogger<T> : ISAISLogger<T>
+    where T : class
 {
-    private readonly ILogger<SAISLogger> _logger;
+    private readonly ILogger<T> _logger;
 
-    public SAISLogger(ILogger<SAISLogger> logger)
+    public SAISLogger(ILogger<T> logger)
     {
         _logger = logger;
     }

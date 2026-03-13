@@ -1,15 +1,16 @@
 using Infrastructure.Persistence.EntityConfigurations.Base;
+using Infrastructure.Persistence.EntityConfigurations.Entitys.UserEntityConfig;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SAIS.Domain.Users;
 
 namespace Infrastructure.Persistence.EntityConfigurations.Entitys;
 
-public class UserEntityConfig :  BaseIdEntityConfig<UserEntity>
+public class UserEntityAttributesConfig :  BaseIdEntityConfig<UserEntity>
 {
     private string Table { get; }
     
-    public UserEntityConfig()
+    public UserEntityAttributesConfig()
     {
         Table = "users";
         Schema = "public";
@@ -74,29 +75,7 @@ public class UserEntityConfig :  BaseIdEntityConfig<UserEntity>
             .HasColumnName("state")
             .IsRequired();
         
-        builder
-            .HasOne(u => u.CreatedByUser)           
-            .WithMany(u => u.CreatedUsers)
-            .HasForeignKey(u => u.CreatedByUserGuid)
-            .OnDelete(DeleteBehavior.Restrict);
-        
-        builder
-            .HasOne(u => u.UpdatedByUser)
-            .WithMany(u => u.UpdatedUsers)
-            .HasForeignKey(u => u.UpdatedByUserGuid)
-            .OnDelete(DeleteBehavior.Restrict);
-        
-        builder
-            .HasOne(u => u.DeletedByUser)
-            .WithMany(u => u.DeletedUsers)
-            .HasForeignKey(u => u.DeletedByUserGuid)
-            .OnDelete(DeleteBehavior.Restrict);
-        
-        builder
-            .HasOne(i => i.Institute)
-            .WithMany(i => i.Users)
-            .HasForeignKey(u => u.InstituteUuid)
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Restrict);
+        builder.AddForeignKeys();
+        builder.AddIndexes();
     }
 }

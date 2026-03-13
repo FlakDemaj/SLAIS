@@ -6,11 +6,11 @@ using Application.Utils.MediatR.Interfaces;
 
 namespace Application.Users.Handlers;
 
-public class GetUserQueryHandler : BaseHandler, IRequestHandler<GetUserQuery, UserDto>
+public class GetUserQueryHandler : BaseHandler<GetUserQueryHandler>, IRequestHandler<GetUserQuery, UserDto>
 {
     private readonly IUserRepository _userRepository;
 
-    public GetUserQueryHandler(IUserRepository userRepository, ISAISLogger logger) :
+    public GetUserQueryHandler(IUserRepository userRepository, ISAISLogger<GetUserQueryHandler> logger) :
         base(logger)
     {
         _userRepository = userRepository;

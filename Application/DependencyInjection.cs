@@ -12,7 +12,7 @@ public static class DependencyInjection
 {
     public static void AddApplicationLayer(this IServiceCollection service)
     {
-        service.AddScoped<ISAISLogger, SAISLogger>();
+        service.AddSingleton(typeof(ISAISLogger<>), typeof(SAISLogger<>));
     }
 
     public static void AddMediator(this IServiceCollection services)

@@ -6,9 +6,9 @@ public class PipelineTransactionBehavior<TRequest, TResponse> :
     IPipelineTransactionBehavior<TRequest, TResponse>
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly ISAISLogger _logger;
+    private readonly ISAISLogger<PipelineTransactionBehavior<TRequest, TResponse>> _logger;
 
-    public PipelineTransactionBehavior(IUnitOfWork unitOfWork, ISAISLogger logger)
+    public PipelineTransactionBehavior(IUnitOfWork unitOfWork,  ISAISLogger<PipelineTransactionBehavior<TRequest, TResponse>> logger)
     {
         _unitOfWork = unitOfWork;
         _logger = logger;

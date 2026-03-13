@@ -1,4 +1,6 @@
+using Infrastructure.Persistence;
 using Presentation.Server;
+using Presentation.Utils;
 
 namespace SAIS.Presentation.Server;
 
@@ -11,6 +13,8 @@ public static class Program
         Startup.ConfigureServices(builder);
         
         var app = builder.Build();
+
+        app.Migrate();
         
         Startup.ConfigurePipeline(app);
                 
