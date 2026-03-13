@@ -2,7 +2,7 @@ using Application.Common;
 using Application.Interfaces;
 using Application.Users.DTOs;
 using Application.Utils.Logger;
-using MediatR;
+using Application.Utils.MediatR.Interfaces;
 
 namespace Application.Users.Handlers;
 
@@ -16,7 +16,7 @@ public class GetUserQueryHandler : BaseHandler, IRequestHandler<GetUserQuery, Us
         _userRepository = userRepository;
     }
     
-    public async Task<UserDto> Handle(GetUserQuery request, CancellationToken cancellationToken)
+    public async Task<UserDto> HandleAsync(GetUserQuery request, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetUserByGuidAsync(request.userGuid);
 

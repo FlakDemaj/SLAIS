@@ -24,10 +24,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="MediatR" Version="14.1.0" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.4" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.4" />
       <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.4" />
+      <PackageReference Include="Scrutor" Version="7.0.0" />
       <PackageReference Include="Sentry" Version="6.1.0" />
     </ItemGroup>
 

@@ -1,12 +1,12 @@
 using Application.Users.DTOs;
-using MediatR;
+using Application.Utils.MediatR.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers;
 
 public class UserController : BaseRestController
 {
-    public UserController(IMediator mediator) :
+    public UserController(IMediatR mediator) :
         base(mediator)
     {
     }
@@ -14,7 +14,7 @@ public class UserController : BaseRestController
     [HttpGet("{userGuid:Guid}")]
     public async Task<ActionResult<UserDto>> GetUserAsync(Guid userGuid)
     {
-        var user = await _mediator.Send(new GetUserQuery(userGuid));
+        var user = await _mediator.SendAsync(new GetUserQuery(userGuid));
         return Ok(user);
     }
 }

@@ -1,4 +1,4 @@
-using MediatR;
+using Application.Utils.MediatR.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers;
@@ -7,9 +7,9 @@ namespace Presentation.Controllers;
 [Route("rest/[controller]")]
 public class BaseRestController : ControllerBase
 {
-    protected readonly IMediator _mediator;
+    protected readonly IMediatR _mediator;
 
-    public BaseRestController(IMediator mediator)
+    public BaseRestController(IMediatR mediator)
     {
         _mediator = mediator;
     }
