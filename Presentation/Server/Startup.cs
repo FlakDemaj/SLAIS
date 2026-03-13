@@ -1,10 +1,7 @@
-using Application;
 using Application.DependencyInjection;
-using Application.Users.Handlers;
 using Application.Utils;
 using Infrastructure.Configurations;
 using Infrastructure.Transaction;
-using MediatR;
 using SAIS.Infrastructure.DependencyInjection;
 
 namespace Presentation.Server;
@@ -14,7 +11,7 @@ public static class Startup
     public static void ConfigureServices(WebApplicationBuilder builder)
     {
         EnableCors(builder.Services);
-        EnableMediatr(builder.Services);
+        
         ConfigureSentry(builder);
         ConfigureLogger(builder);
         ConfigureLayers(builder);
@@ -42,8 +39,8 @@ public static class Startup
     {
         service.AddApplicationLayer();
         
+        service.AddMediator();
         service.AddScoped<IUnitOfWork, UnitOfWork>();
-        service.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
     }
 
     private static void AddInfrastructureLayer(WebApplicationBuilder builder)
@@ -56,27 +53,25 @@ public static class Startup
     
     private static void ConfigureSentry(WebApplicationBuilder builder)
     {
-        if (!builder.Environment.IsDevelopment())
+        builder.WebHost.UseSentry(options =>
         {
-            builder.WebHost.UseSentry(options =>
-            {
-                options.Dsn = builder.Configuration["Sentry:Dsn"];
-                options.Debug = false;
-                options.TracesSampleRate = 0.10;
-                options.MinimumEventLevel = LogLevel.Warning;
-            });
-        }
+            options.Dsn = !builder.Environment.IsProduction() ? "" : builder.Configuration["Sentry:Dsn"];
+            options.Debug = false;
+            options.TracesSampleRate = 0.10;
+            options.MinimumEventLevel = LogLevel.Warning;
+        });
     }
     
     private static void ConfigureLogger(WebApplicationBuilder builder)
     {
-            builder.Logging.ClearProviders(); 
-            builder.Logging.AddConsole(options =>
-            {
-                options.TimestampFormat = "[yyyy-MM-dd HH:mm:ss] "; 
-                options.IncludeScopes = true;                          
-            });
+        builder.Logging.ClearProviders(); 
+        builder.Logging.AddConsole(options => 
+        {
+            options.TimestampFormat = "[yyyy-MM-dd HH:mm:ss] "; 
+            options.IncludeScopes = true;                          
+        });
             
+        builder.Logging.SetMinimumLevel(LogLevel.Trace);
      }
     
     private static void ConfigureMiddleware(WebApplication app)
@@ -106,11 +101,5 @@ public static class Startup
                         .AllowAnyHeader();
                 });
         });
-    }
-
-    private static void EnableMediatr(IServiceCollection service)
-    {
-        service.AddMediatR(cfg =>
-            cfg.RegisterServicesFromAssembly(typeof(ApplicationAssemblyMarker).Assembly));
     }
 }
