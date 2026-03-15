@@ -16,4 +16,9 @@ public class BaseRepository<T> : SAISRepository, IBaseRepository<T>
     {
         return _context.CreateAsync(objectToCreate);
     }
+
+    public async Task UpdateAndSaveChangesAsync(T objectToUpdate)
+    { 
+       await _context.UpdateAndSaveChangesAsync(objectToUpdate);
+    }
 }

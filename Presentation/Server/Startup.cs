@@ -1,7 +1,5 @@
-using Application.DependencyInjection;
-using Application.Utils;
 using Infrastructure.Configurations;
-using Infrastructure.Transaction;
+using Presentation.Middlewares;
 using SAIS.Infrastructure.DependencyInjection;
 
 namespace Presentation.Server;
@@ -25,7 +23,6 @@ public static class Startup
     private static void ConfigureLayers(WebApplicationBuilder builder)
     {
         AddPresentationLayer(builder.Services);
-        AddApplicationLayer(builder.Services);
         AddInfrastructureLayer(builder);
     }
     
@@ -35,20 +32,11 @@ public static class Startup
         services.AddSwaggerGen();
     }
 
-    private static void AddApplicationLayer(IServiceCollection service)
-    {
-        service.AddApplicationLayer();
-        
-        service.AddMediator();
-        service.AddScoped<IUnitOfWork, UnitOfWork>();
-    }
-
     private static void AddInfrastructureLayer(WebApplicationBuilder builder)
     {
         builder.Services.AddInfrastructure();
         
-        builder.Services.Configure<DatabaseOptions>(
-            builder.Configuration.GetSection("Database"));
+        ConfigureOptions(builder);
     }
     
     private static void ConfigureSentry(WebApplicationBuilder builder)
@@ -84,6 +72,7 @@ public static class Startup
 
         app.UseHttpsRedirection();
         app.UseSentryTracing();
+        EnableMiddlewares(app);
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
@@ -101,5 +90,18 @@ public static class Startup
                         .AllowAnyHeader();
                 });
         });
+    }
+
+    private static void EnableMiddlewares(IApplicationBuilder builder)
+    {
+        builder.UseMiddleware<ExceptionMiddleware>();
+    }
+
+    private static void ConfigureOptions(WebApplicationBuilder builder)
+    {
+        builder.Services.Configure<DatabaseOptions>(
+            builder.Configuration.GetSection("Database"));
+        builder.Services.Configure<TokenOptions>(
+            builder.Configuration.GetSection("Access_Token"));
     }
 }

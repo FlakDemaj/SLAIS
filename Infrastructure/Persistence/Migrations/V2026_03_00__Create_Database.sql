@@ -206,6 +206,7 @@ create table if not exists system.refresh_tokens
     device_name         text        not null,
     ip_address          inet        not null,
     revoked             boolean     not null default false,
+    revoked_at          timestamptz not null,
     created_at          timestamptz not null default now(),
     last_used           timestamptz not null default now(),
     fk_user_guid        uuid        not null,

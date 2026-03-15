@@ -12,7 +12,7 @@ public class UserController : BaseRestController
     }
 
     [HttpGet("{userGuid:Guid}")]
-    public async Task<ActionResult<UserDto>> GetUserAsync(Guid userGuid)
+    public async Task<ActionResult<GetUserDto>> GetUserAsync(Guid userGuid)
     {
         var user = await _mediator.SendAsync(new GetUserQuery(userGuid));
         return Ok(user);

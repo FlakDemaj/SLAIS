@@ -18,4 +18,12 @@ public class UserRepository : BaseRepository<UserEntity>, IUserRepository
                .GetNoTrackingSet<UserEntity>()
                .FirstOrDefaultAsync(user => user.Guid == userGuid);
     }
+
+    public Task<UserEntity?> GetUserByUsernameOrEmailAsync(string username)
+    {
+        return _context
+            .GetNoTrackingSet<UserEntity>()
+            .FirstOrDefaultAsync(user => user.Email == username 
+                                         || user.Username == username);
+    }
 }

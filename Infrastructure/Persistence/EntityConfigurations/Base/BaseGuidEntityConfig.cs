@@ -4,13 +4,13 @@ using SAIS.Domain.Commom;
 
 namespace Infrastructure.Persistence.EntityConfigurations.Base;
 
-public class BaseGuidEntityConfiguration<T> : IEntityTypeConfiguration<T>
+public class BaseGuidEntityConfig<T> : IEntityTypeConfiguration<T>
     where T : BaseGuidEntity
 {
     protected string Schema;
     protected string Prefix;
 
-    public BaseGuidEntityConfiguration()
+    public BaseGuidEntityConfig()
     {
         Schema = "public";
         Prefix = string.Empty;

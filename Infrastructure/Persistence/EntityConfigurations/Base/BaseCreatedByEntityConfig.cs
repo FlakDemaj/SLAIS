@@ -5,7 +5,7 @@ using SAIS.Domain.Users;
 
 namespace Infrastructure.Persistence.EntityConfigurations.Base;
 
-public class BaseCreatedByEntityConfig<T> : BaseGuidEntityConfiguration<T>
+public class BaseCreatedByEntityConfig<T> : BaseGuidEntityConfig<T>
     where T : BaseCreatedByEntity
 {
     public override void Configure(EntityTypeBuilder<T> builder)

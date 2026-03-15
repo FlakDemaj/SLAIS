@@ -7,14 +7,19 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Audit\" />
       <Folder Include="Courses\" />
       <Folder Include="Modules\" />
       <Folder Include="Prompts\" />
+      <Folder Include="Public\" />
       <Folder Include="Settings\" />
       <Folder Include="Simulations\" />
+      <Folder Include="System\Audit\" />
       <Folder Include="Tasks\" />
       <Folder Include="Units\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.9" />
     </ItemGroup>
 
 </Project>

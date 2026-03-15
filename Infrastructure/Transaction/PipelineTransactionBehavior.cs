@@ -1,3 +1,4 @@
+using Application.Common;
 using Application.Utils.Logger;
 
 namespace Application.Utils;
@@ -33,7 +34,7 @@ public class PipelineTransactionBehavior<TRequest, TResponse> :
             await transaction.RollbackAsync(cancellationToken);
             
             _logger.LogError("An error occurred during transaction creation.", e);
-            throw;
+            throw new SAISException(CommonErrorCodes.DefaultErrorCode, e);
         }
     }
 }

@@ -1,4 +1,6 @@
 using System.Reflection;
+using Application.Common;
+using Application.Utils;
 using Application.Utils.Logger;
 using EvolveDb;
 using Infrastructure.Configurations;
@@ -49,7 +51,7 @@ public class MigrationManager
         catch (Exception exception)
         {
             _logger.LogError("Database migration failed.", exception);
-            throw;
+            throw new SAISException(CommonErrorCodes.DefaultErrorCode, exception);
         }
     }
 

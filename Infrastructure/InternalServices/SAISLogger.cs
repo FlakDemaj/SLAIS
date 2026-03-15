@@ -1,4 +1,5 @@
 using Application.Utils.Logger;
+using Infrastructure.Persistence.Context;
 using Microsoft.Extensions.Logging;
 
 namespace SAIS.Infrastructure.InternalServices.Logging;
