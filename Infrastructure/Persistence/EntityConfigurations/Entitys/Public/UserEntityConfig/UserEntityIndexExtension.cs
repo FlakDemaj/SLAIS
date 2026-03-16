@@ -4,9 +4,9 @@ using SAIS.Domain.Users;
 
 namespace Infrastructure.Persistence.EntityConfigurations.Entitys.UserEntityConfig;
 
-public static class UserEntityAddIndexesExtension
+internal static class UserEntityIndexExtension
 {
-    public static void AddIndexes(this EntityTypeBuilder<UserEntity> builder)
+    internal static void AddIndexes(this EntityTypeBuilder<UserEntity> builder)
     {
         builder.HasIndex(user => user.InstituteUuid)
             .HasDatabaseName("idx_users_institute_guid");

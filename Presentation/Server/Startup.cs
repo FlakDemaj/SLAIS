@@ -1,3 +1,4 @@
+using Application;
 using Infrastructure.Configurations;
 using Presentation.Middlewares;
 using SAIS.Infrastructure.DependencyInjection;
@@ -22,8 +23,10 @@ public static class Startup
     
     private static void ConfigureLayers(WebApplicationBuilder builder)
     {
+        AddApplicationLayer(builder);
         AddPresentationLayer(builder.Services);
         AddInfrastructureLayer(builder);
+        
     }
     
     private static void AddPresentationLayer(IServiceCollection services)
@@ -37,6 +40,11 @@ public static class Startup
         builder.Services.AddInfrastructure();
         
         ConfigureOptions(builder);
+    }
+
+    private static void AddApplicationLayer(WebApplicationBuilder builder)
+    {
+        builder.Services.AddApplicationLayer();
     }
     
     private static void ConfigureSentry(WebApplicationBuilder builder)

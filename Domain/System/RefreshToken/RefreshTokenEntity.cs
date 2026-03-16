@@ -11,6 +11,8 @@ public class RefreshTokenEntity : RefreshTokenNavigationPropertyEntity
     
     public Guid DeviceGuid { get; set; }
     
+    public Guid DeviceName { get; set; }
+    
     public IPAddress IPAddress { get; set; }
     
     public bool Revoked { get; set; }
@@ -19,7 +21,7 @@ public class RefreshTokenEntity : RefreshTokenNavigationPropertyEntity
     
     public DateTime LastUsedDate { get; set; }
     
-    public DateTime RevokedDate { get; set; }
+    public DateTime? RevokedDate { get; set; }
     
-    public Guid UserId { get; set; }
+    public Guid UserGuid { get; set; }
 }

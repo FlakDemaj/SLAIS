@@ -37,7 +37,7 @@ public class UserEntity : UserNavigationPropertyEntity
     {
         LoginAttempts++;
 
-        if (LoginAttempts == 3)
+        if (LoginAttempts == 5)
         {
             IsBlocked = true;
         }

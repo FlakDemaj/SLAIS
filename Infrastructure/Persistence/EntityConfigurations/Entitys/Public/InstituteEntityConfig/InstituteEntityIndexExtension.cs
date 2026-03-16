@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Persistence.EntityConfigurations.Entitys;
 
-public static class InstituteEntityIndexesExtension
+internal static class InstituteEntityIndexExtension
 {
     public static void AddIndexes(this EntityTypeBuilder<InstituteEntity> builder)
     {

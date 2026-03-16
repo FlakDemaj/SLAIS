@@ -6,11 +6,11 @@ using SAIS.Domain.Users;
 
 namespace Infrastructure.Persistence.EntityConfigurations.Entitys;
 
-public class UserEntityAttributesConfig :  BaseIdEntityConfig<UserEntity>
+internal sealed class UserEntityAttributeConfig :  BaseIdEntityConfig<UserEntity>
 {
     private string Table { get; }
     
-    public UserEntityAttributesConfig()
+    public UserEntityAttributeConfig()
     {
         Table = "users";
         Schema = "public";

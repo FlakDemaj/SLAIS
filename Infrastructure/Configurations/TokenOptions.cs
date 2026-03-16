@@ -12,4 +12,7 @@ public class TokenOptions
     
     [ConfigurationKeyName("Expires_In_Minutes")]
     public int ExpiresInMinutes { get; set; }
+
+    [ConfigurationKeyName("Expires_In_Days")]
+    public int ExpiresInDays { get; set; }
 }

@@ -206,9 +206,9 @@ create table if not exists system.refresh_tokens
     device_name         text        not null,
     ip_address          inet        not null,
     revoked             boolean     not null default false,
-    revoked_at          timestamptz not null,
-    created_at          timestamptz not null default now(),
-    last_used           timestamptz not null default now(),
+    revoked_date        timestamptz,
+    created_date        timestamptz not null default now(),
+    last_used_date      timestamptz not null default now(),
     fk_user_guid        uuid        not null,
 
     constraint fk_refresh_tokens_user

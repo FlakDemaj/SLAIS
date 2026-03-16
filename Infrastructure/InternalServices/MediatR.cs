@@ -18,10 +18,10 @@ public class MediatR : IMediatR
         _logger = logger;
     }
 
-    public async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request,
+    public async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> response,
         CancellationToken cancellationToken = default)
     {
-        var requestType = request.GetType();
+        var requestType = response.GetType();
 
         var handlerType = typeof(IRequestHandler<,>)
             .MakeGenericType(requestType, typeof(TResponse));
@@ -41,7 +41,7 @@ public class MediatR : IMediatR
         }
         
         var task = (Task<TResponse>)method.Invoke(handler,
-            [request, cancellationToken]);
+            [response, cancellationToken]);
 
         return await task;
     }

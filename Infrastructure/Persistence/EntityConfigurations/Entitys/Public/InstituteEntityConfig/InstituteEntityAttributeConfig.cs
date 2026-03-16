@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Persistence.EntityConfigurations.Entitys;
 
-public class InstituteEntityAttributeConfig : BaseIdEntityConfig<InstituteEntity>
+internal sealed class InstituteEntityAttributeConfig : BaseIdEntityConfig<InstituteEntity>
 {
-    private string Table  { get; init; }
+    private string Table  { get; }
     
     public InstituteEntityAttributeConfig()
     {
