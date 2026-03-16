@@ -1,30 +1,28 @@
 using Application.Authentication.Commands;
 using Application.Authentication.Commands.Login;
-using Application.Authentication.DTOs;
 using Application.Common;
 using Application.Interfaces;
 using Application.Utils;
 using Application.Utils.Logger;
 using Application.Utils.MediatR.Interfaces;
 using AutoMapper;
-using Microsoft.AspNetCore.Identity;
 using SAIS.Domain.Users;
 
 namespace Application.Authentication.Handlers;
 
 public class LoginCommandHandler :
     BaseHandler<LoginCommandHandler>,
-    IRequestHandler<LoginCommand, LoginResponseDTO>
+    IRequestHandler<LoginCommand, GeneratedTokenResult>
 {
     private readonly IUserRepository _userRepository;
     private readonly ITokenService _tokenService;
-    private readonly IPasswordHasher<UserEntity> _passwordHasher;
+    private readonly IPasswordHasher _passwordHasher;
 
     public LoginCommandHandler(
         IUserRepository userRepository,
         ITokenService tokenService,
         ISAISLogger<LoginCommandHandler> logger,
-        IPasswordHasher<UserEntity> passwordHasher,
+        IPasswordHasher passwordHasher,
         IMapper mapper) 
         : base(logger,mapper)
     {
@@ -33,7 +31,7 @@ public class LoginCommandHandler :
         _passwordHasher = passwordHasher;
     }
 
-    public async Task<LoginResponseDTO> HandleAsync(
+    public async Task<GeneratedTokenResult> HandleAsync(
         LoginCommand request,
         CancellationToken cancellationToken = default)
     {
@@ -41,10 +39,9 @@ public class LoginCommandHandler :
 
         await CheckPassword(user, request.Password);
         
-        return _mapper.Map<LoginResponseDTO>(
-            await GenerateTokenAsync(
+        return await GenerateTokenAsync(
                 user,
-                request));
+                request);
     }
 
     private async Task<UserEntity> CheckUser(
@@ -70,10 +67,12 @@ public class LoginCommandHandler :
         UserEntity user,
         string password)
     {
-        var checkPassword = user.VerifyPassword(password, _passwordHasher);
+        var checkPassword = _passwordHasher.Verify(password, user.PasswordHashed);
 
         if (checkPassword)
         {
+            user.SetLoginAttemptsToZero();
+            await _userRepository.UpdateAndSaveChangesAsync(user);
             return;
         }
         
@@ -87,7 +86,7 @@ public class LoginCommandHandler :
                 : AuthErrorCodes.WrongPassword);
     }
 
-    private async Task<(string, (Guid, int))> GenerateTokenAsync(
+    private async Task<GeneratedTokenResult> GenerateTokenAsync(
         UserEntity user,
         LoginCommand request)
     {
@@ -96,6 +95,10 @@ public class LoginCommandHandler :
             request,
             user.Guid);
         
-        return (accessToken, refreshToken);
+        return new GeneratedTokenResult
+        {
+            AccessToken = accessToken,
+            refreshTokenResult = refreshToken
+        };
     }
 }

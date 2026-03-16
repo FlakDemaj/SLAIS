@@ -12,7 +12,7 @@ SELECT
     'SAIS_Server',
     'server',
     'SAIS',
-    '$2a$11$injkmZZvgbhSjn0Rzqnu5.vtgI7uLJT.gpRmIYQ/YgLf3mJBPXQGW',
+    '$2a$11$HVc9Pdpxle5wieKAwxEw9uY4BqvOoX.atHQZpzb2bttU7T.YigVNK',
     4,
     0,
     0,

@@ -6,7 +6,7 @@ namespace Infrastructure.Repositorys;
 
 public class RefreshTokenRepository : BaseRepository<RefreshTokenEntity>, IRefreshTokenRepository
 {
-    protected RefreshTokenRepository(SAISDbContext context) : base(context)
+    public RefreshTokenRepository(SAISDbContext context) : base(context)
     {
     }
 }

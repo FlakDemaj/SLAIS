@@ -27,12 +27,6 @@ public class UserEntity : UserNavigationPropertyEntity
     
     public Guid InstituteUuid { get; private set; }
 
-    public bool VerifyPassword(string password, IPasswordHasher<UserEntity> hasher)
-    {
-        var result = hasher.VerifyHashedPassword(this, PasswordHashed, password);
-        return result == PasswordVerificationResult.Success;
-    }
-
     public void IncrementWrongLoginAttempts()
     {
         LoginAttempts++;
@@ -41,5 +35,10 @@ public class UserEntity : UserNavigationPropertyEntity
         {
             IsBlocked = true;
         }
+    }
+
+    public void SetLoginAttemptsToZero()
+    {
+        LoginAttempts = 0;
     }
 }

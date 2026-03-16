@@ -24,10 +24,6 @@ public static class SAISContextExtensions
         {
             throw new SAISException(CommonErrorCodes.DatabaseError, e);
         }
-        finally
-        {
-            context.Entry(saveData).State = EntityState.Detached;
-        }   
     }
 
     public static IQueryable<T> GetNoTrackingSet<T>(this SAISDbContext context)
@@ -43,7 +39,6 @@ public static class SAISContextExtensions
         try
         {
             context.Entry(updateData).State = EntityState.Modified;
-            await context.SaveChangesAsync();
         }
         catch (SAISException)
         {
@@ -57,10 +52,6 @@ public static class SAISContextExtensions
             }
 
             throw new SAISException(CommonErrorCodes.DatabaseError, exception);
-        }
-        finally
-        {
-            context.Entry(updateData).State = EntityState.Detached;
         }
     }
 }

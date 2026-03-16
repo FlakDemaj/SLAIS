@@ -35,10 +35,10 @@ public class ExceptionMiddleware
 
         switch (errorCodeCategory)
         {
-            case 0:
+            case 1:
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 break;
-            case 1:
+            case 2:
                 context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                 break;
             default:

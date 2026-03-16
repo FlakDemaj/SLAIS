@@ -6,5 +6,7 @@
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;NUnit3x::2BBE5FAA-5FCE-4D35-A7CC-F0B2A2B82FDF::net10.0::Integration.Tests.Test1&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::2BBE5FAA-5FCE-4D35-A7CC-F0B2A2B82FDF::net10.0::Integration.Tests.Setup&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::3D7689A3-CC0C-4CD9-B091-59AE53A83A46::net10.0::Unit.Tests.Setup&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::3D7689A3-CC0C-4CD9-B091-59AE53A83A46::net10.0::Unit.Tests.Test1&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

@@ -12,7 +12,7 @@ internal sealed class RefreshTokenEntityAttributesConfig : BaseGuidEntityConfig<
     public RefreshTokenEntityAttributesConfig()
     {
         Table = "refresh_tokens";
-        Schema = "public";
+        Schema = "system";
         Prefix = "refresh_token_";
     }
 
@@ -60,13 +60,13 @@ internal sealed class RefreshTokenEntityAttributesConfig : BaseGuidEntityConfig<
             .Property(rt => rt.CreatedDate)
             .HasColumnName("created_date")
             .IsRequired()
-            .HasDefaultValue(DateTime.Now);
+            .HasDefaultValue(DateTime.UtcNow);
        
         builder
             .Property(rt => rt.LastUsedDate)
             .HasColumnName("last_used_date")
             .IsRequired()
-            .HasDefaultValue(DateTime.Now);
+            .HasDefaultValue(DateTime.UtcNow);
 
         builder
             .Property(rt => rt.UserGuid)

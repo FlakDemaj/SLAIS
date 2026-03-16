@@ -11,7 +11,7 @@ public class RefreshTokenEntity : RefreshTokenNavigationPropertyEntity
     
     public Guid DeviceGuid { get; set; }
     
-    public Guid DeviceName { get; set; }
+    public string DeviceName { get; set; }
     
     public IPAddress IPAddress { get; set; }
     

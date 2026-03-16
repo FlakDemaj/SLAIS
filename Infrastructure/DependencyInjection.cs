@@ -48,6 +48,7 @@ public static class DependencyInjection
         AddMediator(services);
         services.AddSingleton(typeof(ISAISLogger<>), typeof(SAISLogger<>));
         services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IPasswordHasher, PasswordHasher>();
     }
 
     private static void AddMediator(IServiceCollection services)

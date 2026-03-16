@@ -16,20 +16,20 @@ public class AuthController : BaseRestController
 
     [HttpPost("login")]
     [AllowAnonymous]
-    public async Task<IActionResult> login([FromBody] LoginCommand loginCommand)
+    public async Task<IActionResult> login([FromBody] LoginRequest loginRequest)
     {
-        loginCommand.IPAddress = HttpContext.Connection.RemoteIpAddress ?? IPAddress.Loopback; 
+        var loginCommand = MapLoginRequest(loginRequest, HttpContext); 
         var tokens = await _mediator.SendAsync(loginCommand);
 
         HttpContext.Response.Cookies.Append(
             "RefreshToken",
-            tokens.RefreshToken,
+            tokens.refreshTokenResult.RefreshToken.ToString(),
             new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Strict,
-                Expires = DateTime.UtcNow.AddDays(tokens.RefreshTokenExpirationDays)
+                Expires = DateTime.UtcNow.AddDays(tokens.refreshTokenResult.ExpiresIn)
             });
         
         return Ok(
@@ -37,5 +37,19 @@ public class AuthController : BaseRestController
             {
                 AccesToken =  tokens.AccessToken
             });
+    }
+
+    private static LoginCommand MapLoginRequest(
+        LoginRequest loginRequest,
+        HttpContext context)
+    {
+        return new LoginCommand
+        {
+            LoginName = loginRequest.LoginName,
+            Password = loginRequest.Password,
+            IPAddress = context.Connection.RemoteIpAddress ?? IPAddress.Loopback,
+            DeviceName = loginRequest.DeviceName,
+            DeviceGuid = loginRequest.DeviceGuid
+        };
     }
 }

@@ -9,26 +9,24 @@ public class AuthMappingProfile : Profile
 {
     public AuthMappingProfile()
     {
-        CreateMap<(LoginCommand, string, int), RefreshTokenEntity>()
+        CreateMap<(LoginCommand, Guid, int), RefreshTokenEntity>()
             .ForMember(rt => rt.RefreshToken, o
                 => o.MapFrom(src => Guid.CreateVersion7()))
             .ForMember(rt => rt.Revoked, o
                 => o.MapFrom(src => false))
             .ForMember(rt => rt.CreatedDate, o
-                => o.MapFrom(src => DateTime.Now))
+                => o.MapFrom(src => DateTime.UtcNow))
             .ForMember(rt => rt.LastUsedDate, o
-                => o.MapFrom(src => DateTime.Now))
+                => o.MapFrom(src => DateTime.UtcNow))
             .ForMember(rt => rt.UserGuid, o
                 => o.MapFrom(src => src.Item2))
             .ForMember(rt => rt.ExpirationDate, o
-                => o.MapFrom(src => DateTime.Now.AddDays(src.Item3)));
-
-        CreateMap<(string, (string, int)), LoginResponseDTO>()
-            .ForMember(rt => rt.AccessToken, o
-                => o.MapFrom(src => src.Item1))
-            .ForMember(rt => rt.RefreshToken, o
-                => o.MapFrom(src => src.Item2))
-            .ForMember(rt => rt.RefreshTokenExpirationDays, o
-                => o.MapFrom(src => src.Item2.Item2));
+                => o.MapFrom(src => DateTime.UtcNow.AddDays(src.Item3)))
+            .ForMember(rt => rt.IPAddress, o
+                => o.MapFrom(src => src.Item1.IPAddress))
+            .ForMember(rt => rt.DeviceGuid, o
+                => o.MapFrom(src => src.Item1.DeviceGuid))
+            .ForMember(rt => rt.DeviceName, o
+                => o.MapFrom(src => src.Item1.DeviceName));
     }
 }

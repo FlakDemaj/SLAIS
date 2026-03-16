@@ -9,7 +9,8 @@ public class PipelineTransactionBehavior<TRequest, TResponse> :
     private readonly IUnitOfWork _unitOfWork;
     private readonly ISAISLogger<PipelineTransactionBehavior<TRequest, TResponse>> _logger;
 
-    public PipelineTransactionBehavior(IUnitOfWork unitOfWork,  ISAISLogger<PipelineTransactionBehavior<TRequest, TResponse>> logger)
+    public PipelineTransactionBehavior(IUnitOfWork unitOfWork,
+        ISAISLogger<PipelineTransactionBehavior<TRequest, TResponse>> logger)
     {
         _unitOfWork = unitOfWork;
         _logger = logger;
@@ -33,8 +34,9 @@ public class PipelineTransactionBehavior<TRequest, TResponse> :
         {
             await transaction.RollbackAsync(cancellationToken);
             
-            _logger.LogError("An error occurred during transaction creation.", e);
+            _logger.LogError($"An error occurred during transaction creation: {e}", e);
             throw new SAISException(CommonErrorCodes.DefaultErrorCode, e);
         }
+        
     }
 }

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SAIS.Domain.Commom;
 
@@ -13,6 +14,8 @@ public class BaseIdEntityConfig<T> : BaseDeletedByEntityConfig<T>
 
         builder
             .Property(p => p.Id)
-            .HasColumnName(Prefix + "id");
+            .HasColumnName(Prefix + "id")
+            .ValueGeneratedOnAdd()
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);;
     }
 }

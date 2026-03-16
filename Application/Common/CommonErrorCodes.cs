@@ -5,8 +5,8 @@ namespace Application.Common;
 public enum CommonErrorCodes
 {
     [Description("Es gibt momentant Probleme mit dem Server.")]
-    DefaultErrorCode = -00001,
+    DefaultErrorCode = -10001,
     
     [Description("Es gibt momentant Probleme mit der Datenbank.")]
-    DatabaseError = -00002
+    DatabaseError = -10002
 }

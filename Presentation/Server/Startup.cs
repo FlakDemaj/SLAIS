@@ -26,7 +26,6 @@ public static class Startup
         AddApplicationLayer(builder);
         AddPresentationLayer(builder.Services);
         AddInfrastructureLayer(builder);
-        
     }
     
     private static void AddPresentationLayer(IServiceCollection services)

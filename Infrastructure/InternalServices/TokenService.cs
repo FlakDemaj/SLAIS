@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Application.Authentication.Commands;
+using Application.Authentication.Commands.Login;
 using Application.Common;
 using Application.Interfaces;
 using AutoMapper;
@@ -51,14 +52,18 @@ public class TokenService : ITokenService
         return _tokenHandler.WriteToken(token);
     }
 
-    public async Task<(Guid, int)> GenerateRefreshToken(LoginCommand request, Guid userGuid)
+    public async Task<GeneratedRefreshTokenResult> GenerateRefreshToken(LoginCommand request, Guid userGuid)
     {
         var refreshToken = _mapper.Map<RefreshTokenEntity>(
             (request, userGuid, _tokenOptions.ExpiresInDays));
 
         await _refreshTokenRepository.CreateAsync(refreshToken);
 
-        return (refreshToken.RefreshToken, _tokenOptions.ExpiresInDays);
+        return new GeneratedRefreshTokenResult
+        {
+            RefreshToken = refreshToken.RefreshToken,
+            ExpiresIn = _tokenOptions.ExpiresInDays
+        };
     }
 
     public Task<bool> ValidateRefreshTokenAsync(string refreshToken)
@@ -75,7 +80,7 @@ public class TokenService : ITokenService
             issuer: _tokenOptions.Issuer, 
             audience: _tokenOptions.Audience,
             claims: claims,
-            expires: DateTime.Now.AddMinutes(_tokenOptions.ExpiresInMinutes),
+            expires: DateTime.UtcNow.AddMinutes(_tokenOptions.ExpiresInMinutes),
             signingCredentials: creds
         );
 
@@ -91,7 +96,7 @@ public class TokenService : ITokenService
             new(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
           
             new(ClaimTypes.Role, user.Role.ToString()),
-            new("InstituteGuid", user.Institute.ToString())
+            new("InstituteGuid", user.InstituteUuid.ToString())
         };
 
         return claims;
