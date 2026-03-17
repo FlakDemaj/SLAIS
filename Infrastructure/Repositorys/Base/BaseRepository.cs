@@ -1,24 +1,26 @@
 using Application.Interfaces;
+
 using Infrastructure.Persistence.Context;
+
 using SAIS.Domain.Commom;
 
 namespace Infrastructure.Repositorys;
 
-public class BaseRepository<T> : SAISRepository, IBaseRepository<T>
+public class BaseRepository<T> : SlaisRepository, IBaseRepository<T>
     where T : BaseGuidEntity
 {
-    protected BaseRepository(SAISDbContext context)
+    protected BaseRepository(SlaisDbContext context)
         : base(context)
     {
     }
 
     public Task<T> CreateAsync(T objectToCreate)
     {
-        return _context.CreateAsync(objectToCreate);
+        return Context.CreateAsync(objectToCreate);
     }
 
     public async Task UpdateAndSaveChangesAsync(T objectToUpdate)
-    { 
-       await _context.UpdateAndSaveChangesAsync(objectToUpdate);
+    {
+        await Context.UpdateAndSaveChangesAsync(objectToUpdate);
     }
 }

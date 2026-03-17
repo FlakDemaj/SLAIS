@@ -1,8 +1,8 @@
 using System.Net;
-using System.Text.Json.Serialization;
+
 using Application.Utils;
+
 using Newtonsoft.Json;
-using JsonConverter = Newtonsoft.Json.JsonConverter;
 
 namespace Presentation.Middlewares;
 
@@ -21,16 +21,16 @@ public class ExceptionMiddleware
         {
             await _next(context);
         }
-        catch (SAISException e)
+        catch (SlaisException e)
         {
             await HandleException(context, e);
         }
     }
 
-    private Task HandleException(HttpContext context, SAISException e)
+    private Task HandleException(HttpContext context, SlaisException e)
     {
         context.Response.ContentType = "application/json";
-        
+
         var errorCodeCategory = GetErrorCategory(e.ErrorCode);
 
         switch (errorCodeCategory)
@@ -51,10 +51,10 @@ public class ExceptionMiddleware
             ErrorCode = e.ErrorCode,
             ErrorMessage = e.ErrorMessage,
         };
-        
+
         return context.Response.WriteAsync(JsonConvert.SerializeObject(response));
     }
-    
+
     private static int GetErrorCategory(int errorCode)
     {
         var absoluteCode = Math.Abs(errorCode);

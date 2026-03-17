@@ -1,5 +1,5 @@
 using Domain.Systems.RefreshToken;
-using Microsoft.EntityFrameworkCore;
+
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Persistence.EntityConfigurations.Entitys.System.RefreshTokenEntityConfig;

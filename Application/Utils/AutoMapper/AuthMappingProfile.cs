@@ -1,6 +1,7 @@
 using Application.Authentication.Commands;
-using Application.Authentication.DTOs;
+
 using AutoMapper;
+
 using Domain.Systems.RefreshToken;
 
 namespace Infrastructure.AutoMappers;
@@ -11,22 +12,49 @@ public class AuthMappingProfile : Profile
     {
         CreateMap<(LoginCommand, Guid, int), RefreshTokenEntity>()
             .ForMember(rt => rt.RefreshToken, o
-                => o.MapFrom(src => Guid.CreateVersion7()))
+                =>
+            {
+                o.MapFrom(src => Guid.CreateVersion7());
+            })
             .ForMember(rt => rt.Revoked, o
-                => o.MapFrom(src => false))
+                =>
+            {
+                o.MapFrom(src => false);
+            })
             .ForMember(rt => rt.CreatedDate, o
-                => o.MapFrom(src => DateTime.UtcNow))
+                =>
+            {
+                o.MapFrom(src => DateTime.UtcNow);
+            })
             .ForMember(rt => rt.LastUsedDate, o
-                => o.MapFrom(src => DateTime.UtcNow))
+                =>
+            {
+                o.MapFrom(src => DateTime.UtcNow);
+            })
             .ForMember(rt => rt.UserGuid, o
-                => o.MapFrom(src => src.Item2))
+                =>
+            {
+                o.MapFrom(src => src.Item2);
+            })
             .ForMember(rt => rt.ExpirationDate, o
-                => o.MapFrom(src => DateTime.UtcNow.AddDays(src.Item3)))
+                =>
+            {
+                o.MapFrom(src => DateTime.UtcNow.AddDays(src.Item3));
+            })
             .ForMember(rt => rt.IPAddress, o
-                => o.MapFrom(src => src.Item1.IPAddress))
+                =>
+            {
+                o.MapFrom(src => src.Item1.IPAddress);
+            })
             .ForMember(rt => rt.DeviceGuid, o
-                => o.MapFrom(src => src.Item1.DeviceGuid))
+                =>
+            {
+                o.MapFrom(src => src.Item1.DeviceGuid);
+            })
             .ForMember(rt => rt.DeviceName, o
-                => o.MapFrom(src => src.Item1.DeviceName));
+                =>
+            {
+                o.MapFrom(src => src.Item1.DeviceName);
+            });
     }
 }

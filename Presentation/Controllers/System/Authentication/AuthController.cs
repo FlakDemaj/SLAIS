@@ -1,6 +1,8 @@
 using System.Net;
+
 using Application.Authentication.Commands;
 using Application.Utils.MediatR.Interfaces;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,10 +18,10 @@ public class AuthController : BaseRestController
 
     [HttpPost("login")]
     [AllowAnonymous]
-    public async Task<IActionResult> login([FromBody] LoginRequest loginRequest)
+    public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
     {
-        var loginCommand = MapLoginRequest(loginRequest, HttpContext); 
-        var tokens = await _mediator.SendAsync(loginCommand);
+        var loginCommand = MapLoginRequest(loginRequest, HttpContext);
+        var tokens = await Mediator.SendAsync(loginCommand);
 
         HttpContext.Response.Cookies.Append(
             "RefreshToken",
@@ -31,11 +33,11 @@ public class AuthController : BaseRestController
                 SameSite = SameSiteMode.Strict,
                 Expires = DateTime.UtcNow.AddDays(tokens.refreshTokenResult.ExpiresIn)
             });
-        
+
         return Ok(
             new
             {
-                AccesToken =  tokens.AccessToken
+                AccesToken = tokens.AccessToken
             });
     }
 

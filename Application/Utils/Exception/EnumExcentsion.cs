@@ -7,14 +7,14 @@ public static class EnumExcentsion
 {
     public static string GetDescription(this Enum value)
     {
-        var field = value.GetType().GetField(value.ToString());
+        FieldInfo? field = value.GetType().GetField(value.ToString());
 
         if (field is null)
         {
             return value.ToString();
         }
-        
-        var description = field.GetCustomAttribute<DescriptionAttribute>().Description;
+
+        var description = field.GetCustomAttribute<DescriptionAttribute>()?.Description;
 
         return description ?? "An Error occured!";
     }

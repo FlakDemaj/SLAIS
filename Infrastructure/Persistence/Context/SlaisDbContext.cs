@@ -1,35 +1,38 @@
-using Autofac;
+using System.Reflection;
+
 using Infrastructure.Configurations;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+
 using Z.EntityFramework.Plus;
 
 namespace Infrastructure.Persistence.Context;
 
-public class SAISDbContext : DbContext
+public class SlaisDbContext : DbContext
 {
-    private string _connectionString { get; init;  }
-    
-    private ILoggerFactory _iLoggerFactory { get; init; }
-    
-    public SAISDbContext(
+    private string ConnectionString { get; init; }
+
+    private ILoggerFactory LoggerFactory { get; init; }
+
+    public SlaisDbContext(
         IOptions<DatabaseOptions> databaseOptions,
         ILoggerFactory iLoggerFactory)
     {
-        _connectionString = databaseOptions.Value.ConnectionString;
-        _iLoggerFactory = iLoggerFactory;
+        ConnectionString = databaseOptions.Value.ConnectionString;
+        LoggerFactory = iLoggerFactory;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        if(optionsBuilder.IsConfigured)
+        if (optionsBuilder.IsConfigured)
         {
             return;
         }
 
         optionsBuilder.UseNpgsql(
-            _connectionString,
+            ConnectionString,
             o =>
             {
                 o.CommandTimeout(120);
@@ -37,7 +40,7 @@ public class SAISDbContext : DbContext
 
         if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Production")
         {
-            optionsBuilder.UseLoggerFactory(_iLoggerFactory);
+            optionsBuilder.UseLoggerFactory(LoggerFactory);
         }
 
         EntityFrameworkPlusManager.IsCommunity = true;
@@ -45,7 +48,7 @@ public class SAISDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        var assembly = typeof(SAISDbContext).Assembly;
+        Assembly assembly = typeof(SlaisDbContext).Assembly;
         modelBuilder.ApplyConfigurationsFromAssembly(assembly);
     }
 }

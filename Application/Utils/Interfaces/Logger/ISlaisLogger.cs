@@ -1,6 +1,6 @@
 namespace Application.Utils.Logger;
 
-public interface ISAISLogger<T>
+public interface ISlaisLogger<T>
     where T : class
 {
     void LogInformation(string message);

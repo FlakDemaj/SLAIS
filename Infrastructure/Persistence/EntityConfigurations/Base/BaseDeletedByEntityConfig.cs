@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 using SAIS.Domain.Commom;
 
 namespace Infrastructure.Persistence.EntityConfigurations.Base;

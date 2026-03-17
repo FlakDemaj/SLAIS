@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 using SAIS.Domain.Commom;
 
 namespace Infrastructure.Persistence.EntityConfigurations.Base;
@@ -16,6 +17,6 @@ public class BaseIdEntityConfig<T> : BaseDeletedByEntityConfig<T>
             .Property(p => p.Id)
             .HasColumnName(Prefix + "id")
             .ValueGeneratedOnAdd()
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);;
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore); ;
     }
 }

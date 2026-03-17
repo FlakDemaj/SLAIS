@@ -1,6 +1,9 @@
 using Application;
+
 using Infrastructure.Configurations;
+
 using Presentation.Middlewares;
+
 using SAIS.Infrastructure.DependencyInjection;
 
 namespace Presentation.Server;
@@ -10,7 +13,7 @@ public static class Startup
     public static void ConfigureServices(WebApplicationBuilder builder)
     {
         EnableCors(builder.Services);
-        
+
         ConfigureSentry(builder);
         ConfigureLogger(builder);
         ConfigureLayers(builder);
@@ -20,14 +23,14 @@ public static class Startup
     {
         ConfigureMiddleware(app);
     }
-    
+
     private static void ConfigureLayers(WebApplicationBuilder builder)
     {
         AddApplicationLayer(builder);
         AddPresentationLayer(builder.Services);
         AddInfrastructureLayer(builder);
     }
-    
+
     private static void AddPresentationLayer(IServiceCollection services)
     {
         services.AddControllers();
@@ -37,7 +40,7 @@ public static class Startup
     private static void AddInfrastructureLayer(WebApplicationBuilder builder)
     {
         builder.Services.AddInfrastructure();
-        
+
         ConfigureOptions(builder);
     }
 
@@ -45,7 +48,7 @@ public static class Startup
     {
         builder.Services.AddApplicationLayer();
     }
-    
+
     private static void ConfigureSentry(WebApplicationBuilder builder)
     {
         builder.WebHost.UseSentry(options =>
@@ -56,19 +59,19 @@ public static class Startup
             options.MinimumEventLevel = LogLevel.Warning;
         });
     }
-    
+
     private static void ConfigureLogger(WebApplicationBuilder builder)
     {
-        builder.Logging.ClearProviders(); 
-        builder.Logging.AddConsole(options => 
+        builder.Logging.ClearProviders();
+        builder.Logging.AddConsole(options =>
         {
-            options.TimestampFormat = "[yyyy-MM-dd HH:mm:ss] "; 
-            options.IncludeScopes = true;                          
+            options.TimestampFormat = "[yyyy-MM-dd HH:mm:ss] ";
+            options.IncludeScopes = true;
         });
-            
+
         builder.Logging.SetMinimumLevel(LogLevel.Trace);
-     }
-    
+    }
+
     private static void ConfigureMiddleware(WebApplication app)
     {
         if (app.Environment.IsDevelopment())

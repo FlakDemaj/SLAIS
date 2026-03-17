@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 using SAIS.Domain.Commom;
 
 namespace Infrastructure.Persistence.EntityConfigurations.Base;
@@ -15,7 +16,7 @@ public class BaseGuidEntityConfig<T> : IEntityTypeConfiguration<T>
         Schema = "public";
         Prefix = string.Empty;
     }
-    
+
     public virtual void Configure(EntityTypeBuilder<T> builder)
     {
         builder

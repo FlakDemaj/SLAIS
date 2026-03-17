@@ -1,10 +1,13 @@
-using System.Reflection;
 using Application.Common;
 using Application.Utils;
 using Application.Utils.Logger;
+
 using EvolveDb;
+
 using Infrastructure.Configurations;
+
 using Microsoft.Extensions.Options;
+
 using Npgsql;
 
 namespace Infrastructure.Persistence;
@@ -13,18 +16,25 @@ public class MigrationManager
 {
     private const int CommandTimeoutInSeconds = 3600;
 
-    private static string Location => CreateMigrationsFolderPath();
-    private const string Schema = "evolve";
-    
-    private readonly DatabaseOptions _options;
-    private readonly ISAISLogger<MigrationManager> _logger;
+    private static string Location
+    {
+        get
+        {
+            return CreateMigrationsFolderPath();
+        }
+    }
 
-    public MigrationManager(IOptions<DatabaseOptions> options, ISAISLogger<MigrationManager> logger)
+    private const string Schema = "evolve";
+
+    private readonly DatabaseOptions _options;
+    private readonly ISlaisLogger<MigrationManager> _logger;
+
+    public MigrationManager(IOptions<DatabaseOptions> options, ISlaisLogger<MigrationManager> logger)
     {
         _options = options.Value;
         _logger = logger;
     }
-    
+
     public void Migrate()
     {
         var builder = new NpgsqlConnectionStringBuilder(_options.ConnectionString)
@@ -51,7 +61,7 @@ public class MigrationManager
         catch (Exception exception)
         {
             _logger.LogError("Database migration failed.", exception);
-            throw new SAISException(CommonErrorCodes.DefaultErrorCode, exception);
+            throw new SlaisException(CommonErrorCodes.DefaultErrorCode, exception);
         }
     }
 

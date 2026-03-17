@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 using SAIS.Domain.Commom;
-using SAIS.Domain.Users;
 
 namespace Infrastructure.Persistence.EntityConfigurations.Base;
 
@@ -15,7 +15,7 @@ public class BaseUpdatedByEntityConfig<T> : BaseCreatedByEntityConfig<T>
         builder
             .Property(p => p.UpdateDate)
             .HasColumnName("updated_at");
-        
+
         builder
             .Property(p => p.UpdatedByUserGuid)
             .HasColumnName("updated_by_user_guid");

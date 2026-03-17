@@ -1,19 +1,20 @@
 using Application.Utils.Logger;
+
 using AutoMapper;
 
 namespace Application.Common;
 
 public abstract class BaseHandler<T> where T : class
 {
-    protected ISAISLogger<T> _logger;
+    protected ISlaisLogger<T> Logger;
 
-    protected IMapper _mapper;
-    
+    protected IMapper Mapper;
+
     protected BaseHandler(
-        ISAISLogger<T> logger,
+        ISlaisLogger<T> logger,
         IMapper mapper)
     {
-        _logger = logger;
-        _mapper = mapper;
+        Logger = logger;
+        Mapper = mapper;
     }
 }

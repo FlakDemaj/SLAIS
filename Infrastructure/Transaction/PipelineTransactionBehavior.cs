@@ -1,16 +1,18 @@
 using Application.Common;
 using Application.Utils.Logger;
 
+using Microsoft.EntityFrameworkCore.Storage;
+
 namespace Application.Utils;
 
 public class PipelineTransactionBehavior<TRequest, TResponse> :
     IPipelineTransactionBehavior<TRequest, TResponse>
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly ISAISLogger<PipelineTransactionBehavior<TRequest, TResponse>> _logger;
+    private readonly ISlaisLogger<PipelineTransactionBehavior<TRequest, TResponse>> _logger;
 
     public PipelineTransactionBehavior(IUnitOfWork unitOfWork,
-        ISAISLogger<PipelineTransactionBehavior<TRequest, TResponse>> logger)
+        ISlaisLogger<PipelineTransactionBehavior<TRequest, TResponse>> logger)
     {
         _unitOfWork = unitOfWork;
         _logger = logger;
@@ -18,14 +20,14 @@ public class PipelineTransactionBehavior<TRequest, TResponse> :
 
     public async Task<TResponse> HandleAsync(TRequest request, Func<Task<TResponse>> next, CancellationToken cancellationToken)
     {
-        var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
+        IDbContextTransaction transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
 
         try
         {
-            var response = await next();
-            
+            TResponse? response = await next();
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            
+
             await transaction.CommitAsync(cancellationToken);
 
             return response;
@@ -33,10 +35,10 @@ public class PipelineTransactionBehavior<TRequest, TResponse> :
         catch (Exception e)
         {
             await transaction.RollbackAsync(cancellationToken);
-            
+
             _logger.LogError($"An error occurred during transaction creation: {e}", e);
-            throw new SAISException(CommonErrorCodes.DefaultErrorCode, e);
+            throw new SlaisException(CommonErrorCodes.DefaultErrorCode, e);
         }
-        
+
     }
 }

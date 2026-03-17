@@ -2,7 +2,7 @@ namespace Application.Common;
 
 public interface IPasswordHasher
 {
-    public string Hash(string password);
-    
-    public bool Verify(string password, string hash);
+    string Hash(string password);
+
+    bool Verify(string password, string hash);
 }

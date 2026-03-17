@@ -1,4 +1,5 @@
 using Domain.Systems.RefreshToken;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,5 +13,5 @@ internal static class RefreshTokenEntityIndexExtension
             .HasIndex(rt => rt.UserGuid)
             .HasDatabaseName("idx_refresh_tokens_user_guid");
     }
-    
+
 }

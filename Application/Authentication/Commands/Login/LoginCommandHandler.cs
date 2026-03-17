@@ -5,7 +5,9 @@ using Application.Interfaces;
 using Application.Utils;
 using Application.Utils.Logger;
 using Application.Utils.MediatR.Interfaces;
+
 using AutoMapper;
+
 using SAIS.Domain.Users;
 
 namespace Application.Authentication.Handlers;
@@ -21,10 +23,10 @@ public class LoginCommandHandler :
     public LoginCommandHandler(
         IUserRepository userRepository,
         ITokenService tokenService,
-        ISAISLogger<LoginCommandHandler> logger,
+        ISlaisLogger<LoginCommandHandler> logger,
         IPasswordHasher passwordHasher,
-        IMapper mapper) 
-        : base(logger,mapper)
+        IMapper mapper)
+        : base(logger, mapper)
     {
         _userRepository = userRepository;
         _tokenService = tokenService;
@@ -35,10 +37,10 @@ public class LoginCommandHandler :
         LoginCommand request,
         CancellationToken cancellationToken = default)
     {
-        var user = await CheckUser(request.LoginName);
+        UserEntity user = await CheckUser(request.LoginName);
 
         await CheckPassword(user, request.Password);
-        
+
         return await GenerateTokenAsync(
                 user,
                 request);
@@ -47,19 +49,19 @@ public class LoginCommandHandler :
     private async Task<UserEntity> CheckUser(
         string loginName)
     {
-        var user = await _userRepository
+        UserEntity? user = await _userRepository
             .GetUserByUsernameOrEmailAsync(loginName);
 
         if (user == null)
         {
-            throw new SAISException(AuthErrorCodes.NoUserWithThisName);
+            throw new SlaisException(AuthErrorCodes.NoUserWithThisName);
         }
 
         if (user.IsBlocked)
         {
-            throw new SAISException(AuthErrorCodes.UserIsBlocked);
+            throw new SlaisException(AuthErrorCodes.UserIsBlocked);
         }
-        
+
         return user;
     }
 
@@ -75,13 +77,13 @@ public class LoginCommandHandler :
             await _userRepository.UpdateAndSaveChangesAsync(user);
             return;
         }
-        
+
         user.IncrementWrongLoginAttempts();
-        
+
         await _userRepository.UpdateAndSaveChangesAsync(user);
-        
-        throw new SAISException(
-            user.IsBlocked 
+
+        throw new SlaisException(
+            user.IsBlocked
                 ? AuthErrorCodes.UserIsBlocked
                 : AuthErrorCodes.WrongPassword);
     }
@@ -91,10 +93,10 @@ public class LoginCommandHandler :
         LoginCommand request)
     {
         var accessToken = _tokenService.GenerateAccessToken(user);
-        var refreshToken = await _tokenService.GenerateRefreshToken(
+        GeneratedRefreshTokenResult refreshToken = await _tokenService.GenerateRefreshToken(
             request,
             user.Guid);
-        
+
         return new GeneratedTokenResult
         {
             AccessToken = accessToken,
