@@ -194,32 +194,16 @@ jobs:
       - name: Download all Coverage Artifacts
         uses: actions/download-artifact@v4
 
-      - name: List downloaded artifacts
-        if: always()
-        run: find . -name "*.xml" | sort
-
-      - name: Install Codacy Reporter
+      - name: Collect Coverage Paths
+        id: collect
         run: |
-          curl -LsS https://coverage.codacy.com/get.sh | bash -s -- download
-          echo "Codacy reporter location:"
-          find . -name "codacy-coverage-reporter" | sort
+          FILES=$(find . -name "coverage.cobertura.xml" | tr '\n' ',')
+          FILES=${FILES%,}
+          echo "Found coverage files: $FILES"
+          echo "files=$FILES" >> $GITHUB_OUTPUT
 
       - name: Upload Coverage to Codacy
-        env:
-          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
-        run: |
-          REPORTER=$(find . -name "codacy-coverage-reporter" -type f | head -1)
-          chmod +x "$REPORTER"
-
-          find . -name "coverage.cobertura.xml" | while read file; do
-            echo "Uploading: $file"
-            "$REPORTER" report \
-              --project-token $CODACY_PROJECT_TOKEN \
-              --language csharp \
-              --coverage-reports "$file" \
-              --partial
-          done
-
-          echo "Finalizing coverage report"
-          "$REPORTER" final \
-            --project-token $CODACY_PROJECT_TOKEN
+        uses: codacy/codacy-coverage-reporter-action@v1
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: ${{ steps.collect.outputs.files }}
