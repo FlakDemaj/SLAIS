@@ -106,8 +106,8 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Restore
         run: dotnet restore
-      - name: Run API Tests
-        run: dotnet test API.Tests --no-restore --configuration Release --collect:"XPlat Code Coverage"
+      - name: Run Presentation Tests
+        run: dotnet test Presentation.Tests --no-restore --configuration Release --collect:"XPlat Code Coverage"
       - uses: actions/upload-artifact@v4
         with:
           name: api-coverage
