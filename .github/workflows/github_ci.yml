@@ -69,6 +69,12 @@ jobs:
             --logger "trx;LogFileName=Domain.TestResults.trx" \
             --collect:"XPlat Code Coverage" \
             --results-directory ./TestResults
+      - name: Find Coverage File
+        if: always()
+        id: domain-coverage-path
+        run: |
+          FILE=$(find ./TestResults -name "coverage.cobertura.xml" | grep -v "_runner" | head -1)
+          echo "path=$FILE" >> $GITHUB_OUTPUT
       - uses: dorny/test-reporter@v1
         if: always()
         with:
@@ -79,7 +85,7 @@ jobs:
         if: always()
         with:
           name: domain-coverage
-          path: './TestResults/**/coverage.cobertura.xml'
+          path: ${{ steps.domain-coverage-path.outputs.path }}
           if-no-files-found: warn
 
   # =====================
@@ -102,6 +108,12 @@ jobs:
             --logger "trx;LogFileName=Application.TestResults.trx" \
             --collect:"XPlat Code Coverage" \
             --results-directory ./TestResults
+      - name: Find Coverage File
+        if: always()
+        id: application-coverage-path
+        run: |
+          FILE=$(find ./TestResults -name "coverage.cobertura.xml" | grep -v "_runner" | head -1)
+          echo "path=$FILE" >> $GITHUB_OUTPUT
       - uses: dorny/test-reporter@v1
         if: always()
         with:
@@ -112,7 +124,7 @@ jobs:
         if: always()
         with:
           name: application-coverage
-          path: './TestResults/**/coverage.cobertura.xml'
+          path: ${{ steps.application-coverage-path.outputs.path }}
           if-no-files-found: warn
 
   # =====================
@@ -135,6 +147,12 @@ jobs:
             --logger "trx;LogFileName=Infrastructure.TestResults.trx" \
             --collect:"XPlat Code Coverage" \
             --results-directory ./TestResults
+      - name: Find Coverage File
+        if: always()
+        id: infrastructure-coverage-path
+        run: |
+          FILE=$(find ./TestResults -name "coverage.cobertura.xml" | grep -v "_runner" | head -1)
+          echo "path=$FILE" >> $GITHUB_OUTPUT
       - uses: dorny/test-reporter@v1
         if: always()
         with:
@@ -145,7 +163,7 @@ jobs:
         if: always()
         with:
           name: infrastructure-coverage
-          path: './TestResults/**/coverage.cobertura.xml'
+          path: ${{ steps.infrastructure-coverage-path.outputs.path }}
           if-no-files-found: warn
 
   # =====================
@@ -168,6 +186,12 @@ jobs:
             --logger "trx;LogFileName=Presentation.TestResults.trx" \
             --collect:"XPlat Code Coverage" \
             --results-directory ./TestResults
+      - name: Find Coverage File
+        if: always()
+        id: presentation-coverage-path
+        run: |
+          FILE=$(find ./TestResults -name "coverage.cobertura.xml" | grep -v "_runner" | head -1)
+          echo "path=$FILE" >> $GITHUB_OUTPUT
       - uses: dorny/test-reporter@v1
         if: always()
         with:
@@ -178,7 +202,7 @@ jobs:
         if: always()
         with:
           name: presentation-coverage
-          path: './TestResults/**/coverage.cobertura.xml'
+          path: ${{ steps.presentation-coverage-path.outputs.path }}
           if-no-files-found: warn
 
   # =====================
@@ -207,3 +231,5 @@ jobs:
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           coverage-reports: ${{ steps.collect.outputs.files }}
+          force-coverage-parser: cobertura
+          prefix: /home/runner/work/SLAIS/SLAIS/
