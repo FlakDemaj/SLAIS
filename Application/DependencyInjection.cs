@@ -1,4 +1,4 @@
-using Infrastructure.AutoMappers;
+using Application.Utils.AutoMapper;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;

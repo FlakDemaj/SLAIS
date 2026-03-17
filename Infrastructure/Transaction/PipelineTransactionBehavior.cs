@@ -1,7 +1,6 @@
 using Application.Common;
+using Application.Utils.Exceptions;
 using Application.Utils.Logger;
-
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Application.Utils;
 
@@ -20,11 +19,11 @@ public class PipelineTransactionBehavior<TRequest, TResponse> :
 
     public async Task<TResponse> HandleAsync(TRequest request, Func<Task<TResponse>> next, CancellationToken cancellationToken)
     {
-        IDbContextTransaction transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
+        var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
 
         try
         {
-            TResponse? response = await next();
+            var response = await next();
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

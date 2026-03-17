@@ -1,5 +1,4 @@
-using System.Reflection;
-
+using Application.Utils.Interfaces.MediatR;
 using Application.Utils.Logger;
 using Application.Utils.MediatR.Interfaces;
 
@@ -24,9 +23,9 @@ public class MediatR : IMediatR
     public async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request,
         CancellationToken cancellationToken = default)
     {
-        Type requestType = request.GetType();
+        var requestType = request.GetType();
 
-        Type handlerType = typeof(IRequestHandler<,>)
+        var handlerType = typeof(IRequestHandler<,>)
             .MakeGenericType(requestType, typeof(TResponse));
 
         var handler = _serviceProvider.GetRequiredService(handlerType);
@@ -36,19 +35,19 @@ public class MediatR : IMediatR
             _logger.LogError($"Handler not found for type {handlerType}", null);
         }
 
-        MethodInfo? method = handlerType.GetMethod("HandleAsync");
+        var method = handlerType.GetMethod("HandleAsync");
 
         if (method == null)
         {
             _logger.LogError($"Handler method not found for type {handlerType}", null);
         }
 
-        Type pipelineType = typeof(IPipelineTransactionBehavior<,>)
+        var pipelineType = typeof(IPipelineTransactionBehavior<,>)
             .MakeGenericType(requestType, typeof(TResponse));
 
         var pipeline = _serviceProvider.GetRequiredService(pipelineType);
 
-        MethodInfo? pipelineMethod = pipelineType.GetMethod("HandleAsync");
+        var pipelineMethod = pipelineType.GetMethod("HandleAsync");
 
         return await (Task<TResponse>)pipelineMethod?.Invoke(pipeline, [request, (Func<Task<TResponse>?>)Next, cancellationToken])!;
 

@@ -1,5 +1,5 @@
 using Application.Users.DTOs;
-using Application.Utils.MediatR.Interfaces;
+using Application.Utils.Interfaces.MediatR;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +15,7 @@ public class UserController : BaseRestController
     [HttpGet("{userGuid:Guid}")]
     public async Task<ActionResult<GetUserDto>> GetUserAsync(Guid userGuid)
     {
-        GetUserDto user = await Mediator.SendAsync(new GetUserQuery(userGuid));
+        var user = await Mediator.SendAsync(new GetUserQuery(userGuid));
         return Ok(user);
     }
 }

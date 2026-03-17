@@ -2,7 +2,7 @@ using Application.Utils.Logger;
 
 using AutoMapper;
 
-namespace Application.Common;
+namespace Application.Common.Base;
 
 public abstract class BaseHandler<T> where T : class
 {

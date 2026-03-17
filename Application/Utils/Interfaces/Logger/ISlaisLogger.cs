@@ -5,7 +5,7 @@ public interface ISlaisLogger<T>
 {
     void LogInformation(string message);
     void LogWarning(string message);
-    void LogError(string message, Exception? exception);
-    void LogCritical(string message, Exception? exception);
-    void LogDebug(string message, Exception? exception);
+    void LogError(string message, System.Exception? exception);
+    void LogCritical(string message, System.Exception? exception);
+    void LogDebug(string message, System.Exception? exception);
 }

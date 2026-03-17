@@ -6,8 +6,8 @@ public static class WebApplicationExtensions
 {
     public static void Migrate(this WebApplication webApplication)
     {
-        using IServiceScope scope = webApplication.Services.CreateScope();
-        MigrationManager migrator = scope.ServiceProvider.GetRequiredService<MigrationManager>();
+        using var scope = webApplication.Services.CreateScope();
+        var migrator = scope.ServiceProvider.GetRequiredService<MigrationManager>();
         migrator.Migrate();
     }
 }

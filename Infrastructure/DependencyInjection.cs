@@ -1,9 +1,10 @@
 using System.Reflection;
 
 using Application;
-using Application.Common;
+using Application.Common.Interfaces.Services;
 using Application.Interfaces;
 using Application.Utils;
+using Application.Utils.Interfaces.MediatR;
 using Application.Utils.Logger;
 using Application.Utils.MediatR;
 using Application.Utils.MediatR.Interfaces;
@@ -57,18 +58,27 @@ public static class DependencyInjection
 
     private static void AddMediator(IServiceCollection services)
     {
-        Type handlerInterface = typeof(IRequestHandler<,>);
+        var handlerInterface = typeof(IRequestHandler<,>);
 
         var handlers = Assembly.GetAssembly(typeof(ApplicationAssemblyMarker))
             ?.GetTypes()
-            .Where(t => t is { IsAbstract: false, IsInterface: false })
+            .Where(t =>
+            {
+                return t is { IsAbstract: false, IsInterface: false };
+            })
             .SelectMany(t =>
             {
                 return t.GetInterfaces()
-                                    .Where(i => i.IsGenericType &&
-                                                i.GetGenericTypeDefinition() == handlerInterface);
+                                    .Where(i =>
+                                    {
+                                        return i.IsGenericType &&
+                                                                                        i.GetGenericTypeDefinition() == handlerInterface;
+                                    });
             },
-                (type, iface) => new { type, iface });
+                (type, iface) =>
+                {
+                    return new { type, iface };
+                });
 
         if (handlers == null)
         {

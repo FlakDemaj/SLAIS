@@ -1,7 +1,8 @@
 using System.Net;
 
 using Application.Authentication.Commands;
-using Application.Utils.MediatR.Interfaces;
+using Application.Authentication.Commands.Login;
+using Application.Utils.Interfaces.MediatR;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +19,7 @@ public class AuthController : BaseRestController
 
     [HttpPost("login")]
     [AllowAnonymous]
-    public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
+    public async Task<ActionResult<LoginResponseDto>> Login([FromBody] LoginRequest loginRequest)
     {
         var loginCommand = MapLoginRequest(loginRequest, HttpContext);
         var tokens = await Mediator.SendAsync(loginCommand);
@@ -34,11 +35,10 @@ public class AuthController : BaseRestController
                 Expires = DateTime.UtcNow.AddDays(tokens.RefreshTokenResult.ExpiresIn)
             });
 
-        return Ok(
-            new
-            {
-                AccesToken = tokens.AccessToken
-            });
+        return new LoginResponseDto
+        {
+            AccessToken = tokens.AccessToken
+        };
     }
 
     private static LoginCommand MapLoginRequest(

@@ -1,4 +1,4 @@
-using Application.Utils.MediatR.Interfaces;
+using Application.Utils.Interfaces.MediatR;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

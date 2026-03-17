@@ -1,13 +1,13 @@
 using System.ComponentModel;
 using System.Reflection;
 
-namespace Application.Utils;
+namespace Application.Utils.Exceptions;
 
-public static class EnumExcentsion
+public static class EnumExtension
 {
     public static string GetDescription(this Enum value)
     {
-        FieldInfo? field = value.GetType().GetField(value.ToString());
+        var field = value.GetType().GetField(value.ToString());
 
         if (field is null)
         {

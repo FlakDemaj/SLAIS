@@ -1,3 +1,3 @@
-namespace Application.Utils.MediatR.Interfaces;
+namespace Application.Utils.Interfaces.MediatR;
 
 public interface IRequest<TResponse> { }

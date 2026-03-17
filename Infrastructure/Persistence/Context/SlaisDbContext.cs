@@ -1,5 +1,3 @@
-using System.Reflection;
-
 using Infrastructure.Configurations;
 
 using Microsoft.EntityFrameworkCore;
@@ -48,7 +46,7 @@ public class SlaisDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        Assembly assembly = typeof(SlaisDbContext).Assembly;
+        var assembly = typeof(SlaisDbContext).Assembly;
         modelBuilder.ApplyConfigurationsFromAssembly(assembly);
     }
 }

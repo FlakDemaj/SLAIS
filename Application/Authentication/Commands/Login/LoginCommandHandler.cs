@@ -1,8 +1,7 @@
-using Application.Authentication.Commands;
-using Application.Authentication.Commands.Login;
-using Application.Common;
+using Application.Common.Base;
+using Application.Common.Interfaces.Services;
 using Application.Interfaces;
-using Application.Utils;
+using Application.Utils.Exceptions;
 using Application.Utils.Logger;
 using Application.Utils.MediatR.Interfaces;
 
@@ -10,7 +9,7 @@ using AutoMapper;
 
 using SLAIS.Domain.Users;
 
-namespace Application.Authentication.Handlers;
+namespace Application.Authentication.Commands.Login;
 
 public class LoginCommandHandler :
     BaseHandler<LoginCommandHandler>,
@@ -37,7 +36,7 @@ public class LoginCommandHandler :
         LoginCommand request,
         CancellationToken cancellationToken = default)
     {
-        UserEntity user = await CheckUser(request.LoginName);
+        var user = await CheckUser(request.LoginName);
 
         await CheckPassword(user, request.Password);
 
@@ -49,7 +48,7 @@ public class LoginCommandHandler :
     private async Task<UserEntity> CheckUser(
         string loginName)
     {
-        UserEntity? user = await _userRepository
+        var user = await _userRepository
             .GetUserByUsernameOrEmailAsync(loginName);
 
         if (user == null)
@@ -93,7 +92,7 @@ public class LoginCommandHandler :
         LoginCommand request)
     {
         var accessToken = _tokenService.GenerateAccessToken(user);
-        GeneratedRefreshTokenResult refreshToken = await _tokenService.GenerateRefreshToken(
+        var refreshToken = await _tokenService.GenerateRefreshToken(
             request,
             user.Guid);
 

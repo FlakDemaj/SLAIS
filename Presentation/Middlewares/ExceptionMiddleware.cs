@@ -1,6 +1,6 @@
 using System.Net;
 
-using Application.Utils;
+using Application.Utils.Exceptions;
 
 using Newtonsoft.Json;
 

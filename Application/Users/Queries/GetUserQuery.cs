@@ -1,4 +1,4 @@
 using Application.Users.DTOs;
-using Application.Utils.MediatR.Interfaces;
+using Application.Utils.Interfaces.MediatR;
 
 public record GetUserQuery(Guid UserGuid) : IRequest<GetUserDto>;

@@ -4,7 +4,7 @@ using System.Text;
 
 using Application.Authentication.Commands;
 using Application.Authentication.Commands.Login;
-using Application.Common;
+using Application.Common.Interfaces.Services;
 using Application.Interfaces;
 
 using AutoMapper;
@@ -26,7 +26,9 @@ public class TokenService : ITokenService
 {
     private readonly IRefreshTokenRepository _refreshTokenRepository;
 
-    private readonly TokenOptions _tokenOptions;
+    private readonly AccessTokenOptions _accessTokenOptions;
+
+    private readonly RefreshTokenOptions _refreshTokenOptions;
 
     private readonly IMapper _mapper;
 
@@ -34,10 +36,12 @@ public class TokenService : ITokenService
 
     public TokenService(
         IRefreshTokenRepository refreshTokenRepository,
-        IOptions<TokenOptions> tokenOptions,
+        IOptions<AccessTokenOptions> tokenOptions,
+        IOptions<RefreshTokenOptions> refreshTokenOptions,
         IMapper mapper)
     {
-        _tokenOptions = tokenOptions.Value;
+        _accessTokenOptions = tokenOptions.Value;
+        _refreshTokenOptions = refreshTokenOptions.Value;
         _mapper = mapper;
         _tokenHandler = new JwtSecurityTokenHandler();
         _refreshTokenRepository = refreshTokenRepository;
@@ -45,15 +49,15 @@ public class TokenService : ITokenService
 
     public string GenerateAccessToken(UserEntity user)
     {
-        List<Claim> claims = CreateUserClaims(user);
+        var claims = CreateUserClaims(user);
 
         var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(_tokenOptions.Key));
+            Encoding.UTF8.GetBytes(_accessTokenOptions.Key));
 
         var creds = new SigningCredentials(key,
             SecurityAlgorithms.HmacSha512);
 
-        JwtSecurityToken token = CreateToken(
+        var token = CreateToken(
             claims, creds);
 
         return _tokenHandler.WriteToken(token);
@@ -61,15 +65,15 @@ public class TokenService : ITokenService
 
     public async Task<GeneratedRefreshTokenResult> GenerateRefreshToken(LoginCommand request, Guid userGuid)
     {
-        RefreshTokenEntity refreshToken = _mapper.Map<RefreshTokenEntity>(
-            (request, userGuid, _tokenOptions.ExpiresInDays));
+        var refreshToken = _mapper.Map<RefreshTokenEntity>(
+            (request, userGuid, _refreshTokenOptions.ExpiresInDays));
 
         await _refreshTokenRepository.CreateAsync(refreshToken);
 
         return new GeneratedRefreshTokenResult
         {
             RefreshToken = refreshToken.RefreshToken,
-            ExpiresIn = _tokenOptions.ExpiresInDays
+            ExpiresIn = _refreshTokenOptions.ExpiresInDays
         };
     }
 
@@ -84,10 +88,10 @@ public class TokenService : ITokenService
     {
         var token = new JwtSecurityToken
         (
-            issuer: _tokenOptions.Issuer,
-            audience: _tokenOptions.Audience,
+            issuer: _accessTokenOptions.Issuer,
+            audience: _accessTokenOptions.Audience,
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(_tokenOptions.ExpiresInMinutes),
+            expires: DateTime.UtcNow.AddMinutes(_accessTokenOptions.ExpiresInMinutes),
             signingCredentials: creds
         );
 

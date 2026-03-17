@@ -1,10 +1,10 @@
 using Application.Common;
 using Application.Utils;
+using Application.Utils.Exceptions;
 
 using Infrastructure.Persistence.Context;
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 using SLAIS.Domain.Commom;
 
@@ -21,7 +21,7 @@ public static class SlaisContextExtensions
         {
             saveData.Guid = Guid.CreateVersion7();
 
-            EntityEntry<TSaveType> result = context.Add(saveData);
+            var result = context.Add(saveData);
             return result.Entity;
         }
         catch (SlaisException e)

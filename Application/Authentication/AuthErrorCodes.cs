@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace Application.Authentication.Commands.Login;
+namespace Application.Authentication;
 
 public enum AuthErrorCodes
 {
@@ -11,5 +11,5 @@ public enum AuthErrorCodes
     WrongPassword = -20002,
 
     [Description("Ihr Konto ist gesperrt. Um das Konto zu aktivieren bitte das passwort zurücksetzen!")]
-    UserIsBlocked = -20003,
+    UserIsBlocked = -20003
 }

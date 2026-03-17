@@ -4,7 +4,7 @@ using AutoMapper;
 
 using Domain.Systems.RefreshToken;
 
-namespace Infrastructure.AutoMappers;
+namespace Application.Utils.AutoMapper;
 
 public class AuthMappingProfile : Profile
 {

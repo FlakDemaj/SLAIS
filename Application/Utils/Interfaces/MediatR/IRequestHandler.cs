@@ -1,3 +1,5 @@
+using Application.Utils.Interfaces.MediatR;
+
 namespace Application.Utils.MediatR.Interfaces;
 
 public interface IRequestHandler<TRequest, TResponse>

@@ -5,5 +5,5 @@ namespace Infrastructure.Configurations;
 public class DatabaseOptions
 {
     [ConfigurationKeyName("Connection_String")]
-    public string ConnectionString { get; set; } = "";
+    public string ConnectionString { get; init; }
 }

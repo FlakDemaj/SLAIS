@@ -111,7 +111,9 @@ public static class Startup
     {
         builder.Services.Configure<DatabaseOptions>(
             builder.Configuration.GetSection("Database"));
-        builder.Services.Configure<TokenOptions>(
-            builder.Configuration.GetSection("Access_Token"));
+        builder.Services.Configure<AccessTokenOptions>(
+            builder.Configuration.GetSection("AccessToken"));
+        builder.Services.Configure<RefreshTokenOptions>(
+            builder.Configuration.GetSection("RefreshToken"));
     }
 }
