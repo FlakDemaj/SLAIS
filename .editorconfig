@@ -9,6 +9,7 @@ end_of_line = crlf
 charset = utf-8
 insert_final_newline = true
 trim_trailing_whitespace = true
+end_of_line = lf
 
 # var immer erzwingen
 csharp_style_var_for_built_in_types = true:error
