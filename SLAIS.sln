@@ -24,7 +24,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		.gitignore = .gitignore
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Github-CI/CD", "Github-CI/CD", "{211A8057-AD8E-454F-B89A-40E04C2AD73E}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Github-CI_CD", "Github-CI_CD", "{211A8057-AD8E-454F-B89A-40E04C2AD73E}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\github_ci.yml = .github\workflows\github_ci.yml
 	EndProjectSection
