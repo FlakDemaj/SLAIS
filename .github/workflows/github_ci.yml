@@ -21,7 +21,7 @@ env:
 jobs:
 
   # =====================
-  # Code Style Check
+  # Code Style
   # =====================
   code-style:
     name: Code Style
@@ -52,7 +52,7 @@ jobs:
         run: dotnet build --no-restore --configuration Release
 
   # =====================
-  # Domain Tests
+  # DOMAIN TESTS
   # =====================
   domain-tests:
     name: Domain Tests
@@ -63,18 +63,15 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-      - name: Restore
-        run: dotnet restore
-      - name: Run Domain Tests
-        run: dotnet test Domain.Tests --no-restore --configuration Release --logger "trx" --collect:"XPlat Code Coverage"
+      - run: dotnet restore
+      - name: Run Tests
+        run: dotnet test Domain.Tests --configuration Release --logger "trx" --collect:"XPlat Code Coverage"
       - uses: dorny/test-reporter@v1
         if: always()
         with:
           name: Domain Tests
           path: '**/TestResults/*.trx'
           reporter: dotnet-trx
-          fail-on-error: true
-          only-summary: false
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -82,7 +79,7 @@ jobs:
           path: '**/coverage.cobertura.xml'
 
   # =====================
-  # Application Tests
+  # APPLICATION TESTS
   # =====================
   application-tests:
     name: Application Tests
@@ -93,18 +90,15 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-      - name: Restore
-        run: dotnet restore
-      - name: Run Application Tests
-        run: dotnet test Application.Tests --no-restore --configuration Release --logger "trx" --collect:"XPlat Code Coverage"
+      - run: dotnet restore
+      - name: Run Tests
+        run: dotnet test Application.Tests --configuration Release --logger "trx" --collect:"XPlat Code Coverage"
       - uses: dorny/test-reporter@v1
         if: always()
         with:
           name: Application Tests
           path: '**/TestResults/*.trx'
           reporter: dotnet-trx
-          fail-on-error: true
-          only-summary: false
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -112,7 +106,7 @@ jobs:
           path: '**/coverage.cobertura.xml'
 
   # =====================
-  # Infrastructure Tests
+  # INFRASTRUCTURE TESTS
   # =====================
   infrastructure-tests:
     name: Infrastructure Tests
@@ -123,18 +117,15 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-      - name: Restore
-        run: dotnet restore
-      - name: Run Infrastructure Tests
-        run: dotnet test Infrastructure.Tests --no-restore --configuration Release --logger "trx" --collect:"XPlat Code Coverage"
+      - run: dotnet restore
+      - name: Run Tests
+        run: dotnet test Infrastructure.Tests --configuration Release --logger "trx" --collect:"XPlat Code Coverage"
       - uses: dorny/test-reporter@v1
         if: always()
         with:
           name: Infrastructure Tests
           path: '**/TestResults/*.trx'
           reporter: dotnet-trx
-          fail-on-error: true
-          only-summary: false
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -142,7 +133,7 @@ jobs:
           path: '**/coverage.cobertura.xml'
 
   # =====================
-  # Presentation Tests
+  # PRESENTATION TESTS
   # =====================
   presentation-tests:
     name: Presentation Tests
@@ -153,18 +144,15 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-      - name: Restore
-        run: dotnet restore
-      - name: Run Presentation Tests
-        run: dotnet test Presentation.Tests --no-restore --configuration Release --logger "trx" --collect:"XPlat Code Coverage"
+      - run: dotnet restore
+      - name: Run Tests
+        run: dotnet test Presentation.Tests --configuration Release --logger "trx" --collect:"XPlat Code Coverage"
       - uses: dorny/test-reporter@v1
         if: always()
         with:
           name: Presentation Tests
           path: '**/TestResults/*.trx'
           reporter: dotnet-trx
-          fail-on-error: true
-          only-summary: false
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -172,7 +160,7 @@ jobs:
           path: '**/coverage.cobertura.xml'
 
   # =====================
-  # SonarCloud – Coverage + Analyse
+  # SONARCLOUD
   # =====================
   sonarcloud:
     name: SonarCloud
@@ -188,26 +176,23 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Download all Coverage Reports
+      - name: Download Coverage
         uses: actions/download-artifact@v4
 
-      - name: Install SonarCloud Scanner
+      - name: Install SonarScanner
         run: dotnet tool install --global dotnet-sonarscanner
 
-      - name: Begin SonarCloud Scan
+      - name: Begin Scan
         run: |
           dotnet sonarscanner begin \
-            --project-key "${{ secrets.SONAR_PROJECT_KEY }}" \
-            --organization "${{ secrets.SONAR_ORGANIZATION }}" \
+            /k:"${{ secrets.SONAR_PROJECT_KEY }}" \
+            /o:"${{ secrets.SONAR_ORGANIZATION }}" \
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="https://sonarcloud.io" \
-            /d:sonar.cs.opencover.reportsPaths="Coverage/**/*.cobertura.xml" \
-            /d:sonar.coverage.minimum=80
+            /d:sonar.cs.opencover.reportsPaths="**/coverage.cobertura.xml"
 
-      - name: Build for SonarCloud
-        run: dotnet build --no-restore --configuration Release
+      - name: Build
+        run: dotnet build --configuration Release
 
-      - name: End SonarCloud Scan
+      - name: End Scan
         run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
