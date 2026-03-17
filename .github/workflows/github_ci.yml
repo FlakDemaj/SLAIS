@@ -50,7 +50,7 @@ jobs:
       - run: dotnet build --no-restore --configuration Release
 
   # =====================
-  # DOMAIN TESTS
+  # Domain Tests
   # =====================
   domain-tests:
     name: Domain Tests
@@ -62,25 +62,28 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - run: dotnet restore
-      - name: Run Tests
-        run: dotnet test Domain.Tests --configuration Release --logger "trx" --collect:"XPlat Code Coverage"
+      - name: Run Domain Tests
+        run: |
+          dotnet test Domain.Tests \
+            --configuration Release \
+            --logger "trx;LogFileName=Domain.TestResults.trx" \
+            --collect:"XPlat Code Coverage" \
+            --results-directory ./TestResults
       - uses: dorny/test-reporter@v1
         if: always()
         with:
-          name: Domain Tests
-          path: '**/TestResults/*.trx'
+          name: Domain Test Results
+          path: './TestResults/Domain.TestResults.trx'
           reporter: dotnet-trx
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: domain-coverage
-          path: '**/coverage.cobertura.xml'
+          path: './TestResults/**/coverage.cobertura.xml'
+          if-no-files-found: warn
 
-      - name: List test output files
-        if: always()
-        run: find . -name "*.xml" -o -name "*.trx" | sort
   # =====================
-  # APPLICATION TESTS
+  # Application Tests
   # =====================
   application-tests:
     name: Application Tests
@@ -92,22 +95,28 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - run: dotnet restore
-      - name: Run Tests
-        run: dotnet test Application.Tests --configuration Release --logger "trx" --collect:"XPlat Code Coverage"
+      - name: Run Application Tests
+        run: |
+          dotnet test Application.Tests \
+            --configuration Release \
+            --logger "trx;LogFileName=Application.TestResults.trx" \
+            --collect:"XPlat Code Coverage" \
+            --results-directory ./TestResults
       - uses: dorny/test-reporter@v1
         if: always()
         with:
-          name: Application Tests
-          path: '**/TestResults/*.trx'
+          name: Application Test Results
+          path: './TestResults/Application.TestResults.trx'
           reporter: dotnet-trx
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: application-coverage
-          path: '**/coverage.cobertura.xml'
+          path: './TestResults/**/coverage.cobertura.xml'
+          if-no-files-found: warn
 
   # =====================
-  # INFRASTRUCTURE TESTS
+  # Infrastructure Tests
   # =====================
   infrastructure-tests:
     name: Infrastructure Tests
@@ -119,22 +128,28 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - run: dotnet restore
-      - name: Run Tests
-        run: dotnet test Infrastructure.Tests --configuration Release --logger "trx" --collect:"XPlat Code Coverage"
+      - name: Run Infrastructure Tests
+        run: |
+          dotnet test Infrastructure.Tests \
+            --configuration Release \
+            --logger "trx;LogFileName=Infrastructure.TestResults.trx" \
+            --collect:"XPlat Code Coverage" \
+            --results-directory ./TestResults
       - uses: dorny/test-reporter@v1
         if: always()
         with:
-          name: Infrastructure Tests
-          path: '**/TestResults/*.trx'
+          name: Infrastructure Test Results
+          path: './TestResults/Infrastructure.TestResults.trx'
           reporter: dotnet-trx
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: infrastructure-coverage
-          path: '**/coverage.cobertura.xml'
+          path: './TestResults/**/coverage.cobertura.xml'
+          if-no-files-found: warn
 
   # =====================
-  # PRESENTATION TESTS
+  # Presentation Tests
   # =====================
   presentation-tests:
     name: Presentation Tests
@@ -146,40 +161,59 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - run: dotnet restore
-      - name: Run Tests
-        run: dotnet test Presentation.Tests --configuration Release --logger "trx" --collect:"XPlat Code Coverage"
+      - name: Run Presentation Tests
+        run: |
+          dotnet test Presentation.Tests \
+            --configuration Release \
+            --logger "trx;LogFileName=Presentation.TestResults.trx" \
+            --collect:"XPlat Code Coverage" \
+            --results-directory ./TestResults
       - uses: dorny/test-reporter@v1
         if: always()
         with:
-          name: Presentation Tests
-          path: '**/TestResults/*.trx'
+          name: Presentation Test Results
+          path: './TestResults/Presentation.TestResults.trx'
           reporter: dotnet-trx
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: presentation-coverage
-          path: '**/coverage.cobertura.xml'
+          path: './TestResults/**/coverage.cobertura.xml'
+          if-no-files-found: warn
 
   # =====================
   # Codacy Analysis + Coverage
   # =====================
   codacy-analysis:
-    name: Codacy Coverage
+    name: Codacy Analysis
     runs-on: ubuntu-latest
-    needs: [ domain-tests, application-tests, infrastructure-tests, presentation-tests ]
+    needs: [domain-tests, application-tests, infrastructure-tests, presentation-tests]
     steps:
       - uses: actions/checkout@v4
 
       - name: Download all Coverage Artifacts
         uses: actions/download-artifact@v4
 
-      - name: Upload Coverage to Codacy
-        uses: codacy/codacy-coverage-reporter-action@v1
-        with:
-          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: >-
-            domain-coverage/coverage.cobertura.xml,
-            application-coverage/coverage.cobertura.xml,
-            infrastructure-coverage/coverage.cobertura.xml,
-            presentation-coverage/coverage.cobertura.xml
+      - name: List downloaded artifacts
+        if: always()
+        run: find . -name "*.xml" | sort
 
+      - name: Install Codacy Reporter
+        run: curl -LsS https://coverage.codacy.com/get.sh | bash -s -- download
+
+      - name: Upload Coverage to Codacy
+        env:
+          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+        run: |
+          find . -name "coverage.cobertura.xml" | while read file; do
+            echo "Uploading: $file"
+            ./codacy-coverage-reporter report \
+              --project-token $CODACY_PROJECT_TOKEN \
+              --language csharp \
+              --coverage-reports "$file" \
+              --partial
+          done
+
+          echo "Finalizing coverage report"
+          ./codacy-coverage-reporter final \
+            --project-token $CODACY_PROJECT_TOKEN
