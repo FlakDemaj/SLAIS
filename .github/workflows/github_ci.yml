@@ -68,7 +68,7 @@ jobs:
       - name: Restore
         run: dotnet restore
       - name: Run Domain Tests
-        run: dotnet test Tests/Domain.Tests --no-restore --configuration Release --logger "trx" --collect:"XPlat Code Coverage"
+        run: dotnet test Domain.Tests --no-restore --configuration Release --logger "trx" --collect:"XPlat Code Coverage"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -103,7 +103,7 @@ jobs:
       - name: Restore
         run: dotnet restore
       - name: Run Application Tests
-        run: dotnet test Tests/Application.Tests --no-restore --configuration Release --logger "trx" --collect:"XPlat Code Coverage"
+        run: dotnet test Application.Tests --no-restore --configuration Release --logger "trx" --collect:"XPlat Code Coverage"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -138,7 +138,7 @@ jobs:
       - name: Restore
         run: dotnet restore
       - name: Run Infrastructure Tests
-        run: dotnet test Tests/Infrastructure.Tests --no-restore --configuration Release --logger "trx" --collect:"XPlat Code Coverage"
+        run: dotnet test Infrastructure.Tests --no-restore --configuration Release --logger "trx" --collect:"XPlat Code Coverage"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -173,7 +173,7 @@ jobs:
       - name: Restore
         run: dotnet restore
       - name: Run Presentation Tests
-        run: dotnet test Tests/Presentation.Tests --no-restore --configuration Release --logger "trx" --collect:"XPlat Code Coverage"
+        run: dotnet test Presentation.Tests --no-restore --configuration Release --logger "trx" --collect:"XPlat Code Coverage"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
