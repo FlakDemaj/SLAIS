@@ -2,7 +2,8 @@
 *.user
 
 .idea/
-obj/
+**/obj
+**/bin/**
 # dotnet user secrets
 **/secrets.json
 
