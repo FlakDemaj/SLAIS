@@ -1,6 +1,8 @@
 # User specific files
 *.user
 
+.idea/
+
 # dotnet user secrets
 **/secrets.json
 
