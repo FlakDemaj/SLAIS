@@ -76,6 +76,9 @@ jobs:
           name: domain-coverage
           path: '**/coverage.cobertura.xml'
 
+      - name: List test output files
+        if: always()
+        run: find . -name "*.xml" -o -name "*.trx" | sort
   # =====================
   # APPLICATION TESTS
   # =====================
@@ -166,9 +169,6 @@ jobs:
     needs: [ domain-tests, application-tests, infrastructure-tests, presentation-tests ]
     steps:
       - uses: actions/checkout@v4
-
-      - name: List downloaded artifacts
-        run: find . -name "*.xml" | sort
 
       - name: Download all Coverage Artifacts
         uses: actions/download-artifact@v4
