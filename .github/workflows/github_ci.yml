@@ -167,6 +167,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: List downloaded artifacts
+        run: find . -name "*.xml" | sort
+
       - name: Download all Coverage Artifacts
         uses: actions/download-artifact@v4
 
@@ -179,5 +182,4 @@ jobs:
             application-coverage/coverage.cobertura.xml,
             infrastructure-coverage/coverage.cobertura.xml,
             presentation-coverage/coverage.cobertura.xml
-      - name: List downloaded artifacts
-        run: find . -name "*.xml" | sort
+
