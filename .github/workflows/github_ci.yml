@@ -179,3 +179,5 @@ jobs:
             application-coverage/coverage.cobertura.xml,
             infrastructure-coverage/coverage.cobertura.xml,
             presentation-coverage/coverage.cobertura.xml
+      - name: List downloaded artifacts
+        run: find . -name "*.xml" | sort
