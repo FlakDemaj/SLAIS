@@ -197,11 +197,11 @@ jobs:
       - name: Begin SonarCloud Scan
         run: |
           dotnet sonarscanner begin \
-            /k:"${{ secrets.SONAR_PROJECT_KEY }}" \
-            /o:"${{ secrets.SONAR_ORGANIZATION }}" \
+            --project-key "${{ secrets.SONAR_PROJECT_KEY }}" \
+            --organization "${{ secrets.SONAR_ORGANIZATION }}" \
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="https://sonarcloud.io" \
-            /d:sonar.cs.opencover.reportsPaths="**/coverage.cobertura.xml" \
+            /d:sonar.cs.opencover.reportsPaths="Coverage/**/*.cobertura.xml" \
             /d:sonar.coverage.minimum=80
 
       - name: Build for SonarCloud
