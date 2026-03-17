@@ -15,5 +15,5 @@ public class LoginCommand : IRequest<GeneratedTokenResult>
 
     public string DeviceName { get; set; }
 
-    public IPAddress IPAddress { get; set; }
+    public IPAddress IpAddress { get; set; }
 }

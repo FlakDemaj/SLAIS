@@ -49,7 +49,7 @@ public class AuthController : BaseRestController
         {
             LoginName = loginRequest.LoginName,
             Password = loginRequest.Password,
-            IPAddress = context.Connection.RemoteIpAddress ?? IPAddress.Loopback,
+            IpAddress = context.Connection.RemoteIpAddress ?? IPAddress.Loopback,
             DeviceName = loginRequest.DeviceName,
             DeviceGuid = loginRequest.DeviceGuid
         };

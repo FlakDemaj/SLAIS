@@ -44,7 +44,7 @@ public class AuthMappingProfile : Profile
             .ForMember(rt => rt.IpAddress, o
                 =>
             {
-                o.MapFrom(src => src.Item1.IPAddress);
+                o.MapFrom(src => src.Item1.IpAddress);
             })
             .ForMember(rt => rt.DeviceGuid, o
                 =>
