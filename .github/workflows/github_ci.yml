@@ -199,15 +199,21 @@ jobs:
         run: find . -name "*.xml" | sort
 
       - name: Install Codacy Reporter
-        run: curl -LsS https://coverage.codacy.com/get.sh | bash -s -- download
+        run: |
+          curl -LsS https://coverage.codacy.com/get.sh | bash -s -- download
+          echo "Codacy reporter location:"
+          find . -name "codacy-coverage-reporter" | sort
 
       - name: Upload Coverage to Codacy
         env:
           CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
         run: |
+          REPORTER=$(find . -name "codacy-coverage-reporter" -type f | head -1)
+          chmod +x "$REPORTER"
+
           find . -name "coverage.cobertura.xml" | while read file; do
             echo "Uploading: $file"
-            ./codacy-coverage-reporter report \
+            "$REPORTER" report \
               --project-token $CODACY_PROJECT_TOKEN \
               --language csharp \
               --coverage-reports "$file" \
@@ -215,5 +221,5 @@ jobs:
           done
 
           echo "Finalizing coverage report"
-          ./codacy-coverage-reporter final \
+          "$REPORTER" final \
             --project-token $CODACY_PROJECT_TOKEN
