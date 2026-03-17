@@ -53,10 +53,7 @@ jobs:
       - name: Restore
         run: dotnet restore
       - name: Run Domain Tests
-        run: dotnet test Tests/Domain.Tests \
-          --no-restore \
-          --configuration Release \
-          --collect:"XPlat Code Coverage"
+        run: dotnet test Tests/Domain.Tests --no-restore --configuration Release --collect:"XPlat Code Coverage"
       - uses: actions/upload-artifact@v4
         with:
           name: domain-coverage
@@ -74,10 +71,7 @@ jobs:
       - name: Restore
         run: dotnet restore
       - name: Run Application Tests
-        run: dotnet test Tests/Application.Tests \
-          --no-restore \
-          --configuration Release \
-          --collect:"XPlat Code Coverage"
+        run: dotnet test Tests/Application.Tests --no-restore --configuration Release --collect:"XPlat Code Coverage"
       - uses: actions/upload-artifact@v4
         with:
           name: application-coverage
@@ -95,10 +89,7 @@ jobs:
       - name: Restore
         run: dotnet restore
       - name: Run Infrastructure Tests
-        run: dotnet test Tests/Infrastructure.Tests \
-          --no-restore \
-          --configuration Release \
-          --collect:"XPlat Code Coverage"
+        run: dotnet test Tests/Infrastructure.Tests --no-restore --configuration Release --collect:"XPlat Code Coverage"
       - uses: actions/upload-artifact@v4
         with:
           name: infrastructure-coverage
@@ -116,10 +107,7 @@ jobs:
       - name: Restore
         run: dotnet restore
       - name: Run API Tests
-        run: dotnet test Tests/API.Tests \
-          --no-restore \
-          --configuration Release \
-          --collect:"XPlat Code Coverage"
+        run: dotnet test Tests/API.Tests --no-restore --configuration Release --collect:"XPlat Code Coverage"
       - uses: actions/upload-artifact@v4
         with:
           name: api-coverage
