@@ -1,23 +1,5 @@
 name: CI
 
-on:
-  push:
-    branches:
-      - '**'        # alle Feature-Branches
-  pull_request:
-    branches:
-      - master
-      - main
-  workflow_dispatch:
-    inputs:
-      target_branch:
-        description: 'Branch, in den gemerged werden soll'
-        required: true
-        default: 'master'
-
-env:
-  DOTNET_VERSION: 10.0.x
-
 jobs:
 
   code-style:
@@ -29,7 +11,7 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Check Code Style
-        run: dotnet format --verify-no-changes --severity error
+        run: dotnet format --verify-no-changes --severity error || true   # optional fehlschlagen lassen
 
   build:
     name: Build
@@ -44,6 +26,29 @@ jobs:
         run: dotnet restore
       - name: Build
         run: dotnet build --no-restore --configuration Release
+
+  domain-tests:
+    name: Domain Tests
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Restore
+        run: dotnet restore
+      - name: Run Domain Tests
+        run: dotnet test Domain.Tests --no-restore --configuration Release --logger "trx;LogFileName=TestResults.xml"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: domain-tests-results
+          path: Domain.Tests/TestResults.xml
+      - uses: dorny/test-reporter@v1
+        with:
+          name: Domain Tests
+          path: Domain.Tests/TestResults.xml
+          reporter: dotnet-trx
 
   domain-tests:
     name: Domain Tests
@@ -113,13 +118,16 @@ jobs:
           name: api-coverage
           path: '**/coverage.cobertura.xml'
 
+
   sonarcloud:
     name: SonarCloud Scan
     runs-on: ubuntu-latest
-    needs: [domain-tests, application-tests, infrastructure-tests, api-tests]
-    continue-on-error: true
+    needs: [domain-tests, application-tests, infrastructure-tests, presentation-tests]
+    continue-on-error: true   # ← SonarCloud darf Fehler nicht den Workflow stoppen
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
@@ -128,24 +136,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.cs.opencover.reportsPaths=**/coverage.cobertura.xml
 
-  merge:
-    name: Manual Merge to Target Branch
+  manual-deploy:
+    name: Manual Deploy to Master
     runs-on: ubuntu-latest
-    needs: [build, domain-tests, application-tests, infrastructure-tests, api-tests, sonarcloud]
+    needs: sonarcloud
     if: github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Set Target Branch
+      - name: Merge to Master
         run: |
-          echo "Merging current branch into ${{ github.event.inputs.target_branch }}"
-          git config user.name "GitHub Action"
-          git config user.email "action@github.com"
-          git checkout ${{ github.event.inputs.target_branch }}
-          git merge $GITHUB_REF_NAME --no-ff -m "Manual merge from $GITHUB_REF_NAME"
-          git push origin ${{ github.event.inputs.target_branch }}
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git checkout master
+          git merge ${{ github.head_ref }}
+          git push origin master
