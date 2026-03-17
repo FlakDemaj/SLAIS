@@ -100,7 +100,7 @@ public class LoginCommandHandler :
         return new GeneratedTokenResult
         {
             AccessToken = accessToken,
-            refreshTokenResult = refreshToken
+            RefreshTokenResult = refreshToken
         };
     }
 }

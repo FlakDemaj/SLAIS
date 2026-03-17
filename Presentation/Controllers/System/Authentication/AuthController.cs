@@ -25,13 +25,13 @@ public class AuthController : BaseRestController
 
         HttpContext.Response.Cookies.Append(
             "RefreshToken",
-            tokens.refreshTokenResult.RefreshToken.ToString(),
+            tokens.RefreshTokenResult.RefreshToken.ToString(),
             new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Strict,
-                Expires = DateTime.UtcNow.AddDays(tokens.refreshTokenResult.ExpiresIn)
+                Expires = DateTime.UtcNow.AddDays(tokens.RefreshTokenResult.ExpiresIn)
             });
 
         return Ok(

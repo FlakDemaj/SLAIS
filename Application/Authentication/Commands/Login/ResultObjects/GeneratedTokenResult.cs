@@ -4,5 +4,5 @@ public sealed class GeneratedTokenResult
 {
     public string AccessToken { get; set; }
 
-    public GeneratedRefreshTokenResult refreshTokenResult { get; set; }
+    public GeneratedRefreshTokenResult RefreshTokenResult { get; set; }
 }
