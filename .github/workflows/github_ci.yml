@@ -46,10 +46,8 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-      - name: Restore
-        run: dotnet restore
-      - name: Build
-        run: dotnet build --no-restore --configuration Release
+      - run: dotnet restore
+      - run: dotnet build --no-restore --configuration Release
 
   # =====================
   # DOMAIN TESTS
@@ -160,39 +158,21 @@ jobs:
           path: '**/coverage.cobertura.xml'
 
   # =====================
-  # SONARCLOUD
+  # Codacy Analysis + Coverage
   # =====================
-  sonarcloud:
-    name: SonarCloud
+  codacy-analysis:
+    name: Codacy Analysis
     runs-on: ubuntu-latest
     needs: [domain-tests, application-tests, infrastructure-tests, presentation-tests]
-    if: always()
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-
-      - name: Download Coverage
+      - name: Download all Coverage
         uses: actions/download-artifact@v4
-
-      - name: Install SonarScanner
-        run: dotnet tool install --global dotnet-sonarscanner
-
-      - name: Begin Scan
+      - name: Install Codacy Reporter
+        run: curl -LsS https://coverage.codacy.com/get.sh | bash
+      - name: Run Analysis & Send Coverage
+        env:
+          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
         run: |
-          dotnet sonarscanner begin \
-            /k:"FlakDemaj_SLAIS" \
-            /o:"slais2026" \
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
-            /d:sonar.host.url="https://sonarcloud.io" \
-            /d:sonar.cs.opencover.reportsPaths="**/coverage.cobertura.xml"
-
-      - name: Build
-        run: dotnet build --configuration Release
-
-      - name: End Scan
-        run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          ./codacy-coverage-reporter report -l csharp -r '**/coverage.cobertura.xml'
+          ./codacy-coverage-reporter analyze -l csharp
