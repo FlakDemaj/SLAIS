@@ -1,7 +1,7 @@
 using Application.Authentication.Commands;
 using Application.Authentication.Commands.Login;
 
-using SAIS.Domain.Users;
+using SLAIS.Domain.Users;
 
 namespace Application.Common;
 

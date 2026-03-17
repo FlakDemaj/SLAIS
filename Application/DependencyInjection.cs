@@ -3,7 +3,7 @@ using Infrastructure.AutoMappers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
-using SAIS.Domain.Users;
+using SLAIS.Domain.Users;
 
 namespace Application;
 

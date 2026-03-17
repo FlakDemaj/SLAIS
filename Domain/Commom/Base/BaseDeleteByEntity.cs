@@ -1,6 +1,6 @@
-using SAIS.Domain.Users;
+using SLAIS.Domain.Users;
 
-namespace SAIS.Domain.Commom;
+namespace SLAIS.Domain.Commom;
 
 public class BaseDeleteByEntity : BaseUpdatedByEntity
 {

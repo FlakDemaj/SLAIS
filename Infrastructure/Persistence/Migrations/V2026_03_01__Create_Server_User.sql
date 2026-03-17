@@ -2,16 +2,16 @@ WITH new_institute AS (
 INSERT INTO public.institutes
 (name, branch, created_at)
 VALUES
-    ('SAIS', 'Tech', now())
+    ('SLAIS', 'Tech', now())
     RETURNING institute_guid
     )
 INSERT INTO public.users
 (email, username, first_name, last_name, password_hashed, role_id, state, login_attempts, is_blocked, created_at, fk_institute_guid)
 SELECT
-    'flakron.demaj@outlook.de',
-    'SAIS_Server',
+    'noreply@slais.de',
+    'SLAIS_Server',
     'server',
-    'SAIS',
+    'SLAIS',
     '$2a$11$HVc9Pdpxle5wieKAwxEw9uY4BqvOoX.atHQZpzb2bttU7T.YigVNK',
     4,
     0,

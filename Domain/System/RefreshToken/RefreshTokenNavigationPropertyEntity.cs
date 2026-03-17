@@ -1,5 +1,5 @@
-using SAIS.Domain.Commom;
-using SAIS.Domain.Users;
+using SLAIS.Domain.Commom;
+using SLAIS.Domain.Users;
 
 namespace Domain.Systems.RefreshToken;
 

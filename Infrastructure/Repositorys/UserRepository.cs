@@ -4,7 +4,7 @@ using Infrastructure.Persistence.Context;
 
 using Microsoft.EntityFrameworkCore;
 
-using SAIS.Domain.Users;
+using SLAIS.Domain.Users;
 
 namespace Infrastructure.Repositorys;
 

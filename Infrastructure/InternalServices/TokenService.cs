@@ -16,7 +16,7 @@ using Infrastructure.Configurations;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-using SAIS.Domain.Users;
+using SLAIS.Domain.Users;
 
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 

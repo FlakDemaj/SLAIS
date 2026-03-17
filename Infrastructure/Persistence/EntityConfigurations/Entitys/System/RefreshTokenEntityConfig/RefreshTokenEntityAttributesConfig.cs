@@ -44,7 +44,7 @@ internal sealed class RefreshTokenEntityAttributesConfig : BaseGuidEntityConfig<
             .IsRequired();
 
         builder
-            .Property(rt => rt.IPAddress)
+            .Property(rt => rt.IpAddress)
             .HasColumnName("ip_address")
             .IsRequired();
 

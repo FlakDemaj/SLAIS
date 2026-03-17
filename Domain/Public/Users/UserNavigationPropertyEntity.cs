@@ -1,9 +1,9 @@
 using Domain.Institutes;
 using Domain.Systems.RefreshToken;
 
-using SAIS.Domain.Commom;
+using SLAIS.Domain.Commom;
 
-namespace SAIS.Domain.Users;
+namespace SLAIS.Domain.Users;
 
 public abstract class UserNavigationPropertyEntity : BaseIdEntity
 {

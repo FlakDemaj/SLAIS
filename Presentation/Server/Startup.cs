@@ -4,7 +4,7 @@ using Infrastructure.Configurations;
 
 using Presentation.Middlewares;
 
-using SAIS.Infrastructure.DependencyInjection;
+using SLAIS.Infrastructure.DependencyInjection;
 
 namespace Presentation.Server;
 

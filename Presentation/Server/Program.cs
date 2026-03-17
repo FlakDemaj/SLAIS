@@ -1,7 +1,7 @@
 using Presentation.Server;
 using Presentation.Utils;
 
-namespace SAIS.Presentation.Server;
+namespace SLAIS.Presentation.Server;
 
 public static class Program
 {

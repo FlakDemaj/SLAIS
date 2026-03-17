@@ -12,7 +12,7 @@ public class RefreshTokenEntity : RefreshTokenNavigationPropertyEntity
 
     public string DeviceName { get; set; }
 
-    public IPAddress IPAddress { get; set; }
+    public IPAddress IpAddress { get; set; }
 
     public bool Revoked { get; set; }
 

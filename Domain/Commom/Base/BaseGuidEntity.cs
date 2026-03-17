@@ -1,4 +1,4 @@
-namespace SAIS.Domain.Commom;
+namespace SLAIS.Domain.Commom;
 
 public class BaseGuidEntity
 {

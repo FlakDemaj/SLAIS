@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-using SAIS.Domain.Users;
+using SLAIS.Domain.Users;
 
 namespace Infrastructure.Persistence.EntityConfigurations.Entitys.UserEntityConfig;
 

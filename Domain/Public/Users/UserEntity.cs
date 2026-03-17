@@ -1,6 +1,6 @@
-using SAIS.Domain.Commom.Enums;
+using SLAIS.Domain.Commom.Enums;
 
-namespace SAIS.Domain.Users;
+namespace SLAIS.Domain.Users;
 
 public class UserEntity : UserNavigationPropertyEntity
 {

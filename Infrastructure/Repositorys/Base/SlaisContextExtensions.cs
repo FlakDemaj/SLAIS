@@ -6,7 +6,7 @@ using Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-using SAIS.Domain.Commom;
+using SLAIS.Domain.Commom;
 
 namespace Infrastructure.Repositorys;
 

@@ -1,4 +1,4 @@
-using SAIS.Domain.Users;
+using SLAIS.Domain.Users;
 
 namespace Application.Interfaces;
 

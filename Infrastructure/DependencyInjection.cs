@@ -16,9 +16,9 @@ using Infrastructure.Transaction;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using SAIS.Infrastructure.InternalServices.Logging;
+using SLAIS.Infrastructure.InternalServices.Logging;
 
-namespace SAIS.Infrastructure.DependencyInjection;
+namespace SLAIS.Infrastructure.DependencyInjection;
 
 public static class DependencyInjection
 {

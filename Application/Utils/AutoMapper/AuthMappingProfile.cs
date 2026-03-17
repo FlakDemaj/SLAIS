@@ -41,7 +41,7 @@ public class AuthMappingProfile : Profile
             {
                 o.MapFrom(src => DateTime.UtcNow.AddDays(src.Item3));
             })
-            .ForMember(rt => rt.IPAddress, o
+            .ForMember(rt => rt.IpAddress, o
                 =>
             {
                 o.MapFrom(src => src.Item1.IPAddress);

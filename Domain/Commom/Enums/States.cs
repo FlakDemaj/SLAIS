@@ -1,4 +1,4 @@
-namespace SAIS.Domain.Commom.Enums;
+namespace SLAIS.Domain.Commom.Enums;
 
 public enum States
 {

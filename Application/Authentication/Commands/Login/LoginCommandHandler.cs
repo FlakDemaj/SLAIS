@@ -8,7 +8,7 @@ using Application.Utils.MediatR.Interfaces;
 
 using AutoMapper;
 
-using SAIS.Domain.Users;
+using SLAIS.Domain.Users;
 
 namespace Application.Authentication.Handlers;
 

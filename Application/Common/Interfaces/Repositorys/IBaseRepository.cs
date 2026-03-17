@@ -1,4 +1,4 @@
-using SAIS.Domain.Commom;
+using SLAIS.Domain.Commom;
 
 namespace Application.Interfaces;
 
