@@ -2,12 +2,17 @@ name: CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches:
+      - master
+      - main
+      - '**'        # ← alle Feature Branches
   pull_request:
-    branches: [ main, develop ]
+    branches:
+      - master      # ← PR auf master (production)
+      - main
 
 env:
-  DOTNET_VERSION: 9.0.x
+  DOTNET_VERSION: 10.0.x
 
 jobs:
 
