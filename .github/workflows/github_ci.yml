@@ -10,6 +10,11 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  checks: write
+  pull-requests: write
+  contents: read
+
 env:
   DOTNET_VERSION: 10.0.x
 
@@ -61,18 +66,20 @@ jobs:
       - name: Restore
         run: dotnet restore
       - name: Run Domain Tests
-        run: dotnet test Domain.Tests --no-restore --configuration Release --logger "trx;LogFileName=TestResults.xml" --collect:"XPlat Code Coverage"
+        run: dotnet test Tests/Domain.Tests --no-restore --configuration Release --logger "trx" --collect:"XPlat Code Coverage"
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: domain-tests-results
-          path: '**/TestResults.xml'
+          path: '**/TestResults/*.trx'
       - uses: dorny/test-reporter@v1
         if: always()
         with:
           name: Domain Tests
-          path: '**/TestResults.xml'
+          path: '**/TestResults/*.trx'
           reporter: dotnet-trx
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: domain-coverage
           path: '**/coverage.cobertura.xml'
@@ -92,18 +99,20 @@ jobs:
       - name: Restore
         run: dotnet restore
       - name: Run Application Tests
-        run: dotnet test Application.Tests --no-restore --configuration Release --logger "trx;LogFileName=TestResults.xml" --collect:"XPlat Code Coverage"
+        run: dotnet test Tests/Application.Tests --no-restore --configuration Release --logger "trx" --collect:"XPlat Code Coverage"
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: application-tests-results
-          path: '**/TestResults.xml'
+          path: '**/TestResults/*.trx'
       - uses: dorny/test-reporter@v1
         if: always()
         with:
           name: Application Tests
-          path: '**/TestResults.xml'
+          path: '**/TestResults/*.trx'
           reporter: dotnet-trx
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: application-coverage
           path: '**/coverage.cobertura.xml'
@@ -123,18 +132,20 @@ jobs:
       - name: Restore
         run: dotnet restore
       - name: Run Infrastructure Tests
-        run: dotnet test Infrastructure.Tests --no-restore --configuration Release --logger "trx;LogFileName=TestResults.xml" --collect:"XPlat Code Coverage"
+        run: dotnet test Tests/Infrastructure.Tests --no-restore --configuration Release --logger "trx" --collect:"XPlat Code Coverage"
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: infrastructure-tests-results
-          path: '**/TestResults.xml'
+          path: '**/TestResults/*.trx'
       - uses: dorny/test-reporter@v1
         if: always()
         with:
           name: Infrastructure Tests
-          path: '**/TestResults.xml'
+          path: '**/TestResults/*.trx'
           reporter: dotnet-trx
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: infrastructure-coverage
           path: '**/coverage.cobertura.xml'
@@ -154,18 +165,20 @@ jobs:
       - name: Restore
         run: dotnet restore
       - name: Run Presentation Tests
-        run: dotnet test Presentation.Tests --no-restore --configuration Release --logger "trx;LogFileName=TestResults.xml" --collect:"XPlat Code Coverage"
+        run: dotnet test Tests/Presentation.Tests --no-restore --configuration Release --logger "trx" --collect:"XPlat Code Coverage"
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: presentation-tests-results
-          path: '**/TestResults.xml'
+          path: '**/TestResults/*.trx'
       - uses: dorny/test-reporter@v1
         if: always()
         with:
           name: Presentation Tests
-          path: '**/TestResults.xml'
+          path: '**/TestResults/*.trx'
           reporter: dotnet-trx
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: presentation-coverage
           path: '**/coverage.cobertura.xml'
