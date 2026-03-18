@@ -1,4 +1,3 @@
-using Application.Utils;
 using Application.Utils.Interfaces.MediatR;
 using Application.Utils.Logger;
 using Application.Utils.MediatR.Interfaces;

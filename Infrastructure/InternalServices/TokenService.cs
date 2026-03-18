@@ -3,11 +3,7 @@ using System.Security.Claims;
 using System.Text;
 
 using Application.Authentication.Commands;
-using Application.Authentication.Commands.Login;
 using Application.Common.Interfaces.Services;
-using Application.Interfaces;
-
-using AutoMapper;
 
 using Domain.Systems.RefreshToken;
 

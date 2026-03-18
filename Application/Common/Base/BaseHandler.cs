@@ -1,5 +1,6 @@
 using Application.Common.Options;
 using Application.Utils.Logger;
+
 using AutoMapper;
 
 using Microsoft.Extensions.Options;

@@ -1,5 +1,4 @@
 using Application.Authentication.Commands;
-using Application.Authentication.Commands.Login;
 
 using Domain.Systems.RefreshToken;
 

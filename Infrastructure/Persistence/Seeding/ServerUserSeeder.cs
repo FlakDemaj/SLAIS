@@ -48,8 +48,8 @@ public class ServerUserSeeder
             var plainPassword = _configuration["Seeding:ServerUserPassword"];
             if (plainPassword == null)
             {
-              _logger.LogError("Server User Password is empty", null);
-              throw new SlaisException(CommonErrorCodes.DefaultErrorCode);
+                _logger.LogError("Server User Password is empty", null);
+                throw new SlaisException(CommonErrorCodes.DefaultErrorCode);
             }
 
             var hashedPassword = _passwordService.Hash(plainPassword);

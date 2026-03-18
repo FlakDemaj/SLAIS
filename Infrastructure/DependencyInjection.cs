@@ -3,10 +3,8 @@ using System.Reflection;
 using Application;
 using Application.Common.Interfaces.Services;
 using Application.Interfaces;
-using Application.Utils;
 using Application.Utils.Interfaces.MediatR;
 using Application.Utils.Logger;
-using Application.Utils.MediatR;
 using Application.Utils.MediatR.Interfaces;
 
 using Infrastructure.InternalServices;
