@@ -251,3 +251,20 @@ jobs:
           & $scanner begin /k:"FlakDemaj_SLAIS_Backend_Mono" /o:"flakdemaj" /d:sonar.login=$env:SONAR_TOKEN
           dotnet build --configuration Release
           & $scanner end /d:sonar.login=$env:SONAR_TOKEN
+          - name: Generate lightweight summary
+     
+      - name: Generate lightweight summary
+        shell: powershell
+        run: |
+          # SonarCloud generiert automatisch eine file sonar-report-task.txt im .sonarqube Verzeichnis
+          $report = ".\.sonarqube\out\.sonar\report-task.txt"
+          if (Test-Path $report) {
+            $content = Get-Content $report
+            $url = ($content | Select-String "ceTaskUrl").ToString().Split("=")[1]
+            $dashboard = ($content | Select-String "dashboardUrl").ToString().Split("=")[1]
+            echo "### SonarCloud Summary" >> $GITHUB_STEP_SUMMARY
+            echo "- Dashboard: $dashboard" >> $GITHUB_STEP_SUMMARY
+            echo "- CE Task: $url" >> $GITHUB_STEP_SUMMARY
+          } else {
+            echo "Sonar report not found" >> $GITHUB_STEP_SUMMARY
+          }
