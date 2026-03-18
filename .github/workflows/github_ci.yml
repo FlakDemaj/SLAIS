@@ -251,7 +251,6 @@ jobs:
           & $scanner begin /k:"FlakDemaj_SLAIS_Backend_Mono" /o:"flakdemaj" /d:sonar.login=$env:SONAR_TOKEN
           dotnet build --configuration Release
           & $scanner end /d:sonar.login=$env:SONAR_TOKEN
-          - name: Generate lightweight summary
      
       - name: Generate lightweight summary
         shell: powershell
