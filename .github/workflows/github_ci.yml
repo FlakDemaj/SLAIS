@@ -268,3 +268,17 @@ jobs:
           } else {
             echo "Sonar report not found" >> $GITHUB_STEP_SUMMARY
           }
+
+      - name: Check SonarCloud Quality Gate
+        shell: powershell
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          $projectKey="FlakDemaj_SLAIS_Backend_Mono"
+          $response = Invoke-RestMethod -Uri "https://sonarcloud.io/api/qualitygates/project_status?projectKey=$projectKey" -Headers @{Authorization = "Basic $([Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("$env:SONAR_TOKEN:")))"} 
+          $status = $response.projectStatus.status
+          Write-Host "Quality Gate Status: $status"
+          if ($status -ne "OK") { 
+              Write-Host "Quality Gate failed -> exiting"
+              exit 1
+          }
