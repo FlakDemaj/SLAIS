@@ -255,3 +255,5 @@ jobs:
           else
             echo "Sonar report not found" >> $GITHUB_STEP_SUMMARY
           fi
+      - name: List .sonarqube directory
+        run: ls -R .sonarqube
