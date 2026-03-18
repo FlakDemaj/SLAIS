@@ -60,7 +60,7 @@ public static class DependencyInjection
     {
         var handlerInterface = typeof(IRequestHandler<,>);
 
-        var handlers = Assembly.GetAssembly(typeof(ApplicationAssemblyMarker))
+        var handlers = Assembly.GetAssembly(typeof(IApplicationAssemblyMarker))
             ?.GetTypes()
             .Where(t =>
             {

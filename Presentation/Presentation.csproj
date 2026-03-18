@@ -17,4 +17,8 @@
       <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.5" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Include="appsettings.Development.json" />
+    </ItemGroup>
+
 </Project>

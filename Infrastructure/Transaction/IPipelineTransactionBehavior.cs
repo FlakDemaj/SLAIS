@@ -1,4 +1,4 @@
-namespace Application.Utils;
+namespace Infrastructure.Transaction;
 
 public interface IPipelineTransactionBehavior<TRequest, TResponse>
 {

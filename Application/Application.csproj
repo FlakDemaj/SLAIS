@@ -17,6 +17,7 @@
       <Folder Include="Tasks\" />
       <Folder Include="Units\" />
       <Folder Include="Users\Commands\" />
+      <Folder Include="Utils\Interfaces\Transaction\" />
     </ItemGroup>
 
     <ItemGroup>
@@ -26,7 +27,6 @@
     <ItemGroup>
       <PackageReference Include="AutoMapper" Version="12.0.1" />
       <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.4" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.4" />
       <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.4" />
     </ItemGroup>

@@ -1,6 +1,13 @@
 namespace SLAIS.Domain.Commom;
 
-public class BaseIdEntity : BaseDeleteByEntity
+public abstract class BaseIdEntity : BaseDeleteByEntity
 {
-    public int? Id { get; set; }
+    public int? Id { get; init; }
+
+    protected BaseIdEntity(
+        Guid createdByUserGuid)
+        : base(createdByUserGuid)
+    {
+        Id = null;
+    }
 }

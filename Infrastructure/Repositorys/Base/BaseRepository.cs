@@ -6,7 +6,7 @@ using SLAIS.Domain.Commom;
 
 namespace Infrastructure.Repositorys;
 
-public class BaseRepository<T> : SlaisRepository, IBaseRepository<T>
+public abstract class BaseRepository<T> : SlaisRepository, IBaseRepository<T>
     where T : BaseGuidEntity
 {
     protected BaseRepository(SlaisDbContext context)

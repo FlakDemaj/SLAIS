@@ -1,3 +1,3 @@
 namespace Infrastructure;
 
-public sealed class InfrastructureAssemblyMarker;
+public interface INfrastructureAssemblyMarker;

@@ -1,3 +1,5 @@
+using Infrastructure.Persistence.Seeding;
+
 using Presentation.Server;
 using Presentation.Utils;
 
@@ -5,7 +7,7 @@ namespace SLAIS.Presentation.Server;
 
 public static class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -15,8 +17,15 @@ public static class Program
 
         app.Migrate();
 
+        using (var scope = app.Services.CreateScope())
+        {
+            var seeder = scope.ServiceProvider.GetRequiredService<ServerUserSeeder>();
+            await seeder.SeedAsync();
+        }
+
         Startup.ConfigurePipeline(app);
 
-        app.Run();
+        await app.RunAsync();
+
     }
 }

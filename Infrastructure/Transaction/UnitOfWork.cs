@@ -1,5 +1,3 @@
-using Application.Utils;
-
 using Infrastructure.Persistence.Context;
 
 using Microsoft.EntityFrameworkCore.Storage;

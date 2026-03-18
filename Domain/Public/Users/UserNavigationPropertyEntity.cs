@@ -7,7 +7,6 @@ namespace SLAIS.Domain.Users;
 
 public abstract class UserNavigationPropertyEntity : BaseIdEntity
 {
-    // Navigation Property for created Users
     public ICollection<UserEntity>? CreatedUsers { get; private set; } = new List<UserEntity>();
 
     //Navigation Property for updated Users
@@ -29,6 +28,11 @@ public abstract class UserNavigationPropertyEntity : BaseIdEntity
     public ICollection<InstituteEntity>? DeletedInstitute { get; private set; } = new List<InstituteEntity>();
 
     //Navigation Property for refresh tokens
-
     public ICollection<RefreshTokenEntity>? RefreshTokens { get; private set; } = new List<RefreshTokenEntity>();
+
+    // Navigation Property for created Users
+    protected UserNavigationPropertyEntity(
+        Guid createdByUserGuid) : base(createdByUserGuid)
+    {
+    }
 }

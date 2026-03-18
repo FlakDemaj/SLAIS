@@ -17,6 +17,6 @@ public class BaseIdEntityConfig<T> : BaseDeletedByEntityConfig<T>
             .Property(p => p.Id)
             .HasColumnName(Prefix + "id")
             .ValueGeneratedOnAdd()
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore); ;
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
     }
 }

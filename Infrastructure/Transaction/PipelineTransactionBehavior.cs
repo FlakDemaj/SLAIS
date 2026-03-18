@@ -1,8 +1,9 @@
 using Application.Common;
+using Application.Utils;
 using Application.Utils.Exceptions;
 using Application.Utils.Logger;
 
-namespace Application.Utils;
+namespace Infrastructure.Transaction;
 
 public class PipelineTransactionBehavior<TRequest, TResponse> :
     IPipelineTransactionBehavior<TRequest, TResponse>

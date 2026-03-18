@@ -1,11 +1,14 @@
 using Application.Common.Base;
 using Application.Common.Interfaces.Services;
+using Application.Common.Options;
 using Application.Interfaces;
 using Application.Utils.Exceptions;
 using Application.Utils.Logger;
 using Application.Utils.MediatR.Interfaces;
 
 using AutoMapper;
+
+using Microsoft.Extensions.Options;
 
 using SLAIS.Domain.Users;
 
@@ -16,18 +19,22 @@ public class LoginCommandHandler :
     IRequestHandler<LoginCommand, GeneratedTokenResult>
 {
     private readonly IUserRepository _userRepository;
+    private readonly IRefreshTokenRepository _refreshTokenRepository;
     private readonly ITokenService _tokenService;
     private readonly IPasswordHasher _passwordHasher;
 
     public LoginCommandHandler(
         IUserRepository userRepository,
+        IRefreshTokenRepository refreshTokenRepository,
         ITokenService tokenService,
         ISlaisLogger<LoginCommandHandler> logger,
         IPasswordHasher passwordHasher,
-        IMapper mapper)
-        : base(logger, mapper)
+        IMapper mapper,
+        IOptions<CommonOptions> commonOptions)
+        : base(logger, mapper, commonOptions)
     {
         _userRepository = userRepository;
+        _refreshTokenRepository = refreshTokenRepository;
         _tokenService = tokenService;
         _passwordHasher = passwordHasher;
     }
@@ -68,7 +75,7 @@ public class LoginCommandHandler :
         UserEntity user,
         string password)
     {
-        var checkPassword = _passwordHasher.Verify(password, user.PasswordHashed);
+        var checkPassword = _passwordHasher.Verify(password, user.HashedPassword);
 
         if (checkPassword)
         {
@@ -77,7 +84,7 @@ public class LoginCommandHandler :
             return;
         }
 
-        user.IncrementWrongLoginAttempts();
+        user.IncrementWrongLoginAttempts(CommonOptions.MaxLoginAttempts);
 
         await _userRepository.UpdateAndSaveChangesAsync(user);
 
@@ -96,10 +103,13 @@ public class LoginCommandHandler :
             request,
             user.Guid);
 
+        await _refreshTokenRepository.CreateAsync(refreshToken);
+
         return new GeneratedTokenResult
         {
             AccessToken = accessToken,
-            RefreshTokenResult = refreshToken
+            RefreshToken = refreshToken.RefreshToken,
+            ExpiresIn = refreshToken.GetExpirationInDays()
         };
     }
 }

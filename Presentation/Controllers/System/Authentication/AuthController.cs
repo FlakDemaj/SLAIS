@@ -26,19 +26,21 @@ public class AuthController : BaseRestController
 
         HttpContext.Response.Cookies.Append(
             "RefreshToken",
-            tokens.RefreshTokenResult.RefreshToken.ToString(),
+            tokens.RefreshToken.ToString(),
             new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Strict,
-                Expires = DateTime.UtcNow.AddDays(tokens.RefreshTokenResult.ExpiresIn)
+                Expires = DateTime.UtcNow.AddDays(tokens.ExpiresIn)
             });
 
-        return new LoginResponseDto
-        {
-            AccessToken = tokens.AccessToken
-        };
+        return Ok(
+            new LoginResponseDto
+            {
+                AccessToken = tokens.AccessToken
+            }
+        );
     }
 
     private static LoginCommand MapLoginRequest(

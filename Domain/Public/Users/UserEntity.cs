@@ -6,7 +6,7 @@ public class UserEntity : UserNavigationPropertyEntity
 {
     public string Email { get; private set; }
 
-    public string PasswordHashed { get; private set; }
+    public string HashedPassword { get; private set; }
 
     public string Username { get; private set; }
 
@@ -24,11 +24,37 @@ public class UserEntity : UserNavigationPropertyEntity
 
     public Guid InstituteUuid { get; private set; }
 
-    public void IncrementWrongLoginAttempts()
+    public UserEntity(
+        Guid createdByUserGuid,
+        string email,
+        string hashedPassword,
+        string username,
+        string firstName,
+        string lastName,
+        Roles role,
+        short loginAttempts,
+        bool isBlocked,
+        States state,
+        Guid instituteUuid)
+        : base(createdByUserGuid)
+    {
+        Email = email;
+        HashedPassword = hashedPassword;
+        Username = username;
+        FirstName = firstName;
+        LastName = lastName;
+        Role = role;
+        LoginAttempts = loginAttempts;
+        IsBlocked = isBlocked;
+        State = state;
+        InstituteUuid = instituteUuid;
+    }
+
+    public void IncrementWrongLoginAttempts(int maxLoginAttempts = 5)
     {
         LoginAttempts++;
 
-        if (LoginAttempts == 5)
+        if (LoginAttempts == maxLoginAttempts)
         {
             IsBlocked = true;
         }
@@ -37,5 +63,10 @@ public class UserEntity : UserNavigationPropertyEntity
     public void SetLoginAttemptsToZero()
     {
         LoginAttempts = 0;
+    }
+
+    public void SetPassword(string hashedPassword)
+    {
+        HashedPassword = hashedPassword;
     }
 }

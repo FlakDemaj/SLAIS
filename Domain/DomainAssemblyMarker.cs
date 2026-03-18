@@ -1,3 +1,3 @@
 namespace Domain;
 
-public sealed class DomainAssemblyMarker;
+public interface IDomainAssemblyMarker;

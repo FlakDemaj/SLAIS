@@ -24,27 +24,19 @@ namespace Infrastructure.InternalServices;
 
 public class TokenService : ITokenService
 {
-    private readonly IRefreshTokenRepository _refreshTokenRepository;
-
     private readonly AccessTokenOptions _accessTokenOptions;
 
     private readonly RefreshTokenOptions _refreshTokenOptions;
 
-    private readonly IMapper _mapper;
-
     private readonly JwtSecurityTokenHandler _tokenHandler;
 
     public TokenService(
-        IRefreshTokenRepository refreshTokenRepository,
         IOptions<AccessTokenOptions> tokenOptions,
-        IOptions<RefreshTokenOptions> refreshTokenOptions,
-        IMapper mapper)
+        IOptions<RefreshTokenOptions> refreshTokenOptions)
     {
         _accessTokenOptions = tokenOptions.Value;
         _refreshTokenOptions = refreshTokenOptions.Value;
-        _mapper = mapper;
         _tokenHandler = new JwtSecurityTokenHandler();
-        _refreshTokenRepository = refreshTokenRepository;
     }
 
     public string GenerateAccessToken(UserEntity user)
@@ -63,18 +55,16 @@ public class TokenService : ITokenService
         return _tokenHandler.WriteToken(token);
     }
 
-    public async Task<GeneratedRefreshTokenResult> GenerateRefreshToken(LoginCommand request, Guid userGuid)
+    public async Task<RefreshTokenEntity> GenerateRefreshToken(LoginCommand request, Guid userGuid)
     {
-        var refreshToken = _mapper.Map<RefreshTokenEntity>(
-            (request, userGuid, _refreshTokenOptions.ExpiresInDays));
+        var refreshToken = RefreshTokenEntity.CreateRefreshToken(
+            _refreshTokenOptions.ExpiresInDays,
+            request.DeviceGuid,
+            request.DeviceName,
+            request.IpAddress,
+            userGuid);
 
-        await _refreshTokenRepository.CreateAsync(refreshToken);
-
-        return new GeneratedRefreshTokenResult
-        {
-            RefreshToken = refreshToken.RefreshToken,
-            ExpiresIn = _refreshTokenOptions.ExpiresInDays
-        };
+        return refreshToken;
     }
 
     public Task<bool> ValidateRefreshTokenAsync(string refreshToken)

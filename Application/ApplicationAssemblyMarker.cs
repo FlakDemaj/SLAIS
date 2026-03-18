@@ -1,3 +1,3 @@
 namespace Application;
 
-public sealed class ApplicationAssemblyMarker;
+public interface IApplicationAssemblyMarker;

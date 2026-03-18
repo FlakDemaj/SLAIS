@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Application.Utils;
+namespace Infrastructure.Transaction;
 
 public interface IUnitOfWork
 {

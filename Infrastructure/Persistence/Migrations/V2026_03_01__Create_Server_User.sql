@@ -12,7 +12,7 @@ SELECT
     'SLAIS_Server',
     'server',
     'SLAIS',
-    '$2a$11$HVc9Pdpxle5wieKAwxEw9uY4BqvOoX.atHQZpzb2bttU7T.YigVNK',
+    'PLACEHOLDER',
     4,
     0,
     0,

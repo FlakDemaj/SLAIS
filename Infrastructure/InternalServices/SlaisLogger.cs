@@ -7,6 +7,8 @@ namespace SLAIS.Infrastructure.InternalServices.Logging;
 public class SlaisLogger<T> : ISlaisLogger<T>
     where T : class
 {
+    private const string MessageTemplate = "{Message}";
+
     private readonly ILogger<T> _logger;
 
     public SlaisLogger(ILogger<T> logger)
@@ -16,27 +18,40 @@ public class SlaisLogger<T> : ISlaisLogger<T>
 
     public void LogInformation(string message)
     {
-        _logger.LogInformation("{Message}", message);
+        CheckEnabling(LogLevel.Debug);
+        _logger.LogInformation(MessageTemplate, message);
     }
 
     public void LogDebug(string message, Exception? exception)
     {
-        _logger.LogDebug("{Message}", message);
+        CheckEnabling(LogLevel.Debug);
+        _logger.LogDebug(MessageTemplate, message);
     }
 
     public void LogWarning(string message)
     {
-        _logger.LogWarning("{Message}", message);
+        CheckEnabling(LogLevel.Warning);
+        _logger.LogWarning(MessageTemplate, message);
     }
 
     public void LogCritical(string message, Exception? exception)
     {
-        _logger.LogCritical("{Message}", message);
+        CheckEnabling(LogLevel.Critical);
+        _logger.LogCritical(MessageTemplate, message);
     }
 
     public void LogError(string message, Exception? exception)
     {
-        _logger.LogError("{Message}", message);
-
+        CheckEnabling(LogLevel.Error);
+        _logger.LogError(MessageTemplate, message);
     }
+
+    private void CheckEnabling(LogLevel logLevel)
+    {
+        if (!_logger.IsEnabled(logLevel))
+        {
+            return;
+        }
+    }
+
 }

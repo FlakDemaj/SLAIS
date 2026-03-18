@@ -2,7 +2,9 @@ namespace Application.Authentication.Commands.Login;
 
 public sealed class GeneratedTokenResult
 {
-    public string AccessToken { get; set; }
+    public required string AccessToken { get; init; }
 
-    public GeneratedRefreshTokenResult RefreshTokenResult { get; set; }
+    public required Guid RefreshToken { get; init; }
+
+    public required int ExpiresIn { get; init; }
 }

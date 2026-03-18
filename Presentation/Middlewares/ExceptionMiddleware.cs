@@ -27,7 +27,7 @@ public class ExceptionMiddleware
         }
     }
 
-    private Task HandleException(HttpContext context, SlaisException e)
+    private static Task HandleException(HttpContext context, SlaisException e)
     {
         context.Response.ContentType = "application/json";
 

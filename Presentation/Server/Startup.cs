@@ -1,6 +1,9 @@
 using Application;
+using Application.Common.Options;
 
 using Infrastructure.Configurations;
+
+using Microsoft.Extensions.Logging.Console;
 
 using Presentation.Middlewares;
 
@@ -63,10 +66,15 @@ public static class Startup
     private static void ConfigureLogger(WebApplicationBuilder builder)
     {
         builder.Logging.ClearProviders();
-        builder.Logging.AddConsole(options =>
+        builder.Logging.AddSimpleConsole(options =>
         {
             options.TimestampFormat = "[yyyy-MM-dd HH:mm:ss] ";
             options.IncludeScopes = true;
+            options.SingleLine = true;
+            options.UseUtcTimestamp = true;
+            options.ColorBehavior = builder.Environment.IsProduction()
+                ? LoggerColorBehavior.Disabled
+                : LoggerColorBehavior.Enabled;;
         });
 
         builder.Logging.SetMinimumLevel(LogLevel.Trace);
@@ -115,5 +123,8 @@ public static class Startup
             builder.Configuration.GetSection("AccessToken"));
         builder.Services.Configure<RefreshTokenOptions>(
             builder.Configuration.GetSection("RefreshToken"));
+        builder.Services.Configure<CommonOptions>(
+            builder.Configuration.GetSection("CommonOptions"));
+
     }
 }

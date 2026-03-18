@@ -31,7 +31,7 @@ internal sealed class UserEntityAttributeConfig : BaseIdEntityConfig<UserEntity>
             .IsRequired();
 
         builder
-            .Property(u => u.PasswordHashed)
+            .Property(u => u.HashedPassword)
             .HasColumnName("password_hashed")
             .IsRequired();
 
