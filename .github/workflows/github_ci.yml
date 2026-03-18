@@ -208,7 +208,7 @@ jobs:
   sonarqube:
     name: SonarQube Analysis
     runs-on: windows-latest
-    needs: build
+    needs: [build, domain-tests, presentation-tests, application-tests, infrastructure-tests]
     steps:
       - name: Set up JDK 17
         uses: actions/setup-java@v4
