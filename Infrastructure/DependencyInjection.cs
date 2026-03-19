@@ -32,7 +32,6 @@ public static class DependencyInjection
     private static void AddRepositories(IServiceCollection services)
     {
         services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
     }
 
     private static void AddPipeline(IServiceCollection services)
@@ -70,7 +69,7 @@ public static class DependencyInjection
                                     .Where(i =>
                                     {
                                         return i.IsGenericType &&
-                                                                                        i.GetGenericTypeDefinition() == handlerInterface;
+                                               i.GetGenericTypeDefinition() == handlerInterface;
                                     });
             },
                 (type, iface) =>

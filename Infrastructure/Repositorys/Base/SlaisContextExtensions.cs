@@ -18,8 +18,6 @@ public static class SlaisContextExtensions
     {
         try
         {
-            saveData.SetGuid(Guid.CreateVersion7());
-
             var result = context.Add(saveData);
             return result.Entity;
         }

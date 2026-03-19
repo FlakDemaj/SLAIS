@@ -1,3 +1,7 @@
+using System.Net;
+
+using Domain.Systems.RefreshToken;
+
 using SLAIS.Domain.Commom.Enums;
 
 namespace SLAIS.Domain.Users;
@@ -24,7 +28,7 @@ public class UserEntity : UserNavigationPropertyEntity
 
     public Guid InstituteUuid { get; private set; }
 
-    public UserEntity(
+    private UserEntity(
         Guid createdByUserGuid,
         string email,
         string hashedPassword,
@@ -32,9 +36,6 @@ public class UserEntity : UserNavigationPropertyEntity
         string firstName,
         string lastName,
         Roles role,
-        short loginAttempts,
-        bool isBlocked,
-        States state,
         Guid instituteUuid)
         : base(createdByUserGuid)
     {
@@ -44,10 +45,31 @@ public class UserEntity : UserNavigationPropertyEntity
         FirstName = firstName;
         LastName = lastName;
         Role = role;
-        LoginAttempts = loginAttempts;
-        IsBlocked = isBlocked;
-        State = state;
+        LoginAttempts = 0;
+        IsBlocked = false;
+        State = States.Active;
         InstituteUuid = instituteUuid;
+    }
+
+    public static UserEntity CreateAdmin(
+        Guid createdByUserGuid,
+        string email,
+        string hashedPassword,
+        string username,
+        string firstName,
+        string lastName,
+        Guid instituteUuid)
+    {
+        return new UserEntity(
+            createdByUserGuid,
+            email,
+            hashedPassword,
+            username,
+            firstName,
+            lastName,
+            Roles.Admin,
+            instituteUuid
+            );
     }
 
     public void IncrementWrongLoginAttempts(int maxLoginAttempts = 5)
@@ -68,5 +90,23 @@ public class UserEntity : UserNavigationPropertyEntity
     public void SetPassword(string hashedPassword)
     {
         HashedPassword = hashedPassword;
+    }
+
+    public RefreshTokenEntity CreateRefreshToken(
+        int expiresInDays,
+        Guid deviceGuid,
+        string deviceName,
+        IPAddress ipAddress)
+    {
+        var refreshToken = RefreshTokenEntity.CreateRefreshToken(
+            expiresInDays,
+            deviceGuid,
+            deviceName,
+            ipAddress,
+            Guid);
+
+        RefreshTokens.Add(refreshToken);
+
+        return refreshToken;
     }
 }

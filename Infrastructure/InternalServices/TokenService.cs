@@ -2,10 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-using Application.Authentication.Commands;
 using Application.Common.Interfaces.Services;
-
-using Domain.Systems.RefreshToken;
 
 using Infrastructure.Configurations;
 
@@ -22,16 +19,12 @@ public class TokenService : ITokenService
 {
     private readonly AccessTokenOptions _accessTokenOptions;
 
-    private readonly RefreshTokenOptions _refreshTokenOptions;
-
     private readonly JwtSecurityTokenHandler _tokenHandler;
 
     public TokenService(
-        IOptions<AccessTokenOptions> tokenOptions,
-        IOptions<RefreshTokenOptions> refreshTokenOptions)
+        IOptions<AccessTokenOptions> tokenOptions)
     {
         _accessTokenOptions = tokenOptions.Value;
-        _refreshTokenOptions = refreshTokenOptions.Value;
         _tokenHandler = new JwtSecurityTokenHandler();
     }
 
@@ -49,18 +42,6 @@ public class TokenService : ITokenService
             claims, creds);
 
         return _tokenHandler.WriteToken(token);
-    }
-
-    public async Task<RefreshTokenEntity> GenerateRefreshToken(LoginCommand request, Guid userGuid)
-    {
-        var refreshToken = RefreshTokenEntity.CreateRefreshToken(
-            _refreshTokenOptions.ExpiresInDays,
-            request.DeviceGuid,
-            request.DeviceName,
-            request.IpAddress,
-            userGuid);
-
-        return refreshToken;
     }
 
     public Task<bool> ValidateRefreshTokenAsync(string refreshToken)

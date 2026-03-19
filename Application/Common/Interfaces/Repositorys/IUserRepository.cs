@@ -6,5 +6,5 @@ public interface IUserRepository : IBaseRepository<UserEntity>
 {
     Task<UserEntity?> GetUserByGuidAsync(Guid userGuid);
 
-    Task<UserEntity?> GetUserByUsernameOrEmailAsync(string username);
+    Task<UserEntity?> GetUserByUsernameOrEmailWithRefreshTokenAsync(string username);
 }

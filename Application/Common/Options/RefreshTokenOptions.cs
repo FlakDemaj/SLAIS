@@ -1,4 +1,4 @@
-namespace Infrastructure.Configurations;
+namespace Application.Common.Options;
 
 public class RefreshTokenOptions
 {

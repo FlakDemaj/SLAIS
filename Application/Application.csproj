@@ -7,13 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Authentication\Queries\" />
       <Folder Include="Courses\" />
       <Folder Include="Institutes\" />
       <Folder Include="Modules\" />
       <Folder Include="Prompts\" />
       <Folder Include="Settings\" />
       <Folder Include="Simulations\" />
+      <Folder Include="System\" />
       <Folder Include="Tasks\" />
       <Folder Include="Units\" />
       <Folder Include="Users\Commands\" />

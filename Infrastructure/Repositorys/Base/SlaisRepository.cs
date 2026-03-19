@@ -4,10 +4,10 @@ namespace Infrastructure.Repositorys;
 
 public class SlaisRepository
 {
-    protected readonly SlaisDbContext Context;
+    protected readonly SlaisDbContext _context;
 
     protected SlaisRepository(SlaisDbContext context)
     {
-        Context = context;
+        _context = context;
     }
 }

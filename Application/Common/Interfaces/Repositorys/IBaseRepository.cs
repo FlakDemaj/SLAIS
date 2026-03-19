@@ -7,5 +7,5 @@ public interface IBaseRepository<T>
 {
     Task<T> CreateAsync(T objectToCreate);
 
-    Task UpdateAndSaveChangesAsync(T objectToUpdate);
+    Task SaveChangesAsync(T objectToUpdate);
 }

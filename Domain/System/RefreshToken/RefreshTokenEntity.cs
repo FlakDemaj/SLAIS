@@ -30,7 +30,6 @@ public class RefreshTokenEntity : RefreshTokenNavigationPropertyEntity
         string deviceName,
         IPAddress ipAddress,
         Guid userGuid)
-        : base()
     {
         RefreshToken = Guid.CreateVersion7();
         ExpirationDate = DateTime.UtcNow.AddDays(expirationInDate);
@@ -44,7 +43,7 @@ public class RefreshTokenEntity : RefreshTokenNavigationPropertyEntity
         UserGuid = userGuid;
     }
 
-    public static RefreshTokenEntity CreateRefreshToken(
+    internal static RefreshTokenEntity CreateRefreshToken(
         int expirationInDate,
         Guid deviceGuid,
         string deviceName,

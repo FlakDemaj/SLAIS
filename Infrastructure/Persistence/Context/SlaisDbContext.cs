@@ -10,7 +10,7 @@ namespace Infrastructure.Persistence.Context;
 
 public class SlaisDbContext : DbContext
 {
-    private string ConnectionString { get; init; }
+    private readonly string _connectionString;
 
     private ILoggerFactory LoggerFactory { get; init; }
 
@@ -18,7 +18,7 @@ public class SlaisDbContext : DbContext
         IOptions<DatabaseOptions> databaseOptions,
         ILoggerFactory iLoggerFactory)
     {
-        ConnectionString = databaseOptions.Value.ConnectionString;
+        _connectionString = databaseOptions.Value.ConnectionString;
         LoggerFactory = iLoggerFactory;
     }
 
@@ -30,7 +30,7 @@ public class SlaisDbContext : DbContext
         }
 
         optionsBuilder.UseNpgsql(
-            ConnectionString,
+            _connectionString,
             o =>
             {
                 o.CommandTimeout(120);

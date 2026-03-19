@@ -9,19 +9,19 @@ namespace Application.Common.Base;
 
 public abstract class BaseHandler<T> where T : class
 {
-    protected readonly ISlaisLogger<T> Logger;
+    protected readonly ISlaisLogger<T> _logger;
 
-    protected readonly IMapper Mapper;
+    protected readonly IMapper _mapper;
 
-    protected readonly CommonOptions CommonOptions;
+    protected readonly CommonOptions _commonOptions;
 
     protected BaseHandler(
         ISlaisLogger<T> logger,
         IMapper mapper,
         IOptions<CommonOptions> commonOptions)
     {
-        Logger = logger;
-        Mapper = mapper;
-        CommonOptions = commonOptions.Value;
+        _logger = logger;
+        _mapper = mapper;
+        _commonOptions = commonOptions.Value;
     }
 }

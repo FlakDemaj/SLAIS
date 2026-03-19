@@ -17,15 +17,16 @@ public class UserRepository : BaseRepository<UserEntity>, IUserRepository
 
     public Task<UserEntity?> GetUserByGuidAsync(Guid userGuid)
     {
-        return Context
+        return _context
                .GetNoTrackingSet<UserEntity>()
                .FirstOrDefaultAsync(user => user.Guid == userGuid);
     }
 
-    public Task<UserEntity?> GetUserByUsernameOrEmailAsync(string username)
+    public Task<UserEntity?> GetUserByUsernameOrEmailWithRefreshTokenAsync(string username)
     {
-        return Context
+        return _context
             .GetNoTrackingSet<UserEntity>()
+            .Include(user => user.RefreshTokens)
             .FirstOrDefaultAsync(user => user.Email == username
                                          || user.Username == username);
     }

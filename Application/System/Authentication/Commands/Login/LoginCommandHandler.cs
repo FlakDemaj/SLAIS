@@ -19,13 +19,13 @@ public class LoginCommandHandler :
     IRequestHandler<LoginCommand, GeneratedTokenResult>
 {
     private readonly IUserRepository _userRepository;
-    private readonly IRefreshTokenRepository _refreshTokenRepository;
+    private readonly RefreshTokenOptions _refreshTokenOptions;
     private readonly ITokenService _tokenService;
     private readonly IPasswordHasher _passwordHasher;
 
     public LoginCommandHandler(
         IUserRepository userRepository,
-        IRefreshTokenRepository refreshTokenRepository,
+        IOptions<RefreshTokenOptions> refreshTokenOptions,
         ITokenService tokenService,
         ISlaisLogger<LoginCommandHandler> logger,
         IPasswordHasher passwordHasher,
@@ -34,7 +34,7 @@ public class LoginCommandHandler :
         : base(logger, mapper, commonOptions)
     {
         _userRepository = userRepository;
-        _refreshTokenRepository = refreshTokenRepository;
+        _refreshTokenOptions = refreshTokenOptions.Value;
         _tokenService = tokenService;
         _passwordHasher = passwordHasher;
     }
@@ -56,7 +56,7 @@ public class LoginCommandHandler :
         string loginName)
     {
         var user = await _userRepository
-            .GetUserByUsernameOrEmailAsync(loginName);
+            .GetUserByUsernameOrEmailWithRefreshTokenAsync(loginName);
 
         if (user == null)
         {
@@ -80,13 +80,13 @@ public class LoginCommandHandler :
         if (checkPassword)
         {
             user.SetLoginAttemptsToZero();
-            await _userRepository.UpdateAndSaveChangesAsync(user);
+            await _userRepository.SaveChangesAsync(user);
             return;
         }
 
-        user.IncrementWrongLoginAttempts(CommonOptions.MaxLoginAttempts);
+        user.IncrementWrongLoginAttempts(_commonOptions.MaxLoginAttempts);
 
-        await _userRepository.UpdateAndSaveChangesAsync(user);
+        await _userRepository.SaveChangesAsync(user);
 
         throw new SlaisException(
             user.IsBlocked
@@ -99,11 +99,14 @@ public class LoginCommandHandler :
         LoginCommand request)
     {
         var accessToken = _tokenService.GenerateAccessToken(user);
-        var refreshToken = await _tokenService.GenerateRefreshToken(
-            request,
-            user.Guid);
 
-        await _refreshTokenRepository.CreateAsync(refreshToken);
+        var refreshToken = user.CreateRefreshToken(
+            _refreshTokenOptions.ExpiresInDays,
+            request.DeviceGuid,
+            request.DeviceName,
+            request.IpAddress);
+
+        await _userRepository.SaveChangesAsync(user);
 
         return new GeneratedTokenResult
         {

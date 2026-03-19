@@ -4,8 +4,8 @@ public abstract class BaseGuidEntity
 {
     public Guid Guid { get; private set; }
 
-    public void SetGuid(Guid guid)
+    protected BaseGuidEntity()
     {
-        Guid = guid;
+        Guid = Guid.CreateVersion7();
     }
 }
