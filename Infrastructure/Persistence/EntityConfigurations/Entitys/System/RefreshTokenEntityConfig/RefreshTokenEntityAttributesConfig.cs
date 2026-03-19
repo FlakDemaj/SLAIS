@@ -14,13 +14,13 @@ internal sealed class RefreshTokenEntityAttributesConfig : BaseGuidEntityConfig<
     public RefreshTokenEntityAttributesConfig()
     {
         Table = "refresh_tokens";
-        Schema = "system";
-        Prefix = "refresh_token_";
+        _schema = "system";
+        _prefix = "refresh_token_";
     }
 
     public override void Configure(EntityTypeBuilder<RefreshTokenEntity> builder)
     {
-        builder.ToTable(Table, Schema);
+        builder.ToTable(Table, _schema);
 
         base.Configure(builder);
 

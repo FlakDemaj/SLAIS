@@ -1,6 +1,6 @@
-using Application.Utils.Interfaces.MediatR;
+using Application.Utils.Interfaces.Mediator;
 
-namespace Application.Utils.MediatR.Interfaces;
+namespace Application.Utils.Mediator.Interfaces;
 
 public interface IRequestHandler<TRequest, TResponse>
     where TRequest : IRequest<TResponse>

@@ -15,7 +15,7 @@ public class BaseIdEntityConfig<T> : BaseDeletedByEntityConfig<T>
 
         builder
             .Property(p => p.Id)
-            .HasColumnName(Prefix + "id")
+            .HasColumnName(_prefix + "id")
             .ValueGeneratedOnAdd()
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
     }

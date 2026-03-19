@@ -1,5 +1,6 @@
 using Application.Common;
 using Application.Utils.Exceptions;
+using Application.Utils.Interfaces.Transaction;
 using Application.Utils.Logger;
 
 namespace Infrastructure.Transaction;

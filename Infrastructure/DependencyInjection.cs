@@ -3,9 +3,10 @@ using System.Reflection;
 using Application;
 using Application.Common.Interfaces.Services;
 using Application.Interfaces;
-using Application.Utils.Interfaces.MediatR;
+using Application.Utils.Interfaces.Mediator;
+using Application.Utils.Interfaces.Transaction;
 using Application.Utils.Logger;
-using Application.Utils.MediatR.Interfaces;
+using Application.Utils.Mediator.Interfaces;
 
 using Infrastructure.InternalServices;
 using Infrastructure.Persistence;
@@ -87,7 +88,7 @@ public static class DependencyInjection
             services.AddTransient(handler.iface, handler.type);
         }
 
-        services.AddScoped<IMediatR, MediatR>();
+        services.AddScoped<IMediator, Mediator>();
         services.AddTransient(typeof(IPipelineTransactionBehavior<,>), typeof(PipelineTransactionBehavior<,>));
     }
 

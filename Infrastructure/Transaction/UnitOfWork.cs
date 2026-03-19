@@ -1,3 +1,5 @@
+using Application.Utils.Interfaces.Transaction;
+
 using Infrastructure.Persistence.Context;
 
 using Microsoft.EntityFrameworkCore.Storage;
@@ -18,8 +20,10 @@ public class UnitOfWork : IUnitOfWork
         return _context.SaveChangesAsync(cancellationToken);
     }
 
-    public Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
+    public async Task<ITransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
     {
-        return _context.Database.BeginTransactionAsync(cancellationToken);
+        var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+
+        return new EfTransaction(transaction);
     }
 }

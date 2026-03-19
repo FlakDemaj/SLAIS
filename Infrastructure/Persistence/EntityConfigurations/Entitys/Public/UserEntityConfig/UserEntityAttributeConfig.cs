@@ -15,13 +15,13 @@ internal sealed class UserEntityAttributeConfig : BaseIdEntityConfig<UserEntity>
     public UserEntityAttributeConfig()
     {
         Table = "users";
-        Schema = "public";
-        Prefix = "user_";
+        _schema = "public";
+        _prefix = "user_";
     }
 
     public override void Configure(EntityTypeBuilder<UserEntity> builder)
     {
-        builder.ToTable(Table, Schema);
+        builder.ToTable(Table, _schema);
 
         base.Configure(builder);
 

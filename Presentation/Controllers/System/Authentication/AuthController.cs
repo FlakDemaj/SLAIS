@@ -2,7 +2,7 @@ using System.Net;
 
 using Application.Authentication.Commands;
 using Application.Authentication.Commands.Login;
-using Application.Utils.Interfaces.MediatR;
+using Application.Utils.Interfaces.Mediator;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +12,7 @@ namespace Presentation.Controllers;
 public class AuthController : BaseRestController
 {
     public AuthController(
-        IMediatR mediator)
+        IMediator mediator)
         : base(mediator)
     {
     }
@@ -22,7 +22,7 @@ public class AuthController : BaseRestController
     public async Task<ActionResult<LoginResponseDto>> Login([FromBody] LoginRequest loginRequest)
     {
         var loginCommand = MapLoginRequest(loginRequest, HttpContext);
-        var tokens = await Mediator.SendAsync(loginCommand);
+        var tokens = await _mediator.SendAsync(loginCommand);
 
         HttpContext.Response.Cookies.Append(
             "RefreshToken",

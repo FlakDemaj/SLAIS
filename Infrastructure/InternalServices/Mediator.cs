@@ -1,6 +1,6 @@
-using Application.Utils.Interfaces.MediatR;
+using Application.Utils.Interfaces.Mediator;
 using Application.Utils.Logger;
-using Application.Utils.MediatR.Interfaces;
+using Application.Utils.Mediator.Interfaces;
 
 using Infrastructure.Transaction;
 
@@ -8,15 +8,15 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure.InternalServices;
 
-public class MediatR : IMediatR
+public class Mediator : IMediator
 {
     private readonly IServiceProvider _serviceProvider;
 
-    private readonly ISlaisLogger<MediatR> _logger;
+    private readonly ISlaisLogger<Mediator> _logger;
 
-    public MediatR(
+    public Mediator(
         IServiceProvider serviceProvider,
-        ISlaisLogger<MediatR> logger)
+        ISlaisLogger<Mediator> logger)
     {
         _serviceProvider = serviceProvider;
         _logger = logger;

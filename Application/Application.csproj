@@ -17,7 +17,6 @@
       <Folder Include="Tasks\" />
       <Folder Include="Units\" />
       <Folder Include="Users\Commands\" />
-      <Folder Include="Utils\Interfaces\Transaction\" />
     </ItemGroup>
 
     <ItemGroup>

@@ -3,10 +3,13 @@ using Application.Common.Interfaces.Services;
 using Application.Common.Options;
 using Application.Interfaces;
 using Application.Utils.Exceptions;
+using Application.Utils.Interfaces.Transaction;
 using Application.Utils.Logger;
-using Application.Utils.MediatR.Interfaces;
+using Application.Utils.Mediator.Interfaces;
 
 using AutoMapper;
+
+using Infrastructure.Transaction;
 
 using Microsoft.Extensions.Options;
 
@@ -22,6 +25,7 @@ public class LoginCommandHandler :
     private readonly RefreshTokenOptions _refreshTokenOptions;
     private readonly ITokenService _tokenService;
     private readonly IPasswordHasher _passwordHasher;
+    private readonly IUnitOfWork _unitOfWork;
 
     public LoginCommandHandler(
         IUserRepository userRepository,
@@ -30,13 +34,15 @@ public class LoginCommandHandler :
         ISlaisLogger<LoginCommandHandler> logger,
         IPasswordHasher passwordHasher,
         IMapper mapper,
-        IOptions<CommonOptions> commonOptions)
+        IOptions<CommonOptions> commonOptions,
+        IUnitOfWork unitOfWork)
         : base(logger, mapper, commonOptions)
     {
         _userRepository = userRepository;
         _refreshTokenOptions = refreshTokenOptions.Value;
         _tokenService = tokenService;
         _passwordHasher = passwordHasher;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<GeneratedTokenResult> HandleAsync(
@@ -45,7 +51,7 @@ public class LoginCommandHandler :
     {
         var user = await CheckUser(request.LoginName);
 
-        await CheckPassword(user, request.Password);
+        await CheckPassword(user, request.Password, cancellationToken);
 
         return await GenerateTokenAsync(
                 user,
@@ -73,7 +79,8 @@ public class LoginCommandHandler :
 
     private async Task CheckPassword(
         UserEntity user,
-        string password)
+        string password,
+        CancellationToken cancellationToken)
     {
         var checkPassword = _passwordHasher.Verify(password, user.HashedPassword);
 
@@ -85,8 +92,9 @@ public class LoginCommandHandler :
         }
 
         user.IncrementWrongLoginAttempts(_commonOptions.MaxLoginAttempts);
-
         await _userRepository.SaveChangesAsync(user);
+
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         throw new SlaisException(
             user.IsBlocked

@@ -1,7 +1,7 @@
 using System.Net;
 
 using Application.Authentication.Commands.Login;
-using Application.Utils.Interfaces.MediatR;
+using Application.Utils.Interfaces.Mediator;
 
 namespace Application.Authentication.Commands;
 

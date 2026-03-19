@@ -13,14 +13,14 @@ internal sealed class InstituteEntityAttributeConfig : BaseIdEntityConfig<Instit
 
     public InstituteEntityAttributeConfig()
     {
-        Prefix = "institute_";
+        _prefix = "institute_";
         Table = "institutes";
-        Schema = "public";
+        _schema = "public";
     }
 
     public override void Configure(EntityTypeBuilder<InstituteEntity> builder)
     {
-        builder.ToTable(Table, Schema);
+        builder.ToTable(Table, _schema);
 
         base.Configure(builder);
 
