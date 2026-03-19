@@ -2,12 +2,12 @@ namespace Infrastructure.Configurations;
 
 public class AccessTokenOptions
 {
-    public string Issuer { get; init; }
+    public required string Issuer { get; init; }
 
-    public string Audience { get; init; }
+    public required string Audience { get; init; }
 
-    public string Key { get; init; }
+    public required string Key { get; init; }
 
-    public int ExpiresInMinutes { get; init; }
+    public required int ExpiresInMinutes { get; init; }
 
 }

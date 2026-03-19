@@ -7,13 +7,13 @@ namespace Application.Authentication.Commands;
 
 public class LoginCommand : IRequest<GeneratedTokenResult>
 {
-    public string LoginName { get; init; }
+    public required string LoginName { get; init; }
 
-    public string Password { get; init; }
+    public required string Password { get; init; }
 
-    public Guid DeviceGuid { get; init; }
+    public required Guid DeviceGuid { get; init; }
 
-    public string DeviceName { get; init; }
+    public required string DeviceName { get; init; }
 
-    public IPAddress IpAddress { get; set; }
+    public required IPAddress IpAddress { get; init; }
 }

@@ -16,4 +16,12 @@ public class InstituteEntity : InstituteNavigationPropertyEntity
         Name = name;
         Branch = branch;
     }
+
+    public static InstituteEntity Create(
+        Guid createdByUserGuid,
+        string name,
+        string branch)
+    {
+        return new InstituteEntity(createdByUserGuid, name, branch);
+    }
 }

@@ -74,7 +74,7 @@ public static class Startup
             options.UseUtcTimestamp = true;
             options.ColorBehavior = builder.Environment.IsProduction()
                 ? LoggerColorBehavior.Disabled
-                : LoggerColorBehavior.Enabled; ;
+                : LoggerColorBehavior.Enabled;
         });
 
         builder.Logging.SetMinimumLevel(LogLevel.Trace);
