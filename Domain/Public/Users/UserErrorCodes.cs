@@ -12,5 +12,4 @@ public enum UserErrorCodes
 
     [Description("Leider sind die angegebenen Daten nicht erlaubt.")]
     InvalidInput = -310003
-
 }
