@@ -84,47 +84,6 @@ public class UserTests : UserTestBase
     }
 
     [Fact]
-    public void IncrementWrongLoginAttempts_ShouldIncrementLoginAttempts()
-    {
-        // Act
-        _user.IncrementWrongLoginAttempts();
-
-        // Assert
-        _user.LoginAttempts.Should().Be(1);
-        _user.IsBlocked.Should().BeFalse();
-    }
-
-    [Fact]
-    public void IncrementWrongLoginAttempts_ShouldBlockUser()
-    {
-        // Act
-        _user.IncrementWrongLoginAttempts();
-        _user.IncrementWrongLoginAttempts();
-        _user.IncrementWrongLoginAttempts();
-        _user.IncrementWrongLoginAttempts();
-        _user.IncrementWrongLoginAttempts();
-
-        // Assert
-        _user.LoginAttempts.Should().Be(5);
-        _user.IsBlocked.Should().BeTrue();
-    }
-
-    [Fact]
-    public void SetLoginAttemptsToZero_ShouldSetCorrectLoginAttempts()
-    {
-        // Act
-        _user.IncrementWrongLoginAttempts();
-        _user.IncrementWrongLoginAttempts();
-        _user.IncrementWrongLoginAttempts();
-        _user.IncrementWrongLoginAttempts();
-
-        _user.SetLoginAttemptsToZero();
-
-        // Assert
-        _user.LoginAttempts.Should().Be(0);
-    }
-
-    [Fact]
     public void CreateUser_ShouldThrowException_WhenEmailIsInvalid()
     {
         var email = "test";
@@ -180,7 +139,7 @@ public class UserTests : UserTestBase
 
     #endregion
 
-    #region SetPassword
+    #region Set
 
     [Fact]
     public void SetPassword_ShouldSetCorrectPassword()
@@ -214,6 +173,65 @@ public class UserTests : UserTestBase
 
         //Assert
         act.ThrowsException(UserErrorCodes.InvalidPassword);
+    }
+
+
+    [Fact]
+    public void IncrementWrongLoginAttempts_ShouldIncrementLoginAttempts()
+    {
+        // Act
+        _user.IncrementWrongLoginAttempts();
+
+        // Assert
+        _user.LoginAttempts.Should().Be(1);
+        _user.IsBlocked.Should().BeFalse();
+    }
+
+    [Fact]
+    public void IncrementWrongLoginAttempts_ShouldBlockUser()
+    {
+        // Act
+        _user.IncrementWrongLoginAttempts();
+        _user.IncrementWrongLoginAttempts();
+        _user.IncrementWrongLoginAttempts();
+        _user.IncrementWrongLoginAttempts();
+        _user.IncrementWrongLoginAttempts();
+
+        // Assert
+        _user.LoginAttempts.Should().Be(5);
+        _user.IsBlocked.Should().BeTrue();
+    }
+
+    [Fact]
+    public void IncrementWrongLoginAttempts_ShouldThrowException_UserAlreadyBlocked()
+    {
+        // Act
+        _user.IncrementWrongLoginAttempts();
+        _user.IncrementWrongLoginAttempts();
+        _user.IncrementWrongLoginAttempts();
+        _user.IncrementWrongLoginAttempts();
+        _user.IncrementWrongLoginAttempts();
+
+        var act = () => _user.IncrementWrongLoginAttempts();
+
+        act.ThrowsException(
+            UserErrorCodes.UserIsAlreadyBlocked);
+
+    }
+
+    [Fact]
+    public void SetLoginAttemptsToZero_ShouldSetCorrectLoginAttempts()
+    {
+        // Act
+        _user.IncrementWrongLoginAttempts();
+        _user.IncrementWrongLoginAttempts();
+        _user.IncrementWrongLoginAttempts();
+        _user.IncrementWrongLoginAttempts();
+
+        _user.SetLoginAttemptsToZero();
+
+        // Assert
+        _user.LoginAttempts.Should().Be(0);
     }
 
     #endregion
