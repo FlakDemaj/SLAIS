@@ -37,8 +37,7 @@ public class RefreshTokenEntity : RefreshTokenNavigationPropertyEntity
 
         CheckInput(expirationInDays,
             deviceGuid,
-            deviceName,
-            userGuid);
+            deviceName);
 
         RefreshToken = Guid.CreateVersion7();
         ExpirationDate = DateTime.UtcNow.AddDays(expirationInDays);
@@ -75,8 +74,7 @@ public class RefreshTokenEntity : RefreshTokenNavigationPropertyEntity
     private static void CheckInput(
         int expirationInDays,
         Guid deviceGuid,
-        string deviceName,
-        Guid userGuid)
+        string deviceName)
     {
         if (expirationInDays <= 0)
         {
