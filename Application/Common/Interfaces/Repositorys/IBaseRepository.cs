@@ -6,6 +6,4 @@ public interface IBaseRepository<T>
     where T : BaseGuidEntity
 {
     Task<T> CreateAsync(T objectToCreate);
-
-    Task SaveChangesAsync(T objectToUpdate);
 }

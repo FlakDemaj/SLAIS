@@ -18,7 +18,7 @@ public class UserRepository : BaseRepository<UserEntity>, IUserRepository
     public Task<UserEntity?> GetUserByGuidAsync(Guid userGuid)
     {
         return _context
-               .GetNoTrackingSet<UserEntity>()
+               .GetTrackingSet<UserEntity>()
                .FirstOrDefaultAsync(user => user.Guid == userGuid);
     }
 

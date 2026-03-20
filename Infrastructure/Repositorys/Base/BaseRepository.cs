@@ -18,9 +18,4 @@ public abstract class BaseRepository<T> : SlaisRepository, IBaseRepository<T>
     {
         return _context.CreateAsync(objectToCreate);
     }
-
-    public async Task SaveChangesAsync(T objectToUpdate)
-    {
-        await _context.UpdateAndSaveChangesAsync(objectToUpdate);
-    }
 }

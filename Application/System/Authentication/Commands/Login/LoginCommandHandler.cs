@@ -9,8 +9,6 @@ using Application.Utils.Mediator.Interfaces;
 
 using AutoMapper;
 
-using Infrastructure.Transaction;
-
 using Microsoft.Extensions.Options;
 
 using SLAIS.Domain.Users;
@@ -19,7 +17,8 @@ namespace Application.Authentication.Commands.Login;
 
 public class LoginCommandHandler :
     BaseHandler<LoginCommandHandler>,
-    IRequestHandler<LoginCommand, GeneratedTokenResult>
+    IRequestHandler<LoginCommand, GeneratedTokenResult>,
+    INoTransaction
 {
     private readonly IUserRepository _userRepository;
     private readonly RefreshTokenOptions _refreshTokenOptions;
@@ -87,13 +86,10 @@ public class LoginCommandHandler :
         if (checkPassword)
         {
             user.SetLoginAttemptsToZero();
-            await _userRepository.SaveChangesAsync(user);
             return;
         }
 
         user.IncrementWrongLoginAttempts(_commonOptions.MaxLoginAttempts);
-        await _userRepository.SaveChangesAsync(user);
-
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         throw new SlaisException(
@@ -113,8 +109,6 @@ public class LoginCommandHandler :
             request.DeviceGuid,
             request.DeviceName,
             request.IpAddress);
-
-        await _userRepository.SaveChangesAsync(user);
 
         return new GeneratedTokenResult
         {

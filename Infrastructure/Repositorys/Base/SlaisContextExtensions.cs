@@ -33,26 +33,10 @@ public static class SlaisContextExtensions
         return context.Set<T>().AsNoTracking();
     }
 
-    public static async Task UpdateAndSaveChangesAsync(
-        this SlaisDbContext context,
-        object updateData)
+    public static IQueryable<T> GetTrackingSet<T>(
+        this SlaisDbContext context)
+        where T : class
     {
-        try
-        {
-            context.Entry(updateData).State = EntityState.Modified;
-        }
-        catch (SlaisException)
-        {
-            throw;
-        }
-        catch (Exception exception)
-        {
-            if (exception is DbUpdateConcurrencyException)
-            {
-                return;
-            }
-
-            throw new SlaisException(CommonErrorCodes.DatabaseError, exception);
-        }
+        return context.Set<T>();
     }
 }
