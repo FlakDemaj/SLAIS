@@ -52,7 +52,7 @@ public class LoginCommandHandler :
 
         await CheckPassword(user, request.Password, cancellationToken);
 
-        return await GenerateTokenAsync(
+        return GenerateToken(
                 user,
                 request);
     }
@@ -98,7 +98,7 @@ public class LoginCommandHandler :
                 : AuthErrorCodes.WrongPassword);
     }
 
-    private async Task<GeneratedTokenResult> GenerateTokenAsync(
+    private GeneratedTokenResult GenerateToken(
         UserEntity user,
         LoginCommand request)
     {
