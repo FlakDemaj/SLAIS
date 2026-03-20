@@ -1,6 +1,7 @@
 using Application.Common;
-using Application.Utils.Exceptions;
 using Application.Utils.Logger;
+
+using Domain.Common.Exceptions;
 
 using EvolveDb;
 

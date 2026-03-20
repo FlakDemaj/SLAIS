@@ -1,7 +1,8 @@
 using Application.Common;
-using Application.Utils.Exceptions;
 using Application.Utils.Interfaces.Transaction;
 using Application.Utils.Logger;
+
+using Domain.Common.Exceptions;
 
 namespace Infrastructure.Transaction;
 

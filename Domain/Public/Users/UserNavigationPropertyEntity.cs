@@ -1,4 +1,5 @@
 using Domain.Institutes;
+using Domain.System.RefreshToken;
 using Domain.Systems.RefreshToken;
 
 using SLAIS.Domain.Commom;

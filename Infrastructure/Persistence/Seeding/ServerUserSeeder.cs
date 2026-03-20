@@ -1,7 +1,8 @@
 using Application.Common;
 using Application.Common.Interfaces.Services;
-using Application.Utils.Exceptions;
 using Application.Utils.Logger;
+
+using Domain.Common.Exceptions;
 
 using Infrastructure.Persistence.Context;
 using Infrastructure.Repositorys;

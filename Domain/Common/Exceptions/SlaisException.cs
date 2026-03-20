@@ -1,4 +1,4 @@
-namespace Application.Utils.Exceptions;
+namespace Domain.Common.Exceptions;
 
 public class SlaisException : Exception
 {
@@ -13,7 +13,7 @@ public class SlaisException : Exception
         ErrorMessage = errorCode.GetDescription();
     }
 
-    public SlaisException(Enum errorCode, System.Exception exception) :
+    public SlaisException(Enum errorCode, Exception exception) :
         base(errorCode.GetDescription(), exception)
     {
         ErrorCode = Convert.ToInt32(errorCode);

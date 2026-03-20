@@ -1,6 +1,9 @@
 using System.Net;
 
-namespace Domain.Systems.RefreshToken;
+using Domain.Common.Exceptions;
+using Domain.Systems.RefreshToken;
+
+namespace Domain.System.RefreshToken;
 
 public class RefreshTokenEntity : RefreshTokenNavigationPropertyEntity
 {
@@ -25,14 +28,20 @@ public class RefreshTokenEntity : RefreshTokenNavigationPropertyEntity
     public Guid UserGuid { get; private set; }
 
     private RefreshTokenEntity(
-        int expirationInDate,
+        int expirationInDays,
         Guid deviceGuid,
         string deviceName,
         IPAddress ipAddress,
         Guid userGuid)
     {
+
+        CheckInput(expirationInDays,
+            deviceGuid,
+            deviceName,
+            userGuid);
+
         RefreshToken = Guid.CreateVersion7();
-        ExpirationDate = DateTime.UtcNow.AddDays(expirationInDate);
+        ExpirationDate = DateTime.UtcNow.AddDays(expirationInDays);
         DeviceGuid = deviceGuid;
         DeviceName = deviceName;
         IpAddress = ipAddress;
@@ -44,14 +53,14 @@ public class RefreshTokenEntity : RefreshTokenNavigationPropertyEntity
     }
 
     internal static RefreshTokenEntity CreateRefreshToken(
-        int expirationInDate,
+        int expirationInDays,
         Guid deviceGuid,
         string deviceName,
         IPAddress ipAddress,
         Guid userGuid)
     {
         return new RefreshTokenEntity(
-            expirationInDate,
+            expirationInDays,
             deviceGuid,
             deviceName,
             ipAddress,
@@ -61,5 +70,27 @@ public class RefreshTokenEntity : RefreshTokenNavigationPropertyEntity
     public int GetExpirationInDays()
     {
         return ExpirationDate.Subtract(LastUsedDate).Days;
+    }
+
+    private static void CheckInput(
+        int expirationInDays,
+        Guid deviceGuid,
+        string deviceName,
+        Guid userGuid)
+    {
+        if (expirationInDays <= 0)
+        {
+            throw new SlaisException(RefreshTokenErrorCodes.InvalidExpiration);
+        }
+
+        if (deviceGuid == Guid.Empty)
+        {
+            throw new SlaisException(RefreshTokenErrorCodes.InvalidDeviceGuid);
+        }
+
+        if (string.IsNullOrWhiteSpace(deviceName))
+        {
+            throw new SlaisException(RefreshTokenErrorCodes.InvalidDeviceName);
+        }
     }
 }

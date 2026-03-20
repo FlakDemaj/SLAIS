@@ -2,7 +2,7 @@ namespace SLAIS.Domain.Commom;
 
 public abstract class BaseGuidEntity
 {
-    public Guid Guid { get; private set; }
+    public Guid Guid { get; init; }
 
     protected BaseGuidEntity()
     {

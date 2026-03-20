@@ -1,6 +1,8 @@
 using System.Net;
 
+using Domain.System.RefreshToken;
 using Domain.Systems.RefreshToken;
+using Domain.Tests.Utils.Extensions;
 
 using FluentAssertions;
 
@@ -10,16 +12,18 @@ namespace Domain.Tests.Public.Users;
 
 public class UserRefreshTokenTest : UserTestBase
 {
-    private readonly RefreshTokenEntity _refreshTokenEntity;
+    private RefreshTokenEntity _refreshTokenEntity;
 
     public UserRefreshTokenTest()
     {
         _refreshTokenEntity = _user.CreateRefreshToken(
-            5,
+            30,
             Guid.CreateVersion7(),
             "Iphone Galaxy S8 Ultra",
             IPAddress.Loopback);
     }
+
+    #region Create
 
     [Fact]
     public void CreateRefreshTokenForUser_NotBeNull()
@@ -73,6 +77,55 @@ public class UserRefreshTokenTest : UserTestBase
     public void CreateRefreshTokenForUser_ShouldSetCorrectIpAddress()
     {
         _refreshTokenEntity.IpAddress.Should().Be(IPAddress.Loopback);
+    }
+
+    [Fact]
+    public void CreateRefreshToken_ShouldThrowExtension_ExpireDaysIsZero()
+    {
+        var expiresInDays = 0;
+
+        var act = () => _refreshTokenEntity = _user.CreateRefreshToken(
+            expiresInDays,
+            Guid.CreateVersion7(),
+            "Iphone Galaxy S8 Ultra",
+            IPAddress.Loopback);
+
+        act.ThrowsException(
+            RefreshTokenErrorCodes.InvalidExpiration);
+    }
+
+    [Fact]
+    public void CreateRefreshToken_ShouldThrowExtension_DeviceGuidIsEmpty()
+    {
+        var act = () => _refreshTokenEntity = _user.CreateRefreshToken(
+            30,
+            Guid.Empty,
+            "Iphone Galaxy S8 Ultra",
+            IPAddress.Loopback);
+
+        act.ThrowsException(
+            RefreshTokenErrorCodes.InvalidDeviceGuid);
+    }
+
+    [Fact]
+    public void CreateRefreshToken_ShouldThrowExtension_DeviceNameIsEmpty()
+    {
+        var act = () => _refreshTokenEntity = _user.CreateRefreshToken(
+            30,
+            Guid.CreateVersion7(),
+            " ",
+            IPAddress.Loopback);
+
+        act.ThrowsException(
+            RefreshTokenErrorCodes.InvalidDeviceName);
+    }
+
+    #endregion
+
+    [Fact]
+    public void GetRefreshTokenExpireDate_ShouldReturnCorrectExpireDate()
+    {
+        _refreshTokenEntity.GetExpirationInDays().Should().Be(29);
     }
 
 }

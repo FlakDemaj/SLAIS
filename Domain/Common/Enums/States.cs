@@ -1,4 +1,4 @@
-namespace SLAIS.Domain.Commom.Enums;
+namespace Domain.Common.Enums;
 
 public enum States
 {

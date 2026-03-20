@@ -1,5 +1,6 @@
 using Application.Common;
-using Application.Utils.Exceptions;
+
+using Domain.Common.Exceptions;
 
 using Infrastructure.Persistence.Context;
 

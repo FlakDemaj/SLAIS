@@ -1,3 +1,4 @@
+using Domain.System.RefreshToken;
 using Domain.Systems.RefreshToken;
 
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

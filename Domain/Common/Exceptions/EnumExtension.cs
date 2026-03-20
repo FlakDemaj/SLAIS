@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Reflection;
 
-namespace Application.Utils.Exceptions;
+namespace Domain.Common.Exceptions;
 
 public static class EnumExtension
 {

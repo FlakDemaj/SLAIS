@@ -1,8 +1,9 @@
 using System.Net;
 
+using Domain.Common.Enums;
+using Domain.Common.Exceptions;
+using Domain.System.RefreshToken;
 using Domain.Systems.RefreshToken;
-
-using SLAIS.Domain.Commom.Enums;
 
 namespace SLAIS.Domain.Users;
 
@@ -60,6 +61,13 @@ public class UserEntity : UserNavigationPropertyEntity
         string lastName,
         Guid instituteUuid)
     {
+        CheckInputs(
+            email,
+            hashedPassword,
+            username,
+            firstName,
+            lastName);
+
         return new UserEntity(
             createdByUserGuid,
             email,
@@ -69,11 +77,16 @@ public class UserEntity : UserNavigationPropertyEntity
             lastName,
             Roles.Admin,
             instituteUuid
-            );
+        );
     }
 
     public void IncrementWrongLoginAttempts(int maxLoginAttempts = 5)
     {
+        if (IsBlocked)
+        {
+            throw new SlaisException(UserErrorCodes.UserIsAlreadyBlocked);
+        }
+
         LoginAttempts++;
 
         if (LoginAttempts == maxLoginAttempts)
@@ -89,6 +102,12 @@ public class UserEntity : UserNavigationPropertyEntity
 
     public void SetPassword(string hashedPassword)
     {
+        if (string.IsNullOrWhiteSpace(hashedPassword)
+            || hashedPassword == HashedPassword)
+        {
+            throw new SlaisException(UserErrorCodes.InvalidPassword);
+        }
+
         HashedPassword = hashedPassword;
     }
 
@@ -109,4 +128,38 @@ public class UserEntity : UserNavigationPropertyEntity
 
         return refreshToken;
     }
+
+    #region Private
+
+    private static void CheckInputs(
+        string email,
+        string hashedPassword,
+        string username,
+        string firstName,
+        string lastName)
+    {
+        if (string.IsNullOrWhiteSpace(email)
+            || !email.Contains('@')
+            || email.Length < 6)
+        {
+            throw new SlaisException(UserErrorCodes.InvalidInput);
+        }
+
+        if (string.IsNullOrWhiteSpace(username)
+            ||string.IsNullOrWhiteSpace(email)
+            || string.IsNullOrWhiteSpace(firstName)
+            || string.IsNullOrWhiteSpace(lastName)
+            || string.IsNullOrWhiteSpace(hashedPassword))
+        {
+            throw new SlaisException(UserErrorCodes.InvalidInput);
+        }
+
+        if (username.Length < 3
+            || username.Length > 100)
+        {
+            throw new SlaisException(UserErrorCodes.InvalidInput);
+        }
+    }
+
+    #endregion
 }

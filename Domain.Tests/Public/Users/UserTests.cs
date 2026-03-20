@@ -1,6 +1,9 @@
+using Domain.Common.Enums;
+using Domain.Tests.Utils.Extensions;
+
 using FluentAssertions;
 
-using SLAIS.Domain.Commom.Enums;
+using SLAIS.Domain.Users;
 
 using Xunit;
 
@@ -8,9 +11,8 @@ namespace Domain.Tests.Public.Users;
 
 public class UserTests : UserTestBase
 {
-    public UserTests()
-    {
-    }
+
+    #region Create
 
     [Fact]
     public void CreateAdmin_ShouldSetCorrectEmail()
@@ -122,6 +124,64 @@ public class UserTests : UserTestBase
     }
 
     [Fact]
+    public void CreateUser_ShouldThrowException_WhenEmailIsInvalid()
+    {
+        var email = "test";
+
+        var act = () => UserEntity.CreateAdmin(
+            Guid.CreateVersion7(),
+            email,
+            "HashedPassword",
+            "testAdmin",
+            "Max",
+            "Mustermann",
+            Guid.CreateVersion7());
+
+        act.ThrowsException(
+            UserErrorCodes.InvalidInput);
+    }
+
+    [Fact]
+    public void CreateUser_ShouldThrowException_WhenUsernameIsWhitespace()
+    {
+        var username = " ";
+
+        var act = () => UserEntity.CreateAdmin(
+            Guid.CreateVersion7(),
+            "test@slais.de",
+            "HashedPassword",
+            username,
+            "Max",
+            "Mustermann",
+            Guid.CreateVersion7());
+
+        act.ThrowsException(
+            UserErrorCodes.InvalidInput);
+    }
+
+    [Fact]
+    public void CreateUser_ShouldThrowException_WhenUsernameIsToSmall()
+    {
+        var username = "a";
+
+        var act = () => UserEntity.CreateAdmin(
+            Guid.CreateVersion7(),
+            "test@slais.de",
+            "HashedPassword",
+            username,
+            "Max",
+            "Mustermann",
+            Guid.CreateVersion7());
+
+        act.ThrowsException(
+            UserErrorCodes.InvalidInput);
+    }
+
+    #endregion
+
+    #region SetPassword
+
+    [Fact]
     public void SetPassword_ShouldSetCorrectPassword()
     {
         var newPassword = "NewPassword";
@@ -132,4 +192,28 @@ public class UserTests : UserTestBase
         //Assert
         _user.HashedPassword.Should().Be(newPassword);
     }
+
+    [Fact]
+    public void SetPassword_ShouldThrowException_WhenPasswordIsInvalid()
+    {
+        var newPassword = " ";
+
+        // Act
+        var act = () => _user.SetPassword(newPassword);
+
+        //Assert
+        act.ThrowsException(UserErrorCodes.InvalidPassword);
+    }
+
+    [Fact]
+    public void SetPassword_ShouldThrowException_PasswordIsTheSame()
+    {
+        // Act
+        var act = () => _user.SetPassword(_user.HashedPassword);
+
+        //Assert
+        act.ThrowsException(UserErrorCodes.InvalidPassword);
+    }
+
+    #endregion
 }
