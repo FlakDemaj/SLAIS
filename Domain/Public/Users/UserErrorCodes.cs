@@ -5,7 +5,7 @@ namespace Domain.Public.Users;
 public enum UserErrorCodes
 {
     [Description("Der Nutzer ist schon blockiert.")]
-    UserIsAlreadyBlocked  = -310001,
+    UserIsAlreadyBlocked = -310001,
 
     [Description("Das Password ist nicht erlaubt.")]
     InvalidPassword = -310002,
