@@ -24,5 +24,6 @@ public class EfTransaction : ITransaction
     public async ValueTask DisposeAsync()
     {
         await _transaction.DisposeAsync();
+        GC.SuppressFinalize(this);
     }
 }

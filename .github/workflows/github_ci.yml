@@ -209,7 +209,7 @@ jobs:
   sonarqube:
     name: SonarCloud Analysis
     runs-on: ubuntu-latest
-    needs: [build, domain-tests, application-tests, infrastructure-tests, presentation-tests]
+    needs: [ build, domain-tests, application-tests, infrastructure-tests, presentation-tests ]
     permissions:
       contents: read
     steps:
@@ -268,11 +268,13 @@ jobs:
             /k:"FlakDemaj_SLAIS_Backend_Mono" \
             /o:"flakdemaj" \
             /d:sonar.login=$SONAR_TOKEN \
+            /d:sonar.qualitygate.wait=true \
             /d:sonar.cs.opencover.reportsPaths="./coverage/**/coverage.opencover.xml"
           dotnet build --configuration Release
           dotnet-sonarscanner end /d:sonar.login=$SONAR_TOKEN
 
       - name: Generate lightweight summary
+        if: always()
         run: |
           REPORT=".sonarqube/out/report-task.txt"
           if [ -f "$REPORT" ]; then
@@ -286,4 +288,5 @@ jobs:
           fi
 
       - name: List .sonarqube directory
+        if: always()
         run: ls -R .sonarqube
