@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace SLAIS.Domain.Users;
+namespace Domain.Public.Users;
 
 public enum UserErrorCodes
 {
@@ -11,6 +11,6 @@ public enum UserErrorCodes
     InvalidPassword = -310002,
 
     [Description("Leider sind die angegebenen Daten nicht erlaubt.")]
-    InvalidInput = -310003,
+    InvalidInput = -310003
 
 }

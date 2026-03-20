@@ -2,8 +2,8 @@ using System.Net;
 
 using Domain.Common.Enums;
 using Domain.Common.Exceptions;
+using Domain.Public.Users;
 using Domain.System.RefreshToken;
-using Domain.Systems.RefreshToken;
 
 namespace SLAIS.Domain.Users;
 
@@ -146,7 +146,7 @@ public class UserEntity : UserNavigationPropertyEntity
         }
 
         if (string.IsNullOrWhiteSpace(username)
-            ||string.IsNullOrWhiteSpace(email)
+            || string.IsNullOrWhiteSpace(email)
             || string.IsNullOrWhiteSpace(firstName)
             || string.IsNullOrWhiteSpace(lastName)
             || string.IsNullOrWhiteSpace(hashedPassword))

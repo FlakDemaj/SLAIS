@@ -1,4 +1,5 @@
 using Domain.Common.Enums;
+using Domain.Public.Users;
 using Domain.Tests.Utils.Extensions;
 
 using FluentAssertions;
