@@ -1,5 +1,7 @@
 using Infrastructure.Persistence.Context;
+
 using Microsoft.EntityFrameworkCore;
+
 using Xunit;
 
 namespace Infrastructure.Tests.Common;
