@@ -30,6 +30,8 @@ public class RefreshTokenEntity : RefreshTokenNavigationPropertyEntity
     //EF Core
     private RefreshTokenEntity()
     {
+        DeviceName = null!;
+        IpAddress = null!;
     }
 
     private RefreshTokenEntity(

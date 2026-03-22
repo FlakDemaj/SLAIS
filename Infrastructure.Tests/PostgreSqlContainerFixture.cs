@@ -22,8 +22,7 @@ public class PostgreSqlContainerFixture : IAsyncLifetime
 
     public PostgreSqlContainerFixture()
     {
-        _postgresContainer = new PostgreSqlBuilder()
-            .WithImage("postgres:15-alpine")
+        _postgresContainer = new PostgreSqlBuilder("postgres:15-alpine")
             .WithDatabase("testdb")
             .WithUsername("testuser")
             .WithPassword("testpassword")
