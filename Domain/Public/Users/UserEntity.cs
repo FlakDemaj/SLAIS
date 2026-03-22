@@ -30,7 +30,7 @@ public class UserEntity : UserNavigationPropertyEntity
     public Guid InstituteUuid { get; private set; }
 
     private UserEntity(
-        Guid createdByUserGuid,
+        Guid? createdByUserGuid,
         string email,
         string hashedPassword,
         string username,
@@ -53,7 +53,7 @@ public class UserEntity : UserNavigationPropertyEntity
     }
 
     public static UserEntity CreateAdmin(
-        Guid createdByUserGuid,
+        Guid? createdByUserGuid,
         string email,
         string hashedPassword,
         string username,

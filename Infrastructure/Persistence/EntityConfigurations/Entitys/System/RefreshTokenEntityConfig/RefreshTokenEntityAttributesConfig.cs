@@ -63,13 +63,13 @@ internal sealed class RefreshTokenEntityAttributesConfig : BaseGuidEntityConfig<
             .Property(rt => rt.CreatedDate)
             .HasColumnName("created_date")
             .IsRequired()
-            .HasDefaultValue(DateTime.UtcNow);
+            .HasDefaultValueSql("now()");
 
         builder
             .Property(rt => rt.LastUsedDate)
             .HasColumnName("last_used_date")
             .IsRequired()
-            .HasDefaultValue(DateTime.UtcNow);
+            .HasDefaultValueSql("now()");
 
         builder
             .Property(rt => rt.UserGuid)

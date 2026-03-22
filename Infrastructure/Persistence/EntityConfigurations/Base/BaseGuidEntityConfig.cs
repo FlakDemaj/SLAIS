@@ -22,7 +22,8 @@ public class BaseGuidEntityConfig<T> : IEntityTypeConfiguration<T>
         builder
             .Property(p => p.Guid)
             .IsRequired()
-            .HasColumnName(_prefix + "guid");
+            .HasColumnName(_prefix + "guid")
+            .ValueGeneratedNever();
 
         builder.HasKey(p => p.Guid);
     }

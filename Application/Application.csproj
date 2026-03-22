@@ -16,7 +16,6 @@
       <Folder Include="System\" />
       <Folder Include="Tasks\" />
       <Folder Include="Units\" />
-      <Folder Include="Users\Commands\" />
     </ItemGroup>
 
     <ItemGroup>

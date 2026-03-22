@@ -9,7 +9,7 @@ public abstract class InstituteNavigationPropertyEntity : BaseIdEntity
     public ICollection<UserEntity> Users { get; private set; } = new List<UserEntity>();
 
     protected InstituteNavigationPropertyEntity
-        (Guid createdByUserGuid)
+        (Guid? createdByUserGuid)
         : base(createdByUserGuid)
     {
     }

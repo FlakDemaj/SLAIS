@@ -8,7 +8,7 @@ public class InstituteEntity : InstituteNavigationPropertyEntity
     public string Branch { get; private set; }
 
     private InstituteEntity(
-        Guid createdByUserGuid,
+        Guid? createdByUserGuid,
         string name,
         string branch)
         : base(createdByUserGuid)
@@ -18,10 +18,13 @@ public class InstituteEntity : InstituteNavigationPropertyEntity
     }
 
     public static InstituteEntity Create(
-        Guid createdByUserGuid,
+        Guid? createdByUserGuid,
         string name,
         string branch)
     {
-        return new InstituteEntity(createdByUserGuid, name, branch);
+        return new InstituteEntity(
+            createdByUserGuid,
+            name,
+            branch);
     }
 }

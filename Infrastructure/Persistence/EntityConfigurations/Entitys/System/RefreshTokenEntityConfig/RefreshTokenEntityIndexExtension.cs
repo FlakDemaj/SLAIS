@@ -14,5 +14,4 @@ internal static class RefreshTokenEntityIndexExtension
             .HasIndex(rt => rt.UserGuid)
             .HasDatabaseName("idx_refresh_tokens_user_guid");
     }
-
 }

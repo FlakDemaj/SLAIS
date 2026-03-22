@@ -12,7 +12,7 @@ public abstract class BaseUpdatedByEntity : BaseCreatedByEntity
     public UserEntity? UpdatedByUser { get; private set; }
 
     protected BaseUpdatedByEntity(
-        Guid createdByUserGuid)
+        Guid? createdByUserGuid)
         : base(createdByUserGuid)
     {
         UpdatedByUserGuid = null;

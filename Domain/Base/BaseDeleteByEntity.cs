@@ -12,7 +12,7 @@ public abstract class BaseDeleteByEntity : BaseUpdatedByEntity
     public UserEntity? DeletedByUser { get; private set; }
 
     protected BaseDeleteByEntity(
-        Guid createdByUserGuid)
+        Guid? createdByUserGuid)
         : base(createdByUserGuid)
     {
         DeletedByUserGuid = null;

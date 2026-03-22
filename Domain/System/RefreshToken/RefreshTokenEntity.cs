@@ -9,7 +9,7 @@ public class RefreshTokenEntity : RefreshTokenNavigationPropertyEntity
 {
     public Guid RefreshToken { get; private set; }
 
-    public DateTime ExpirationDate { get; init; }
+    public DateTime ExpirationDate { get; private set; }
 
     public Guid DeviceGuid { get; private set; }
 
@@ -19,13 +19,18 @@ public class RefreshTokenEntity : RefreshTokenNavigationPropertyEntity
 
     public bool Revoked { get; private set; }
 
-    public DateTime CreatedDate { get; init; }
+    public DateTime CreatedDate { get; private set; }
 
     public DateTime LastUsedDate { get; private set; }
 
     public DateTime? RevokedDate { get; private set; }
 
     public Guid UserGuid { get; private set; }
+
+    //EF Core
+    private RefreshTokenEntity()
+    {
+    }
 
     private RefreshTokenEntity(
         int expirationInDays,

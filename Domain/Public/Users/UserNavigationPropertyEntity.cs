@@ -33,7 +33,7 @@ public abstract class UserNavigationPropertyEntity : BaseIdEntity
 
     // Navigation Property for created Users
     protected UserNavigationPropertyEntity(
-        Guid createdByUserGuid) : base(createdByUserGuid)
+        Guid? createdByUserGuid) : base(createdByUserGuid)
     {
     }
 }
