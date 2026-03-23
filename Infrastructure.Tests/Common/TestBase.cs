@@ -1,6 +1,9 @@
 using Infrastructure.Persistence.Context;
+using Infrastructure.Repositorys;
 
 using Microsoft.EntityFrameworkCore;
+
+using SLAIS.Domain.Commom;
 
 using Xunit;
 
@@ -26,6 +29,19 @@ public abstract class TestBase : IAsyncLifetime
     public virtual Task DisposeAsync()
     {
         return Task.CompletedTask;
+    }
+
+    public async Task SaveChangesAsync()
+    {
+        await _dbContext.SaveChangesAsync();
+    }
+
+    protected async Task<T?> GetCreatedEntityByGuid<T>(Guid userGuid)
+        where T : BaseGuidEntity
+    {
+        return await _dbContext
+            .GetTrackingSet<T>()
+            .FirstOrDefaultAsync(rt => rt.Guid == userGuid);
     }
 
     private async Task CleanDatabaseAsync()

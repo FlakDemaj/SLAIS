@@ -1,4 +1,4 @@
-namespace Infrastructure.Transaction;
+namespace Application.Utils.Interfaces.Transaction;
 
 public interface ITransaction : IAsyncDisposable
 {

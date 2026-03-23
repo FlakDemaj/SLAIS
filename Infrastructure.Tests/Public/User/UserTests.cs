@@ -1,9 +1,8 @@
-using Domain.System.RefreshToken;
-
 using FluentAssertions;
 
 using Infrastructure.Tests.Common;
 using Infrastructure.Tests.Common.Repositorys;
+using Infrastructure.Tests.Common.Shared;
 
 using SLAIS.Domain.Users;
 
@@ -43,38 +42,16 @@ public class UserTests : TestBase
             "Mustermann",
             institute.Guid);
 
-        // Act
         await _userTestRepository.UserRepository
             .CreateAsync(user);
-        await _userTestRepository
-            .SaveChangesAsync();
+        await SaveChangesAsync();
 
-        // Assert
-        var persistedUser = await _userTestRepository
-            .GetUserByGuid(user.Guid);
+        var persistedUser = await GetCreatedEntityByGuid<UserEntity>(user.Guid);
 
-        CheckCreatedUser(
+        Helpers.CheckCreatedUser(
             persistedUser,
             user,
             institute.Guid);
-    }
-
-    [Fact]
-    public async Task CreateAsync_ShouldPersistUserWithRefreshToken_WhenUserIsValid()
-    {
-        var institute = await _instituteTestRepository
-            .CreateInstituteAsync();
-
-        var user = await _userTestRepository.CreateUserAsync(institute.Guid);
-
-        await _userTestRepository
-            .CreateRefreshTokenForUserAsync(user);
-
-        var refreshToken = await _userTestRepository.GetRefreshTokenByUserGuid(user.Guid);
-
-        CheckRefreshToken(
-            refreshToken,
-            user);
     }
 
     #endregion
@@ -95,7 +72,7 @@ public class UserTests : TestBase
             .UserRepository
             .GetUserByGuidAsync(user.Guid);
 
-        CheckCreatedUser(
+        Helpers.CheckCreatedUser(
             persistedUser,
             user,
             institute.Guid);
@@ -132,7 +109,7 @@ public class UserTests : TestBase
             .UserRepository
             .GetUserByUsernameOrEmailWithRefreshTokenAsync(user.Email);
 
-        CheckCreatedUser(
+        Helpers.CheckCreatedUser(
             persistedUser,
             user,
             institute.Guid);
@@ -152,7 +129,7 @@ public class UserTests : TestBase
             .UserRepository
             .GetUserByUsernameOrEmailWithRefreshTokenAsync(user.Username);
 
-        CheckCreatedUser(
+        Helpers.CheckCreatedUser(
             persistedUser,
             user,
             institute.Guid);
@@ -190,85 +167,6 @@ public class UserTests : TestBase
             .GetUserByUsernameOrEmailWithRefreshTokenAsync("userTest1234");
 
         persistedUser.Should().BeNull();
-    }
-
-    [Fact]
-    public async Task GetUserWithRefreshToken_ShouldReturnUser_WhenUserIsValid()
-    {
-        var institute = await _instituteTestRepository.CreateInstituteAsync();
-        var user = await _userTestRepository.CreateUserAsync(institute.Guid);
-        await _userTestRepository.CreateRefreshTokenForUserAsync(user);
-
-        var userWithToken = await _userTestRepository
-            .UserRepository
-            .GetUserByUsernameOrEmailWithRefreshTokenAsync(user.Username);
-
-        CheckCreatedUser(
-            userWithToken,
-            user,
-            institute.Guid);
-
-        user.RefreshTokens.Should().NotBeEmpty();
-        user.RefreshTokens.ToList().Count.Should().Be(1);
-
-        CheckRefreshToken(
-            user.RefreshTokens.ToList()[0],
-            user);
-    }
-
-    #endregion
-
-    #region Helper
-
-    private static void CheckCreatedUser(
-        UserEntity? persistedUser,
-        UserEntity user,
-        Guid instituteGuid)
-    {
-        persistedUser.Should().NotBeNull();
-
-        persistedUser.Guid.Should().Be(user.Guid);
-        persistedUser.Email.Should().Be(user.Email);
-        persistedUser.FirstName.Should().Be(user.FirstName);
-        persistedUser.LastName.Should().Be(user.LastName);
-        persistedUser.Username.Should().Be(user.Username);
-        persistedUser.State.Should().Be(user.State);
-        persistedUser.Role.Should().Be(user.Role);
-        persistedUser.HashedPassword.Should().Be(user.HashedPassword);
-        persistedUser.IsBlocked.Should().Be(user.IsBlocked);
-        persistedUser.LoginAttempts.Should().Be(user.LoginAttempts);
-        persistedUser.InstituteUuid.Should().Be(instituteGuid);
-
-        persistedUser.CreatedDate.Should().BeCloseTo(
-            user.CreatedDate,
-            precision: TimeSpan.FromMicroseconds(1));
-        persistedUser.CreatedByUserGuid.Should().Be(user.CreatedByUserGuid);
-
-        persistedUser.DeleteDate.Should().Be(user.DeleteDate);
-        persistedUser.DeletedByUserGuid.Should().Be(user.DeletedByUserGuid);
-
-        persistedUser.UpdateDate.Should().Be(user.UpdateDate);
-        persistedUser.UpdatedByUserGuid.Should().Be(user.UpdatedByUserGuid);
-    }
-
-    private static void CheckRefreshToken(
-        RefreshTokenEntity? refreshToken,
-        UserEntity user)
-    {
-        refreshToken.Should().NotBeNull();
-
-        refreshToken.Guid.Should().NotBeEmpty();
-        refreshToken.RefreshToken.Should().NotBeEmpty();
-        refreshToken.CreatedDate.Should().BeAfter(user.CreatedDate);
-        refreshToken.Revoked.Should().BeFalse();
-        refreshToken.ExpirationDate.Should().BeCloseTo(DateTime.UtcNow.AddDays(7),
-            precision: TimeSpan.FromSeconds(1));
-        refreshToken.DeviceGuid.Should().NotBeEmpty();
-        refreshToken.DeviceName.Should().NotBeEmpty();
-        refreshToken.UserGuid.Should().Be(user.Guid);
-        refreshToken.IpAddress.Should().NotBeNull();
-        refreshToken.LastUsedDate.Should().BeBefore(DateTime.UtcNow);
-        refreshToken.RevokedDate.Should().BeNull();
     }
 
     #endregion

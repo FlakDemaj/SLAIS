@@ -49,13 +49,7 @@ public class UserTestRepository
         return user;
     }
 
-    public async Task SaveChangesAsync()
-    {
-        await _dbContext.SaveChangesAsync();
-    }
-
-    public async Task<UserEntity> CreateRefreshTokenForUserAsync(
-        UserEntity user,
+    public async Task CreateRefreshTokenForUserAsync(UserEntity user,
         IPAddress? ipAddress = null,
         int expiresInDays = 7,
         Guid? deviceGuid = default,
@@ -68,14 +62,6 @@ public class UserTestRepository
             ipAddress ?? IPAddress.Loopback);
 
         await _dbContext.SaveChangesAsync();
-
-        return user;
-    }
-
-    public async Task<UserEntity?> GetUserByGuid(Guid userGuid)
-    {
-        return await _dbContext.GetNoTrackingSet<UserEntity>()
-            .FirstOrDefaultAsync(u => u.Guid == userGuid);
     }
 
     public async Task<RefreshTokenEntity?> GetRefreshTokenByUserGuid(Guid userGuid)

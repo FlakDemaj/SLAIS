@@ -1,3 +1,5 @@
+using Application.Utils.Interfaces.Transaction;
+
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Infrastructure.Transaction;
