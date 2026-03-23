@@ -49,7 +49,7 @@ public abstract class TestBase
 
     protected readonly string?[] _allowedAssembliesForApplication =
     [
-        _domainAssembly, _applicationAssembly
+        _domainAssembly
     ];
 
     #endregion
