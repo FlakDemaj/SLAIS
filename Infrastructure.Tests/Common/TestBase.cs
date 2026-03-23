@@ -44,8 +44,10 @@ public abstract class TestBase : IAsyncLifetime
 
         var tables = string.Join(", ", qualifiedTableNames);
 
+        #pragma warning disable EF1002
         await _dbContext.Database.ExecuteSqlRawAsync(
             $"TRUNCATE TABLE {tables} RESTART IDENTITY CASCADE");
+        #pragma warning restore EF1002
     }
 
     private static string SanitizeIdentifier(string identifier)
