@@ -39,12 +39,17 @@ public abstract class TestBase : IAsyncLifetime
             })
             .Where(e => e.Table is not null)
             .Where(e => !_excludedSchemas.Contains(e.Schema))
-            .Select(e => $"\"{e.Schema}\".\"{e.Table}\"")
+            .Select(e => $"\"{SanitizeIdentifier(e.Schema)}\".\"{SanitizeIdentifier(e.Table!)}\"")
             .Distinct();
 
         var tables = string.Join(", ", qualifiedTableNames);
 
         await _dbContext.Database.ExecuteSqlRawAsync(
             $"TRUNCATE TABLE {tables} RESTART IDENTITY CASCADE");
+    }
+
+    private static string SanitizeIdentifier(string identifier)
+    {
+        return identifier.Replace("\"", string.Empty);
     }
 }
