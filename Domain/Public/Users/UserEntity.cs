@@ -59,7 +59,7 @@ public class UserEntity : UserNavigationPropertyEntity
         string username,
         string firstName,
         string lastName,
-        Guid instituteUuid)
+        Guid instituteGuid)
     {
         CheckInputs(
             email,
@@ -76,7 +76,7 @@ public class UserEntity : UserNavigationPropertyEntity
             firstName,
             lastName,
             Roles.Admin,
-            instituteUuid
+            instituteGuid
         );
     }
 
