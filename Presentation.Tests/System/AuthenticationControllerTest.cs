@@ -22,7 +22,8 @@ public class AuthenticationControllerTest : TestBase
 {
     public AuthenticationControllerTest(TestWebApplicationFactory factory)
         : base(factory)
-    {}
+    {
+    }
 
     [Fact]
     public async Task Login_ShouldReturnAccessToken_WhenRequestIsValid()
