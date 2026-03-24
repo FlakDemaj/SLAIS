@@ -313,3 +313,6 @@ jobs:
           else
             echo "Sonar report not found" >> $GITHUB_STEP_SUMMARY
           fi
+
+      - name: Show Project Structure
+        run: find . -name "*.csproj" | sort
