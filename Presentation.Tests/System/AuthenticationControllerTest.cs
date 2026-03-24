@@ -27,7 +27,7 @@ public class AuthenticationControllerTest : TestBase
     [Fact]
     public async Task Login_ShouldReturnAccessToken_WhenRequestIsValid()
     {
-        //Arrange
+        // Arrange
         var expectedResult = new LoginResponseDto { AccessToken = Guid.NewGuid().ToString() };
         var expectedMediatorResult = new GeneratedTokenResult
         {
