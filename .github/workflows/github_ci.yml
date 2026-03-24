@@ -330,7 +330,3 @@ sonarqube:
     - name: List .sonarqube directory
       if: always()
       run: ls -R .sonarqube
-
-      - name: List .sonarqube directory
-        if: always()
-        run: ls -R .sonarqube
