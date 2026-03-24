@@ -256,7 +256,7 @@ public class LoginCommandHandlerTests
             username: "testuser",
             email: "test@test.com",
             hashedPassword: "hashed-password",
-            firstName:"Max",
+            firstName: "Max",
             lastName: "Mustermann");
     }
 
