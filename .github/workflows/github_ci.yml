@@ -315,4 +315,5 @@ jobs:
           fi
 
       - name: Show Project Structure
+        if: always()
         run: find . -name "*.csproj" | sort
