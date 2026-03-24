@@ -313,12 +313,3 @@ jobs:
           else
             echo "Sonar report not found" >> $GITHUB_STEP_SUMMARY
           fi
-
-      - name: Debug Application Tests
-        if: always()
-        run: |
-          echo "=== Projektinhalt ==="
-          ls -la Application.Tests/
-
-          echo "=== Teste ob dotnet das Projekt erkennt ==="
-          dotnet test Application.Tests/Application.Tests.csproj --list-tests --configuration Release
