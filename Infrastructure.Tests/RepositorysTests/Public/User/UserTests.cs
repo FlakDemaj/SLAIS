@@ -8,7 +8,7 @@ using SLAIS.Domain.Users;
 
 using Xunit;
 
-namespace Infrastructure.Tests.Public.User;
+namespace Infrastructure.Tests.RepositorysTests.Public.User;
 
 public class UserTests : TestBase
 {

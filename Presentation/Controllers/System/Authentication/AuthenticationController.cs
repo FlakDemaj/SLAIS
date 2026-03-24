@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers;
 
-public class AuthController : BaseRestController
+public class AuthenticationController : BaseRestController
 {
-    public AuthController(
+    public AuthenticationController(
         IMediator mediator)
         : base(mediator)
     {

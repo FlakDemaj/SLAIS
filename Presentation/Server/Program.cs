@@ -5,7 +5,7 @@ using Presentation.Utils;
 
 namespace SLAIS.Presentation.Server;
 
-public static class Program
+public class Program
 {
     public static async Task Main(string[] args)
     {
@@ -15,12 +15,15 @@ public static class Program
 
         var app = builder.Build();
 
-        app.Migrate();
-
-        using (var scope = app.Services.CreateScope())
+        if (!app.Environment.IsEnvironment("Testing"))
         {
-            var seeder = scope.ServiceProvider.GetRequiredService<ServerUserSeeder>();
-            await seeder.SeedAsync();
+            app.Migrate();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var seeder = scope.ServiceProvider.GetRequiredService<ServerUserSeeder>();
+                await seeder.SeedAsync();
+            }
         }
 
         Startup.ConfigurePipeline(app);

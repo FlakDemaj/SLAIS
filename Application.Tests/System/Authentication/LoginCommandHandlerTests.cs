@@ -24,7 +24,7 @@ using SLAIS.Domain.Users;
 
 using Xunit;
 
-namespace Application.Tests.System;
+namespace Application.Tests.System.Authentication;
 
 public class LoginCommandHandlerTests
 {
