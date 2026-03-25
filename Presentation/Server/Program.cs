@@ -23,12 +23,6 @@ public class Program
         if (!app.Environment.IsEnvironment("Testing"))
         {
             app.Migrate();
-
-            using (var scope = app.Services.CreateScope())
-            {
-                var seeder = scope.ServiceProvider.GetRequiredService<ServerUserSeeder>();
-                await seeder.SeedAsync();
-            }
         }
 
         Startup.ConfigurePipeline(app);
