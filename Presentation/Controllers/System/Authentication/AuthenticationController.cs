@@ -26,19 +26,20 @@ public class AuthenticationController : BaseRestController
 
         HttpContext.Response.Cookies.Append(
             "RefreshToken",
-            tokens.RefreshToken.ToString(),
+            tokens.RefreshToken.RefreshToken.ToString(),
             new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Strict,
-                Expires = DateTime.UtcNow.AddDays(tokens.ExpiresIn)
+                Expires = DateTime.UtcNow.AddDays(tokens.RefreshToken.RefreshTokenExpiresInDays)
             });
 
         return Ok(
             new LoginResponseDto
             {
-                AccessToken = tokens.AccessToken
+                AccessToken = tokens.GeneratedAccessToken.AccessToken,
+                AccessTokenExpiresInMinutes = tokens.GeneratedAccessToken.AccessTokenExpiresInMinutes
             }
         );
     }

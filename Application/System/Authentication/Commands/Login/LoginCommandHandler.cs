@@ -113,9 +113,12 @@ public class LoginCommandHandler :
 
         return new GeneratedTokenResult
         {
-            AccessToken = accessToken,
-            RefreshToken = refreshToken.RefreshToken,
-            ExpiresIn = refreshToken.GetExpirationInDays()
+            GeneratedAccessToken = accessToken,
+            RefreshToken = new GeneratedRefreshTokenResult
+            {
+                RefreshToken = refreshToken.Guid,
+                RefreshTokenExpiresInDays = _refreshTokenOptions.ExpiresInDays
+            }
         };
     }
 }

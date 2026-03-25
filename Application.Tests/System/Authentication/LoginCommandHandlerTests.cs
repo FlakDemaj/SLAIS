@@ -83,17 +83,23 @@ public class LoginCommandHandlerTests
             .Verify(command.Password, user.HashedPassword)
             .Returns(true);
 
+        var expectedResult = new GeneratedAccessTokenResult
+        {
+            AccessToken = "access-token",
+            AccessTokenExpiresInMinutes = 900
+        };
+
         _tokenService
             .GenerateAccessToken(user)
-            .Returns("access-token");
+            .Returns(expectedResult);
 
         // Act
         var result = await _handler.HandleAsync(command, CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
-        result.AccessToken.Should().Be("access-token");
-        result.RefreshToken.Should().NotBeEmpty();
+        result.GeneratedAccessToken.Should().Be(expectedResult);
+        result.RefreshToken.Should().NotBeNull();
     }
 
     #endregion
@@ -216,9 +222,15 @@ public class LoginCommandHandlerTests
             .Verify(command.Password, user.HashedPassword)
             .Returns(true);
 
+        var expectedResult = new GeneratedAccessTokenResult
+        {
+            AccessToken = "access-token",
+            AccessTokenExpiresInMinutes = 900
+        };
+
         _tokenService
             .GenerateAccessToken(user)
-            .Returns("access-token");
+            .Returns(expectedResult);
 
         // Act
         await _handler.HandleAsync(command, CancellationToken.None);

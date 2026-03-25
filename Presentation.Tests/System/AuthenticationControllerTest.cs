@@ -29,12 +29,23 @@ public class AuthenticationControllerTest : TestBase
     public async Task Login_ShouldReturnAccessToken_WhenRequestIsValid()
     {
         // Arrange
-        var expectedResult = new LoginResponseDto { AccessToken = Guid.NewGuid().ToString() };
+        var expectedResult = new LoginResponseDto
+        {
+            AccessToken = Guid.NewGuid().ToString(),
+            AccessTokenExpiresInMinutes = 900
+        };
         var expectedMediatorResult = new GeneratedTokenResult
         {
-            AccessToken = expectedResult.AccessToken,
-            ExpiresIn = 10,
-            RefreshToken = Guid.CreateVersion7()
+            GeneratedAccessToken = new GeneratedAccessTokenResult
+            {
+                AccessToken = expectedResult.AccessToken,
+                AccessTokenExpiresInMinutes = expectedResult.AccessTokenExpiresInMinutes
+            },
+            RefreshToken = new GeneratedRefreshTokenResult
+            {
+                RefreshToken = Guid.CreateVersion7(),
+                RefreshTokenExpiresInDays = 15
+            }
         };
 
         _factory.MediatorMock
