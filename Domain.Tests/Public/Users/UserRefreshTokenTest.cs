@@ -1,5 +1,8 @@
 using System.Net;
 
+using ClassLibrary1.Builders;
+
+using Domain.Public.Users;
 using Domain.System.RefreshToken;
 using Domain.Systems.RefreshToken;
 using Domain.Tests.Utils.Extensions;
@@ -82,10 +85,8 @@ public class UserRefreshTokenTest : UserTestBase
     [Fact]
     public void CreateRefreshToken_ShouldThrowExtension_ExpireDaysIsZero()
     {
-        var expiresInDays = 0;
-
         var act = () => _refreshTokenEntity = _user.CreateRefreshToken(
-            expiresInDays,
+            0,
             Guid.CreateVersion7(),
             "Iphone Galaxy S8 Ultra",
             IPAddress.Loopback);
@@ -122,10 +123,69 @@ public class UserRefreshTokenTest : UserTestBase
 
     #endregion
 
+    #region Get
+
     [Fact]
     public void GetRefreshTokenExpireDate_ShouldReturnCorrectExpireDate()
     {
         _refreshTokenEntity.GetExpirationInDays().Should().Be(29);
     }
 
+    #endregion
+
+    #region Validate
+
+    [Fact]
+    public void ValidateRefreshToken_ShouldReturnTrue()
+    {
+        var refreshToken = _user.RefreshTokens.First().RefreshToken;
+        var isValid = _user.ValidateRefreshToken(refreshToken);
+
+        isValid.Should().BeTrue();
+        _user.RefreshTokens.First().LastUsedDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
+    }
+
+    [Fact]
+    public void ValidateRefreshToken_ShouldReturnThrowException_UserIsBlocked()
+    {
+        BlockUser();
+
+        var refreshToken = _user.RefreshTokens.First().RefreshToken;
+
+        var act = () => _user.ValidateRefreshToken(refreshToken);
+
+        act.ThrowsException(UserErrorCodes.UserIsBlocked);
+    }
+
+    [Fact]
+    public void ValidateRefreshToken_ShouldReturnFalse_TokenIsNotFound()
+    {
+        var token = _user.RefreshTokens.First();
+
+        var isValid = _user.ValidateRefreshToken(token.Guid);
+
+        isValid.Should().BeFalse();
+    }
+
+    [Fact]
+    public void ValidateRefreshToken_ShouldReturnFalse_TokenIsRevoked()
+    {
+        var token = new RefreshTokenEntityBuilder().BuildRevoked(_user);
+
+        var isValid = _user.ValidateRefreshToken(token.RefreshToken);
+
+        isValid.Should().BeFalse();
+    }
+
+    [Fact]
+    public void ValidateRefreshToken_ShouldReturnFalse_TokenIsExpired()
+    {
+        var token = new RefreshTokenEntityBuilder().BuildExpired(_user);
+
+        var isValid = _user.ValidateRefreshToken(token.RefreshToken);
+
+        isValid.Should().BeFalse();
+    }
+
+    #endregion
 }

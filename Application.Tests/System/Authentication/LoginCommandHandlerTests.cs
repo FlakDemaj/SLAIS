@@ -6,6 +6,7 @@ using Application.Authentication.Commands.Login;
 using Application.Common.Interfaces.Services;
 using Application.Common.Options;
 using Application.Interfaces;
+using Application.Tests.Common;
 using Application.Utils.Interfaces.Transaction;
 using Application.Utils.Logger;
 
@@ -26,14 +27,18 @@ using Xunit;
 
 namespace Application.Tests.System.Authentication;
 
-public class LoginCommandHandlerTests
+public class LoginCommandHandlerTests : TestBase
 {
     private readonly IUserRepository _userRepository;
+
     private readonly ITokenService _tokenService;
+
     private readonly IPasswordHasher _passwordHasher;
+
     private readonly IUnitOfWork _unitOfWork;
-    private readonly ISlaisLogger<LoginCommandHandler> _logger;
+
     private readonly IOptions<CommonOptions> _commonOptions;
+
     private readonly LoginCommandHandler _handler;
 
     public LoginCommandHandlerTests()
@@ -42,7 +47,7 @@ public class LoginCommandHandlerTests
         _tokenService = Substitute.For<ITokenService>();
         _passwordHasher = Substitute.For<IPasswordHasher>();
         _unitOfWork = Substitute.For<IUnitOfWork>();
-        _logger = Substitute.For<ISlaisLogger<LoginCommandHandler>>();
+        var logger = Substitute.For<ISlaisLogger<LoginCommandHandler>>();
         var mapper = Substitute.For<IMapper>();
 
         var refreshTokenOptions = Options.Create(new RefreshTokenOptions
@@ -59,9 +64,8 @@ public class LoginCommandHandlerTests
             _userRepository,
             refreshTokenOptions,
             _tokenService,
-            _logger,
+            logger,
             _passwordHasher,
-            mapper,
             _commonOptions,
             _unitOfWork);
     }
@@ -125,26 +129,6 @@ public class LoginCommandHandlerTests
             .Where(x => x.ErrorCode == (int)AuthErrorCodes.NoUserWithThisName);
     }
 
-    [Fact]
-    public async Task HandleAsync_ShouldThrowException_WhenUserIsBlocked()
-    {
-        // Arrange
-        var command = BuildValidCommand();
-        var user = BuildBlockedUser();
-
-        _userRepository
-            .GetUserByUsernameOrEmailWithRefreshTokenAsync(command.LoginName)
-            .Returns(user);
-
-        // Act
-        var act = async () => await _handler.HandleAsync(command, CancellationToken.None);
-
-        // Assert
-        await act.Should()
-            .ThrowAsync<SlaisException>()
-            .Where(x => x.ErrorCode == (int)AuthErrorCodes.UserIsBlocked);
-    }
-
     #endregion
 
     #region HandleAsync - Password Checks
@@ -171,36 +155,6 @@ public class LoginCommandHandlerTests
         await act.Should()
             .ThrowAsync<SlaisException>()
             .Where(x => x.ErrorCode == (int)AuthErrorCodes.WrongPassword);
-
-        await _unitOfWork
-            .Received(1)
-            .SaveChangesAsync(Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task HandleAsync_ShouldThrowException_WhenUserGetsBlockedAfterWrongPassword()
-    {
-        // Arrange
-        var command = BuildValidCommand();
-
-        // User hat bereits MaxLoginAttempts - 1 Fehlversuche
-        var user = BuildUserWithLoginAttempts(_commonOptions.Value.MaxLoginAttempts - 1);
-
-        _userRepository
-            .GetUserByUsernameOrEmailWithRefreshTokenAsync(command.LoginName)
-            .Returns(user);
-
-        _passwordHasher
-            .Verify(command.Password, user.HashedPassword)
-            .Returns(false);
-
-        // Act
-        var act = async () => await _handler.HandleAsync(command, CancellationToken.None);
-
-        // Assert
-        await act.Should()
-            .ThrowAsync<SlaisException>()
-            .Where(x => x.ErrorCode == (int)AuthErrorCodes.UserIsBlocked);
 
         await _unitOfWork
             .Received(1)
@@ -253,32 +207,6 @@ public class LoginCommandHandlerTests
             DeviceName = "Test Device",
             IpAddress = IPAddress.Loopback
         };
-    }
-
-    private static UserEntity BuildValidUser()
-    {
-        var institute = InstituteEntity.Create(
-            createdByUserGuid: null,
-            name: "testInstitute",
-            branch: "Health");
-
-        return UserEntity.CreateAdmin(
-            instituteGuid: institute.Guid,
-            createdByUserGuid: null,
-            username: "testuser",
-            email: "test@test.com",
-            hashedPassword: "hashed-password",
-            firstName: "Max",
-            lastName: "Mustermann");
-    }
-
-    private static UserEntity BuildBlockedUser()
-    {
-        var user = BuildValidUser();
-
-        user.IncrementWrongLoginAttempts(1);
-
-        return user;
     }
 
     private static UserEntity BuildUserWithLoginAttempts(int attempts)

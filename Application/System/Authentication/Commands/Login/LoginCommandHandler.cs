@@ -26,6 +26,8 @@ public class LoginCommandHandler :
     private readonly ITokenService _tokenService;
     private readonly IPasswordHasher _passwordHasher;
     private readonly IUnitOfWork _unitOfWork;
+    protected readonly CommonOptions _commonOptions;
+
 
     public LoginCommandHandler(
         IUserRepository userRepository,
@@ -33,16 +35,16 @@ public class LoginCommandHandler :
         ITokenService tokenService,
         ISlaisLogger<LoginCommandHandler> logger,
         IPasswordHasher passwordHasher,
-        IMapper mapper,
         IOptions<CommonOptions> commonOptions,
         IUnitOfWork unitOfWork)
-        : base(logger, mapper, commonOptions)
+        : base(logger)
     {
         _userRepository = userRepository;
         _refreshTokenOptions = refreshTokenOptions.Value;
         _tokenService = tokenService;
         _passwordHasher = passwordHasher;
         _unitOfWork = unitOfWork;
+        _commonOptions = commonOptions.Value;
     }
 
     public async Task<GeneratedTokenResult> HandleAsync(
@@ -69,11 +71,6 @@ public class LoginCommandHandler :
             throw new SlaisException(AuthErrorCodes.NoUserWithThisName);
         }
 
-        if (user.IsBlocked)
-        {
-            throw new SlaisException(AuthErrorCodes.UserIsBlocked);
-        }
-
         return user;
     }
 
@@ -93,10 +90,7 @@ public class LoginCommandHandler :
         user.IncrementWrongLoginAttempts(_commonOptions.MaxLoginAttempts);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        throw new SlaisException(
-            user.IsBlocked
-                ? AuthErrorCodes.UserIsBlocked
-                : AuthErrorCodes.WrongPassword);
+        throw new SlaisException(AuthErrorCodes.WrongPassword);
     }
 
     private GeneratedTokenResult GenerateToken(
@@ -107,9 +101,9 @@ public class LoginCommandHandler :
 
         var refreshToken = user.CreateRefreshToken(
             _refreshTokenOptions.ExpiresInDays,
-            request.DeviceGuid,
-            request.DeviceName,
-            request.IpAddress);
+            deviceName: request.DeviceName,
+            ipAddress: request.IpAddress,
+            deviceGuid: request.DeviceGuid);
 
         return new GeneratedTokenResult
         {

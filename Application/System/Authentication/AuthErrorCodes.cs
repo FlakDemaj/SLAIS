@@ -10,6 +10,9 @@ public enum AuthErrorCodes
     [Description("Das angegebene Passwort ist falsch.")]
     WrongPassword = -200002,
 
-    [Description("Ihr Konto ist gesperrt. Um das Konto zu aktivieren bitte das passwort zurücksetzen!")]
-    UserIsBlocked = -200003
+    [Description("Ex existiert kein Nutzer mit diesem Token. Bitte melden Sie sich beim Support!")]
+    NoUserWithThisToken = -200003,
+
+    [Description("Ihre Session ist abgelaufen. Bitte melden Sie sich wieder an.")]
+    NoValidTokenFound = -200004,
 }

@@ -215,7 +215,7 @@ public class UserTests : UserTestBase
         var act = () => _user.IncrementWrongLoginAttempts();
 
         act.ThrowsException(
-            UserErrorCodes.UserIsAlreadyBlocked);
+            UserErrorCodes.UserIsBlocked);
 
     }
 

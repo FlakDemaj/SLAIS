@@ -17,4 +17,9 @@ public abstract class UserTestBase
             "Mustermann",
             Guid.CreateVersion7());
     }
+
+    protected void BlockUser()
+    {
+        _user.IncrementWrongLoginAttempts(1);
+    }
 }

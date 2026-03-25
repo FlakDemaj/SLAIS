@@ -58,8 +58,7 @@ public class RefreshTokenEntity : RefreshTokenNavigationPropertyEntity
         UserGuid = userGuid;
     }
 
-    internal static RefreshTokenEntity CreateRefreshToken(
-        int expirationInDays,
+    internal static RefreshTokenEntity CreateRefreshToken(int expirationInDays,
         Guid deviceGuid,
         string deviceName,
         IPAddress ipAddress,
@@ -71,6 +70,24 @@ public class RefreshTokenEntity : RefreshTokenNavigationPropertyEntity
             deviceName,
             ipAddress,
             userGuid);
+    }
+
+    public bool Validate()
+    {
+        if (Revoked)
+        {
+            return false;
+        }
+
+        if (ExpirationDate <= DateTime.UtcNow)
+        {
+            Revoked = true;
+            RevokedDate = DateTime.UtcNow;
+            return false;
+        }
+
+        LastUsedDate = DateTime.UtcNow;
+        return true;
     }
 
     public int GetExpirationInDays()

@@ -29,7 +29,7 @@ public class AuthenticationControllerTest : TestBase
     public async Task Login_ShouldReturnAccessToken_WhenRequestIsValid()
     {
         // Arrange
-        var expectedResult = new LoginResponseDto
+        var expectedResult = new AccessTokenResponseDto
         {
             AccessToken = Guid.NewGuid().ToString(),
             AccessTokenExpiresInMinutes = 900
@@ -66,7 +66,7 @@ public class AuthenticationControllerTest : TestBase
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var result = await DeserializeResponseAsync<LoginResponseDto>(response);
+        var result = await DeserializeResponseAsync<AccessTokenResponseDto>(response);
 
         result.Should().NotBeNull();
         result.AccessToken.Should().Be(expectedResult.AccessToken);
@@ -131,36 +131,5 @@ public class AuthenticationControllerTest : TestBase
         errorResponse.ErrorCode.Should().Be((int)AuthErrorCodes.WrongPassword);
         errorResponse.ErrorMessage.Should().Be(AuthErrorCodes.WrongPassword.GetDescription());
     }
-
-    [Fact]
-    public async Task Login_ShouldReturnUnauthorized_WhenUserIsBlocked()
-    {
-        _factory.MediatorMock
-            .SendAsync(Arg.Any<LoginCommand>(), Arg.Any<CancellationToken>())
-            .ThrowsAsync(new SlaisException(AuthErrorCodes.UserIsBlocked));
-
-        var payload = new LoginRequest
-        {
-            LoginName = "TestLoginName",
-            Password = "123456789!",
-            DeviceName = "Samsung Iphone S8 +",
-            DeviceGuid = Guid.CreateVersion7()
-        };
-
-        var content = BuildJsonContent(payload);
-
-        // Act
-        var response = await _client.PostAsync(Routings.RestAuthenticationRouting + "login", content);
-
-        var errorResponse = await DeserializeResponseAsync<ErrorResponseDto>(response);
-
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
-
-        errorResponse.Should().NotBeNull();
-        errorResponse.ErrorCode.Should().Be((int)AuthErrorCodes.UserIsBlocked);
-        errorResponse.ErrorMessage.Should().Be(AuthErrorCodes.UserIsBlocked.GetDescription());
-    }
-
 
 }

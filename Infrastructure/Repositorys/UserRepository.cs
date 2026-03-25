@@ -1,5 +1,7 @@
 using Application.Interfaces;
 
+using Domain.System.RefreshToken;
+
 using Infrastructure.Persistence.Context;
 
 using Microsoft.EntityFrameworkCore;
@@ -29,5 +31,15 @@ public class UserRepository : BaseRepository<UserEntity>, IUserRepository
             .Include(user => user.RefreshTokens)
             .FirstOrDefaultAsync(user => user.Email == username
                                          || user.Username == username);
+    }
+
+    public async Task<UserEntity?> GetUserWithRefreshTokensByGuidAsync(Guid refreshTokenGuid)
+    {
+        return await _context
+            .GetTrackingSet<UserEntity>()
+            .Include(user => user.RefreshTokens)
+            .FirstOrDefaultAsync(user
+                => user.RefreshTokens.Any(rt
+                    => rt.RefreshToken == refreshTokenGuid));
     }
 }
