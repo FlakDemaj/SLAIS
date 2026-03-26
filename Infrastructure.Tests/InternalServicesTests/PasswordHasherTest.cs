@@ -8,7 +8,7 @@ namespace Infrastructure.Tests;
 
 public class PasswordHasherTest
 {
-    private PasswordHasher _passwordHasher;
+    private readonly PasswordHasher _passwordHasher;
 
     public PasswordHasherTest()
     {

@@ -15,9 +15,11 @@ public class TokenServiceTests
 {
     private readonly TokenService _tokenService;
 
+    private readonly IOptions<AccessTokenOptions> _accessTokenOptions;
+
     public TokenServiceTests()
     {
-        var accessTokenOptions = Options.Create(new AccessTokenOptions
+        _accessTokenOptions = Options.Create(new AccessTokenOptions
         {
             Audience = "TestAudience",
             ExpiresInMinutes = 30,
@@ -25,7 +27,7 @@ public class TokenServiceTests
             Key = "SLAIS-Testing-Secret-Key-For-HmacSha512-Must-Be-64-Characters-!!"
         });
 
-        _tokenService = new TokenService(accessTokenOptions);
+        _tokenService = new TokenService(_accessTokenOptions);
     }
 
     [Fact]
@@ -42,6 +44,9 @@ public class TokenServiceTests
 
         var token = _tokenService.GenerateAccessToken(user);
 
-        token.Should().NotBeNullOrEmpty();
+        token.Should().NotBeNull();
+
+        token.AccessToken.Should().NotBeEmpty();
+        token.AccessTokenExpiresInMinutes.Should().Be(_accessTokenOptions.Value.ExpiresInMinutes);
     }
 }

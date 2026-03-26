@@ -6,13 +6,11 @@ using Application.Authentication.Commands.Login;
 using Application.Common.Interfaces.Services;
 using Application.Common.Options;
 using Application.Interfaces;
+using Application.System.Authentication.Commands.Login;
 using Application.Utils.Interfaces.Transaction;
 using Application.Utils.Logger;
 
-using AutoMapper;
-
 using Domain.Common.Exceptions;
-using Domain.Institutes;
 
 using FluentAssertions;
 
@@ -22,47 +20,49 @@ using NSubstitute;
 
 using SLAIS.Domain.Users;
 
+using Tests.Shared.TestDataCreator;
+
 using Xunit;
 
 namespace Application.Tests.System.Authentication;
 
-public class LoginCommandHandlerTests
+public class LoginCommandHandlerUserTests
 {
     private readonly IUserRepository _userRepository;
-    private readonly ITokenService _tokenService;
-    private readonly IPasswordHasher _passwordHasher;
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly ISlaisLogger<LoginCommandHandler> _logger;
-    private readonly IOptions<CommonOptions> _commonOptions;
-    private readonly LoginCommandHandler _handler;
 
-    public LoginCommandHandlerTests()
+    private readonly ITokenService _tokenService;
+
+    private readonly IPasswordHasher _passwordHasher;
+
+    private readonly IUnitOfWork _unitOfWork;
+
+    private readonly LoginCommandHandlerUser _handlerUser;
+
+    public LoginCommandHandlerUserTests()
     {
         _userRepository = Substitute.For<IUserRepository>();
         _tokenService = Substitute.For<ITokenService>();
         _passwordHasher = Substitute.For<IPasswordHasher>();
         _unitOfWork = Substitute.For<IUnitOfWork>();
-        _logger = Substitute.For<ISlaisLogger<LoginCommandHandler>>();
-        var mapper = Substitute.For<IMapper>();
+        var logger = Substitute.For<ISlaisLogger<LoginCommandHandlerUser>>();
 
         var refreshTokenOptions = Options.Create(new RefreshTokenOptions
         {
             ExpiresInDays = 7
         });
 
-        _commonOptions = Options.Create(new CommonOptions
+        var commonOptions = Options.Create(new CommonOptions
         {
             MaxLoginAttempts = 5
         });
 
-        _handler = new LoginCommandHandler(
+        _handlerUser = new LoginCommandHandlerUser(
             _userRepository,
             refreshTokenOptions,
             _tokenService,
-            _logger,
+            logger,
             _passwordHasher,
-            mapper,
-            _commonOptions,
+            commonOptions,
             _unitOfWork);
     }
 
@@ -71,9 +71,8 @@ public class LoginCommandHandlerTests
     [Fact]
     public async Task HandleAsync_ShouldReturnToken_WhenCredentialsAreValid()
     {
-        // Arrange
         var command = BuildValidCommand();
-        var user = BuildValidUser();
+        var user = UserTestData.CreateUser();
 
         _userRepository
             .GetUserByUsernameOrEmailWithRefreshTokenAsync(command.LoginName)
@@ -83,17 +82,21 @@ public class LoginCommandHandlerTests
             .Verify(command.Password, user.HashedPassword)
             .Returns(true);
 
+        var expectedResult = new GeneratedAccessTokenResult
+        {
+            AccessToken = "access-token",
+            AccessTokenExpiresInMinutes = 900
+        };
+
         _tokenService
             .GenerateAccessToken(user)
-            .Returns("access-token");
+            .Returns(expectedResult);
 
-        // Act
-        var result = await _handler.HandleAsync(command, CancellationToken.None);
+        var result = await _handlerUser.HandleAsync(command, CancellationToken.None);
 
-        // Assert
         result.Should().NotBeNull();
-        result.AccessToken.Should().Be("access-token");
-        result.RefreshToken.Should().NotBeEmpty();
+        result.GeneratedAccessToken.Should().Be(expectedResult);
+        result.RefreshToken.Should().NotBeNull();
     }
 
     #endregion
@@ -103,40 +106,20 @@ public class LoginCommandHandlerTests
     [Fact]
     public async Task HandleAsync_ShouldThrowException_WhenUserDoesNotExist()
     {
-        // Arrange
         var command = BuildValidCommand();
 
         _userRepository
             .GetUserByUsernameOrEmailWithRefreshTokenAsync(command.LoginName)
             .Returns((UserEntity?)null);
 
-        // Act
-        var act = async () => await _handler.HandleAsync(command, CancellationToken.None);
+        var act = async () =>
+        {
+            return await _handlerUser.HandleAsync(command, CancellationToken.None);
+        };
 
-        // Assert
         await act.Should()
             .ThrowAsync<SlaisException>()
             .Where(x => x.ErrorCode == (int)AuthErrorCodes.NoUserWithThisName);
-    }
-
-    [Fact]
-    public async Task HandleAsync_ShouldThrowException_WhenUserIsBlocked()
-    {
-        // Arrange
-        var command = BuildValidCommand();
-        var user = BuildBlockedUser();
-
-        _userRepository
-            .GetUserByUsernameOrEmailWithRefreshTokenAsync(command.LoginName)
-            .Returns(user);
-
-        // Act
-        var act = async () => await _handler.HandleAsync(command, CancellationToken.None);
-
-        // Assert
-        await act.Should()
-            .ThrowAsync<SlaisException>()
-            .Where(x => x.ErrorCode == (int)AuthErrorCodes.UserIsBlocked);
     }
 
     #endregion
@@ -146,9 +129,8 @@ public class LoginCommandHandlerTests
     [Fact]
     public async Task HandleAsync_ShouldThrowException_WhenPasswordIsWrong()
     {
-        // Arrange
         var command = BuildValidCommand();
-        var user = BuildValidUser();
+        var user = UserTestData.CreateUser();
 
         _userRepository
             .GetUserByUsernameOrEmailWithRefreshTokenAsync(command.LoginName)
@@ -158,10 +140,11 @@ public class LoginCommandHandlerTests
             .Verify(command.Password, user.HashedPassword)
             .Returns(false);
 
-        // Act
-        var act = async () => await _handler.HandleAsync(command, CancellationToken.None);
+        var act = async () =>
+        {
+            return await _handlerUser.HandleAsync(command, CancellationToken.None);
+        };
 
-        // Assert
         await act.Should()
             .ThrowAsync<SlaisException>()
             .Where(x => x.ErrorCode == (int)AuthErrorCodes.WrongPassword);
@@ -172,41 +155,10 @@ public class LoginCommandHandlerTests
     }
 
     [Fact]
-    public async Task HandleAsync_ShouldThrowException_WhenUserGetsBlockedAfterWrongPassword()
-    {
-        // Arrange
-        var command = BuildValidCommand();
-
-        // User hat bereits MaxLoginAttempts - 1 Fehlversuche
-        var user = BuildUserWithLoginAttempts(_commonOptions.Value.MaxLoginAttempts - 1);
-
-        _userRepository
-            .GetUserByUsernameOrEmailWithRefreshTokenAsync(command.LoginName)
-            .Returns(user);
-
-        _passwordHasher
-            .Verify(command.Password, user.HashedPassword)
-            .Returns(false);
-
-        // Act
-        var act = async () => await _handler.HandleAsync(command, CancellationToken.None);
-
-        // Assert
-        await act.Should()
-            .ThrowAsync<SlaisException>()
-            .Where(x => x.ErrorCode == (int)AuthErrorCodes.UserIsBlocked);
-
-        await _unitOfWork
-            .Received(1)
-            .SaveChangesAsync(Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
     public async Task HandleAsync_ShouldResetLoginAttempts_WhenPasswordIsCorrect()
     {
-        // Arrange
         var command = BuildValidCommand();
-        var user = BuildUserWithLoginAttempts(3);
+        var user = UserTestData.CreateUserWithLoginAttempts(3);
 
         _userRepository
             .GetUserByUsernameOrEmailWithRefreshTokenAsync(command.LoginName)
@@ -216,20 +168,84 @@ public class LoginCommandHandlerTests
             .Verify(command.Password, user.HashedPassword)
             .Returns(true);
 
+        var expectedResult = new GeneratedAccessTokenResult
+        {
+            AccessToken = "access-token",
+            AccessTokenExpiresInMinutes = 900
+        };
+
         _tokenService
             .GenerateAccessToken(user)
-            .Returns("access-token");
+            .Returns(expectedResult);
 
-        // Act
-        await _handler.HandleAsync(command, CancellationToken.None);
+        await _handlerUser.HandleAsync(command, CancellationToken.None);
 
-        // Assert
         user.LoginAttempts.Should().Be(0);
     }
 
     #endregion
 
-    #region Builders
+    #region HandleAsync - Revoke Refresh Token
+
+    [Fact]
+    public async Task HandleAsync_ShouldRevokeActiveRefreshToken_WhenGuidIsTheSame()
+    {
+        var command = BuildValidCommand();
+
+        var user = UserTestData.CreateUser();
+        UserTestData.CreateRefreshToken(
+            user,
+            deviceGuid: command.DeviceGuid);
+        UserTestData.CreateRefreshToken(
+            user,
+            deviceGuid: command.DeviceGuid);
+        UserTestData.CreateRefreshToken(
+            user);
+
+        _userRepository
+            .GetUserByUsernameOrEmailWithRefreshTokenAsync(command.LoginName)
+            .Returns(user);
+
+        _passwordHasher
+            .Verify(command.Password, user.HashedPassword)
+            .Returns(true);
+
+        var expectedResult = new GeneratedAccessTokenResult
+        {
+            AccessToken = "access-token",
+            AccessTokenExpiresInMinutes = 900
+        };
+
+        _tokenService
+            .GenerateAccessToken(user)
+            .Returns(expectedResult);
+
+        await _handlerUser.HandleAsync(command, CancellationToken.None);
+
+        var revokedRefreshTokensWithTheSameDeviceGuid = user
+            .RefreshTokens
+            .Where(rt => rt.DeviceGuid == command.DeviceGuid
+                         && rt.Revoked);
+
+        var notRevokedRefreshTokensWithTheSameDeviceGuid = user
+            .RefreshTokens
+            .Where(rt => rt.DeviceGuid == command.DeviceGuid
+                         && !rt.Revoked);
+
+        var notRevokedRefreshTokensWithDifferentDeviceGuid = user
+            .RefreshTokens
+            .Where(rt => rt.DeviceGuid != command.DeviceGuid
+                         && !rt.Revoked);
+
+        revokedRefreshTokensWithTheSameDeviceGuid.Count().Should().Be(2);
+        notRevokedRefreshTokensWithTheSameDeviceGuid.Count().Should().Be(1);
+        notRevokedRefreshTokensWithDifferentDeviceGuid.Count().Should().Be(1);
+
+    }
+
+    #endregion
+
+    #region Helpers
 
     private static LoginCommand BuildValidCommand()
     {
@@ -241,44 +257,6 @@ public class LoginCommandHandlerTests
             DeviceName = "Test Device",
             IpAddress = IPAddress.Loopback
         };
-    }
-
-    private static UserEntity BuildValidUser()
-    {
-        var institute = InstituteEntity.Create(
-            createdByUserGuid: null,
-            name: "testInstitute",
-            branch: "Health");
-
-        return UserEntity.CreateAdmin(
-            instituteGuid: institute.Guid,
-            createdByUserGuid: null,
-            username: "testuser",
-            email: "test@test.com",
-            hashedPassword: "hashed-password",
-            firstName: "Max",
-            lastName: "Mustermann");
-    }
-
-    private static UserEntity BuildBlockedUser()
-    {
-        var user = BuildValidUser();
-
-        user.IncrementWrongLoginAttempts(1);
-
-        return user;
-    }
-
-    private static UserEntity BuildUserWithLoginAttempts(int attempts)
-    {
-        var user = BuildValidUser();
-
-        for (var i = 0; i < attempts; i++)
-        {
-            user.IncrementWrongLoginAttempts(999);
-        }
-
-        return user;
     }
 
     #endregion

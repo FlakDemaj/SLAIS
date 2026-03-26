@@ -26,48 +26,57 @@ public class UserTestRepository
     public async Task<UserEntity> CreateUserAsync(
         Guid instituteGuid,
         Guid? createdByUserGuid = null,
-        string email = "test@test.com",
-        string firstname = "max",
-        string lastname = "mustermann",
-        string username = "max_mustermann69",
-        string password = "testpassword")
+        string? email = null,
+        string? firstName = null,
+        string? lastName = null,
+        string? username = null,
+        string? password = null)
     {
         var user = UserEntity.CreateAdmin(
             createdByUserGuid,
-            email,
-            password,
-            username,
-            firstname,
-            lastname,
+            email ?? "test@test.com",
+            password ?? "testpassword",
+            username ?? "max_mustermann69",
+            firstName ?? "Max",
+            lastName ?? "Mustermann",
             instituteGuid);
 
-        user = await UserRepository.CreateAsync(
-            user);
-
+        user = await UserRepository.CreateAsync(user);
         await _dbContext.SaveChangesAsync();
 
         return user;
     }
 
-    public async Task CreateRefreshTokenForUserAsync(UserEntity user,
+    public async Task<RefreshTokenEntity> CreateRefreshTokenForUserAsync(
+        UserEntity user,
         IPAddress? ipAddress = null,
-        int expiresInDays = 7,
-        Guid? deviceGuid = default,
-        string deviceName = "test")
+        int? expiresInDays = null,
+        Guid? deviceGuid = null,
+        string? deviceName = null)
     {
-        user.CreateRefreshToken(
-            expiresInDays,
+        var refreshToken = user.CreateRefreshToken(
+            expiresInDays ?? 7,
             deviceGuid ?? Guid.CreateVersion7(),
-            deviceName,
+            deviceName ?? "Test Device",
             ipAddress ?? IPAddress.Loopback);
 
         await _dbContext.SaveChangesAsync();
+
+        return refreshToken;
     }
 
-    public async Task<RefreshTokenEntity?> GetRefreshTokenByUserGuid(Guid userGuid)
+    public async Task<RefreshTokenEntity?> GetRefreshTokenByUserGuidAsync(Guid userGuid)
     {
         return await _dbContext
             .GetNoTrackingSet<RefreshTokenEntity>()
             .FirstOrDefaultAsync(rt => rt.UserGuid == userGuid);
+    }
+
+    public async Task<UserEntity?> GetUserWithRefreshTokensByGuidAsync(Guid userGuid)
+    {
+        return await _dbContext
+            .GetNoTrackingSet<UserEntity>()
+            .Include(u => u.RefreshTokens)
+            .FirstOrDefaultAsync(u => u.Guid == userGuid);
     }
 }

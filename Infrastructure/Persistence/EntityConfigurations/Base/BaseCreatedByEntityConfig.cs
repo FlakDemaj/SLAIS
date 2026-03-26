@@ -1,7 +1,7 @@
+using Domain.Base;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-using SLAIS.Domain.Commom;
 
 namespace Infrastructure.Persistence.EntityConfigurations.Base;
 

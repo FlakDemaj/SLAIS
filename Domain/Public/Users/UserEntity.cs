@@ -82,10 +82,7 @@ public class UserEntity : UserNavigationPropertyEntity
 
     public void IncrementWrongLoginAttempts(int maxLoginAttempts = 5)
     {
-        if (IsBlocked)
-        {
-            throw new SlaisException(UserErrorCodes.UserIsAlreadyBlocked);
-        }
+        CheckUser();
 
         LoginAttempts++;
 
@@ -129,6 +126,38 @@ public class UserEntity : UserNavigationPropertyEntity
         return refreshToken;
     }
 
+    public bool ValidateRefreshToken(Guid refreshTokenGuid)
+    {
+        CheckUser();
+
+        var refreshToken = RefreshTokens
+            .FirstOrDefault(rt =>
+            {
+                return rt.RefreshToken == refreshTokenGuid;
+            });
+
+        if (refreshToken == null)
+        {
+            return false;
+        }
+
+        return refreshToken.Validate();
+    }
+
+    public void RevokeRefreshTokens(Guid deviceGuid)
+    {
+        var activeRefreshTokensInTheDevice =
+            RefreshTokens
+                .Where(rt => rt.DeviceGuid == deviceGuid
+                             && !rt.Revoked)
+                .ToList();
+
+        foreach (var refreshToken in activeRefreshTokensInTheDevice)
+        {
+            refreshToken.Revoke();
+        }
+    }
+
     #region Private
 
     private static void CheckInputs(
@@ -158,6 +187,14 @@ public class UserEntity : UserNavigationPropertyEntity
             || username.Length > 100)
         {
             throw new SlaisException(UserErrorCodes.InvalidInput);
+        }
+    }
+
+    private void CheckUser()
+    {
+        if (IsBlocked)
+        {
+            throw new SlaisException(UserErrorCodes.UserIsBlocked);
         }
     }
 

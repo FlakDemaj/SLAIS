@@ -1,3 +1,6 @@
+using Application.Authentication;
+using Application.Authentication.Commands;
+using Application.Authentication.Commands.Login;
 using Application.Common.Base;
 using Application.Common.Interfaces.Services;
 using Application.Common.Options;
@@ -6,18 +9,16 @@ using Application.Utils.Interfaces.Transaction;
 using Application.Utils.Logger;
 using Application.Utils.Mediator.Interfaces;
 
-using AutoMapper;
-
 using Domain.Common.Exceptions;
 
 using Microsoft.Extensions.Options;
 
 using SLAIS.Domain.Users;
 
-namespace Application.Authentication.Commands.Login;
+namespace Application.System.Authentication.Commands.Login;
 
-public class LoginCommandHandler :
-    BaseHandler<LoginCommandHandler>,
+public class LoginCommandHandlerUser :
+    BaseHandler<LoginCommandHandlerUser>,
     IRequestHandler<LoginCommand, GeneratedTokenResult>,
     INoTransaction
 {
@@ -26,23 +27,25 @@ public class LoginCommandHandler :
     private readonly ITokenService _tokenService;
     private readonly IPasswordHasher _passwordHasher;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly CommonOptions _commonOptions;
 
-    public LoginCommandHandler(
+
+    public LoginCommandHandlerUser(
         IUserRepository userRepository,
         IOptions<RefreshTokenOptions> refreshTokenOptions,
         ITokenService tokenService,
-        ISlaisLogger<LoginCommandHandler> logger,
+        ISlaisLogger<LoginCommandHandlerUser> logger,
         IPasswordHasher passwordHasher,
-        IMapper mapper,
         IOptions<CommonOptions> commonOptions,
         IUnitOfWork unitOfWork)
-        : base(logger, mapper, commonOptions)
+        : base(logger)
     {
         _userRepository = userRepository;
         _refreshTokenOptions = refreshTokenOptions.Value;
         _tokenService = tokenService;
         _passwordHasher = passwordHasher;
         _unitOfWork = unitOfWork;
+        _commonOptions = commonOptions.Value;
     }
 
     public async Task<GeneratedTokenResult> HandleAsync(
@@ -50,6 +53,10 @@ public class LoginCommandHandler :
         CancellationToken cancellationToken = default)
     {
         var user = await CheckUser(request.LoginName);
+
+        // Check if the user is already logged in with the same device.
+        // If so, revoke the old refresh token and create a new one.
+        user.RevokeRefreshTokens(request.DeviceGuid);
 
         await CheckPassword(user, request.Password, cancellationToken);
 
@@ -67,11 +74,6 @@ public class LoginCommandHandler :
         if (user == null)
         {
             throw new SlaisException(AuthErrorCodes.NoUserWithThisName);
-        }
-
-        if (user.IsBlocked)
-        {
-            throw new SlaisException(AuthErrorCodes.UserIsBlocked);
         }
 
         return user;
@@ -93,10 +95,7 @@ public class LoginCommandHandler :
         user.IncrementWrongLoginAttempts(_commonOptions.MaxLoginAttempts);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        throw new SlaisException(
-            user.IsBlocked
-                ? AuthErrorCodes.UserIsBlocked
-                : AuthErrorCodes.WrongPassword);
+        throw new SlaisException(AuthErrorCodes.WrongPassword);
     }
 
     private GeneratedTokenResult GenerateToken(
@@ -107,15 +106,18 @@ public class LoginCommandHandler :
 
         var refreshToken = user.CreateRefreshToken(
             _refreshTokenOptions.ExpiresInDays,
-            request.DeviceGuid,
-            request.DeviceName,
-            request.IpAddress);
+            deviceName: request.DeviceName,
+            ipAddress: request.IpAddress,
+            deviceGuid: request.DeviceGuid);
 
         return new GeneratedTokenResult
         {
-            AccessToken = accessToken,
-            RefreshToken = refreshToken.RefreshToken,
-            ExpiresIn = refreshToken.GetExpirationInDays()
+            GeneratedAccessToken = accessToken,
+            RefreshToken = new GeneratedRefreshTokenResult
+            {
+                RefreshToken = refreshToken.Guid,
+                RefreshTokenExpiresInDays = _refreshTokenOptions.ExpiresInDays
+            }
         };
     }
 }

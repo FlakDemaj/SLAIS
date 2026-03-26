@@ -1,5 +1,4 @@
 using Domain.System.RefreshToken;
-using Domain.Systems.RefreshToken;
 
 using Infrastructure.Persistence.EntityConfigurations.Base;
 
