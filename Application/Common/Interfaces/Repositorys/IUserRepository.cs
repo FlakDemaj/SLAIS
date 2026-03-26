@@ -1,5 +1,3 @@
-using Domain.System.RefreshToken;
-
 using SLAIS.Domain.Users;
 
 namespace Application.Interfaces;

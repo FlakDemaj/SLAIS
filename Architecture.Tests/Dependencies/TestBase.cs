@@ -17,7 +17,10 @@ public abstract class TestBase
     protected static string LogForbiddenDependencies(TestResult result)
     {
         var failingTypes = result.FailingTypes?
-            .Select(t => t.FullName)
+            .Select(t =>
+            {
+                return t.FullName;
+            })
             .ToList() ?? [];
 
         var message = string.Join(Environment.NewLine, failingTypes);

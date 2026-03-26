@@ -23,10 +23,16 @@ public class PresentationLayer : TestBase
         var referencedAssemblies = typeof(Presentation.IPresentationAssemblyMarker)
             .Assembly
             .GetReferencedAssemblies()
-            .Select(a => a.Name)
+            .Select(a =>
+            {
+                return a.Name;
+            })
             .ToList();
 
         Assert.True(_allowedAssembliesForPresentation
-            .All(allowed => referencedAssemblies.Contains(allowed)));
+            .All(allowed =>
+            {
+                return referencedAssemblies.Contains(allowed);
+            }));
     }
 }

@@ -1,7 +1,5 @@
 using Application.Interfaces;
 
-using Domain.System.RefreshToken;
-
 using Infrastructure.Persistence.Context;
 
 using Microsoft.EntityFrameworkCore;
@@ -40,6 +38,7 @@ public class UserRepository : BaseRepository<UserEntity>, IUserRepository
             .Include(user => user.RefreshTokens)
             .FirstOrDefaultAsync(user
                 => user.RefreshTokens.Any(rt
-                    => rt.RefreshToken == refreshTokenGuid));
+                    => rt.RefreshToken == refreshTokenGuid
+                ));
     }
 }

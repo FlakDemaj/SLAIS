@@ -1,5 +1,4 @@
 using System.Net;
-using System.Security;
 
 using Domain.Common.Enums;
 using Domain.Common.Exceptions;
@@ -132,7 +131,10 @@ public class UserEntity : UserNavigationPropertyEntity
         CheckUser();
 
         var refreshToken = RefreshTokens
-            .FirstOrDefault(rt => rt.RefreshToken == refreshTokenGuid);
+            .FirstOrDefault(rt =>
+            {
+                return rt.RefreshToken == refreshTokenGuid;
+            });
 
         if (refreshToken == null)
         {

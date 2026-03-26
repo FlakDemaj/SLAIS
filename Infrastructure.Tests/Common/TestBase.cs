@@ -48,14 +48,26 @@ public abstract class TestBase : IAsyncLifetime
     {
         var qualifiedTableNames = _dbContext.Model
             .GetEntityTypes()
-            .Select(e => new
+            .Select(e =>
             {
-                Schema = e.GetSchema() ?? "public",
-                Table = e.GetTableName()
+                return new
+                {
+                    Schema = e.GetSchema() ?? "public",
+                    Table = e.GetTableName()
+                };
             })
-            .Where(e => e.Table is not null)
-            .Where(e => !_excludedSchemas.Contains(e.Schema))
-            .Select(e => $"\"{SanitizeIdentifier(e.Schema)}\".\"{SanitizeIdentifier(e.Table!)}\"")
+            .Where(e =>
+            {
+                return e.Table is not null;
+            })
+            .Where(e =>
+            {
+                return !_excludedSchemas.Contains(e.Schema);
+            })
+            .Select(e =>
+            {
+                return $"\"{SanitizeIdentifier(e.Schema)}\".\"{SanitizeIdentifier(e.Table!)}\"";
+            })
             .Distinct();
 
         var tables = string.Join(", ", qualifiedTableNames);

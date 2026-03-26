@@ -93,7 +93,10 @@ public class MediatorTests
         var mediator = BuildMediator(serviceProvider);
 
         // Act
-        var act = async () => await mediator.SendAsync(request, CancellationToken.None);
+        var act = async () =>
+        {
+            return await mediator.SendAsync(request, CancellationToken.None);
+        };
 
         // Assert
         await act.Should().ThrowAsync<InvalidOperationException>();
