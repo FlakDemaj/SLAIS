@@ -31,27 +31,22 @@ public class AuthenticationControllerTest : TestBase
     [Fact]
     public async Task Login_ShouldReturnAccessToken_WhenRequestIsValid()
     {
-        var expectedResult = new AccessTokenResponseDto
+        var expectedResult = new GeneratedTokenResult
         {
-            AccessToken = Guid.NewGuid().ToString(),
-            AccessTokenExpiresInMinutes = 900
+            GeneratedAccessToken =
+                new GeneratedAccessTokenResult
+                {
+                    AccessToken = Guid.CreateVersion7().ToString(), AccessTokenExpiresInMinutes = 900
+                },
+            RefreshToken = new GeneratedRefreshTokenResult
+            {
+                RefreshToken = Guid.CreateVersion7(), RefreshTokenExpiresInDays = 15
+            }
         };
 
         _factory.MediatorMock
             .SendAsync(Arg.Any<LoginCommand>(), Arg.Any<CancellationToken>())
-            .Returns(new GeneratedTokenResult
-            {
-                GeneratedAccessToken = new GeneratedAccessTokenResult
-                {
-                    AccessToken = expectedResult.AccessToken,
-                    AccessTokenExpiresInMinutes = expectedResult.AccessTokenExpiresInMinutes
-                },
-                RefreshToken = new GeneratedRefreshTokenResult
-                {
-                    RefreshToken = Guid.CreateVersion7(),
-                    RefreshTokenExpiresInDays = 15
-                }
-            });
+            .Returns(expectedResult);
 
         var response = await _client.PostAsync(
             Routings.RestAuthenticationRouting + "login",
@@ -62,7 +57,18 @@ public class AuthenticationControllerTest : TestBase
         var result = await DeserializeResponseAsync<AccessTokenResponseDto>(response);
 
         result.Should().NotBeNull();
-        result.AccessToken.Should().Be(expectedResult.AccessToken);
+        result.AccessToken.Should().Be(expectedResult.GeneratedAccessToken.AccessToken);
+
+        var setCookieHeader = response.Headers
+            .SingleOrDefault(h => h.Key == "Set-Cookie")
+            .Value?
+            .FirstOrDefault();
+
+        setCookieHeader.Should().NotBeNull();
+        setCookieHeader.Should().Contain($"RefreshToken={expectedResult.RefreshToken.RefreshToken}");
+        setCookieHeader.Should().Contain("httponly");
+        setCookieHeader.Should().Contain("secure");
+        setCookieHeader.Should().Contain("samesite=strict");
     }
 
     [Fact]
