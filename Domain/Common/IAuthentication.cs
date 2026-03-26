@@ -4,7 +4,7 @@ namespace Domain.Common;
 
 public interface IAuthentication
 {
-    public Guid UserGuid { get; }
+    Guid UserGuid { get; }
 
-    public Roles UserRole { get; }
+    Roles UserRole { get; }
 }
