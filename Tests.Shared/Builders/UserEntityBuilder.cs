@@ -122,10 +122,12 @@ public class UserEntityBuilder
 
         while (type != null)
         {
-            // NOSONAR - Intentionally used in test helpers only
+
+            #pragma warning disable S3011
             var property = type.GetProperty(
                 propertyName,
                 BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+            #pragma warning restore S3011
 
             if (property != null)
             {
@@ -143,11 +145,12 @@ public class UserEntityBuilder
 
         while (type != null)
         {
-            // NOSONAR - Intentionally used in test helpers only
+            #pragma warning disable S3011
             var field = type.GetFields(
                     BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly)
                 .FirstOrDefault(f =>
                     f.FieldType == typeof(ICollection<RefreshTokenEntity>));
+            #pragma warning restore S3011
 
             if (field != null)
             {
