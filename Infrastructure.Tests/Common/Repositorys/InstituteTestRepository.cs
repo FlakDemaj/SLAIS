@@ -8,6 +8,7 @@ namespace Infrastructure.Tests.Common.Repositorys;
 public class InstituteTestRepository
 {
     public readonly InstituteRepository InstituteRepository;
+
     private readonly SlaisDbContext _dbContext;
 
     public InstituteTestRepository(PostgreSqlContainerFixture fixture)
@@ -18,13 +19,13 @@ public class InstituteTestRepository
 
     public async Task<InstituteEntity> CreateInstituteAsync(
         Guid? createdByUserGuid = null,
-        string name = "TestInstitute",
-        string branch = "Health")
+        string? name = null,
+        string? branch = null)
     {
         var institute = InstituteEntity.Create(
             createdByUserGuid,
-            name,
-            branch);
+            name ?? "TestInstitute",
+            branch ?? "Health");
 
         institute = await InstituteRepository.CreateAsync(institute);
         await _dbContext.SaveChangesAsync();
@@ -32,4 +33,3 @@ public class InstituteTestRepository
         return institute;
     }
 }
-

@@ -1,17 +1,12 @@
 using Application.Authentication.Commands.Login;
 using Application.Common.Base;
 using Application.Common.Interfaces.Services;
-using Application.Common.Options;
 using Application.Interfaces;
 using Application.Utils.Interfaces.Transaction;
 using Application.Utils.Logger;
 using Application.Utils.Mediator.Interfaces;
 
-using AutoMapper;
-
 using Domain.Common.Exceptions;
-
-using Microsoft.Extensions.Options;
 
 namespace Application.Authentication.Commands.ValidateRefreshToken;
 
@@ -25,7 +20,6 @@ public class ValidateRefreshTokenCommandHandler
     private readonly IUnitOfWork _unitOfWork;
 
     private readonly ITokenService _tokenService;
-
 
     public ValidateRefreshTokenCommandHandler(
         ISlaisLogger<ValidateRefreshTokenCommandHandler> logger,

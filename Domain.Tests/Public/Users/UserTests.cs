@@ -6,135 +6,226 @@ using FluentAssertions;
 
 using SLAIS.Domain.Users;
 
+using Tests.Shared.TestDataCreator;
+
 using Xunit;
 
 namespace Domain.Tests.Public.Users;
 
-public class UserTests : UserTestBase
+public class UserTests
 {
-
     #region Create
 
     [Fact]
     public void CreateAdmin_ShouldSetCorrectEmail()
     {
-        _user.Email.Should().Be("test@slais.de");
-    }
-
-    [Fact]
-    public void CreateAdmin_ShouldSetCorrectName()
-    {
-        _user.FirstName.Should().Be("Max");
-        _user.LastName.Should().Be("Mustermann");
-    }
-
-    [Fact]
-    public void CreateAdmin_ShouldSetCorrectPassword()
-    {
-        _user.HashedPassword.Should().Be("HashedPassword");
-    }
-
-    [Fact]
-    public void CreateAdmin_ShouldSetCorrectUserName()
-    {
-        _user.Username.Should().Be("testAdmin");
-    }
-
-    [Fact]
-    public void CreateAdmin_ShouldSetCorrectRole()
-    {
-        _user.Role.Should().Be(Roles.Admin);
-    }
-
-    [Fact]
-    public void CreateAdmin_ShouldSetDefaultValues()
-    {
-        _user.LoginAttempts.Should().Be(0);
-        _user.IsBlocked.Should().BeFalse();
-        _user.State.Should().Be(States.Active);
-    }
-
-    [Fact]
-    public void CreateAdmin_ShouldSetAuditDefaults()
-    {
-        _user.CreatedByUserGuid.Should().NotBeNull();
-        _user.CreatedDate.Should().BeAfter(DateTime.MinValue);
-        _user.UpdateDate.Should().BeNull();
-        _user.UpdatedByUserGuid.Should().BeNull();
-        _user.DeleteDate.Should().BeNull();
-        _user.DeletedByUserGuid.Should().BeNull();
-    }
-
-    [Fact]
-    public void CreateAdmin_ShouldHaveInstituteGuid()
-    {
-        _user.InstituteUuid.Should().NotBeEmpty();
-    }
-
-    [Fact]
-    public void CreateAdmin_ShouldGenerateGuid()
-    {
-        _user.Guid.Should().NotBeEmpty();
-    }
-
-    [Fact]
-    public void CreateAdmin_ShouldNotGenerateId()
-    {
-        _user.Id.Should().BeNull();
-    }
-
-    [Fact]
-    public void CreateUser_ShouldThrowException_WhenEmailIsInvalid()
-    {
-        var email = "test";
-
-        var act = () => UserEntity.CreateAdmin(
+        var user = UserEntity.CreateAdmin(
             Guid.CreateVersion7(),
-            email,
+            "test@slais.de",
             "HashedPassword",
             "testAdmin",
             "Max",
             "Mustermann",
             Guid.CreateVersion7());
 
-        act.ThrowsException(
-            UserErrorCodes.InvalidInput);
+        user.Email.Should().Be("test@slais.de");
+    }
+
+    [Fact]
+    public void CreateAdmin_ShouldSetCorrectName()
+    {
+        var user = UserEntity.CreateAdmin(
+            Guid.CreateVersion7(),
+            "test@slais.de",
+            "HashedPassword",
+            "testAdmin",
+            "Max",
+            "Mustermann",
+            Guid.CreateVersion7());
+
+        user.FirstName.Should().Be("Max");
+        user.LastName.Should().Be("Mustermann");
+    }
+
+    [Fact]
+    public void CreateAdmin_ShouldSetCorrectPassword()
+    {
+        var user = UserEntity.CreateAdmin(
+            Guid.CreateVersion7(),
+            "test@slais.de",
+            "HashedPassword",
+            "testAdmin",
+            "Max",
+            "Mustermann",
+            Guid.CreateVersion7());
+
+        user.HashedPassword.Should().Be("HashedPassword");
+    }
+
+    [Fact]
+    public void CreateAdmin_ShouldSetCorrectUserName()
+    {
+        var user = UserEntity.CreateAdmin(
+            Guid.CreateVersion7(),
+            "test@slais.de",
+            "HashedPassword",
+            "testAdmin",
+            "Max",
+            "Mustermann",
+            Guid.CreateVersion7());
+
+        user.Username.Should().Be("testAdmin");
+    }
+
+    [Fact]
+    public void CreateAdmin_ShouldSetCorrectRole()
+    {
+        var user = UserEntity.CreateAdmin(
+            Guid.CreateVersion7(),
+            "test@slais.de",
+            "HashedPassword",
+            "testAdmin",
+            "Max",
+            "Mustermann",
+            Guid.CreateVersion7());
+
+        user.Role.Should().Be(Roles.Admin);
+    }
+
+    [Fact]
+    public void CreateAdmin_ShouldSetDefaultValues()
+    {
+        var user = UserEntity.CreateAdmin(
+            Guid.CreateVersion7(),
+            "test@slais.de",
+            "HashedPassword",
+            "testAdmin",
+            "Max",
+            "Mustermann",
+            Guid.CreateVersion7());
+
+        user.LoginAttempts.Should().Be(0);
+        user.IsBlocked.Should().BeFalse();
+        user.State.Should().Be(States.Active);
+    }
+
+    [Fact]
+    public void CreateAdmin_ShouldSetAuditDefaults()
+    {
+        var user = UserEntity.CreateAdmin(
+            Guid.CreateVersion7(),
+            "test@slais.de",
+            "HashedPassword",
+            "testAdmin",
+            "Max",
+            "Mustermann",
+            Guid.CreateVersion7());
+
+        user.CreatedByUserGuid.Should().NotBeNull();
+        user.CreatedDate.Should().BeAfter(DateTime.MinValue);
+        user.UpdateDate.Should().BeNull();
+        user.UpdatedByUserGuid.Should().BeNull();
+        user.DeleteDate.Should().BeNull();
+        user.DeletedByUserGuid.Should().BeNull();
+    }
+
+    [Fact]
+    public void CreateAdmin_ShouldHaveInstituteGuid()
+    {
+        var user = UserEntity.CreateAdmin(
+            Guid.CreateVersion7(),
+            "test@slais.de",
+            "HashedPassword",
+            "testAdmin",
+            "Max",
+            "Mustermann",
+            Guid.CreateVersion7());
+
+        user.InstituteUuid.Should().NotBeEmpty();
+    }
+
+    [Fact]
+    public void CreateAdmin_ShouldGenerateGuid()
+    {
+        var user = UserEntity.CreateAdmin(
+            Guid.CreateVersion7(),
+            "test@slais.de",
+            "HashedPassword",
+            "testAdmin",
+            "Max",
+            "Mustermann",
+            Guid.CreateVersion7());
+
+        user.Guid.Should().NotBeEmpty();
+    }
+
+    [Fact]
+    public void CreateAdmin_ShouldNotGenerateId()
+    {
+        var user = UserEntity.CreateAdmin(
+            Guid.CreateVersion7(),
+            "test@slais.de",
+            "HashedPassword",
+            "testAdmin",
+            "Max",
+            "Mustermann",
+            Guid.CreateVersion7());
+
+        user.Id.Should().BeNull();
+    }
+
+    [Fact]
+    public void CreateUser_ShouldThrowException_WhenEmailIsInvalid()
+    {
+        var act = () =>
+        {
+            return UserEntity.CreateAdmin(
+                        Guid.CreateVersion7(),
+                        "test",
+                        "HashedPassword",
+                        "testAdmin",
+                        "Max",
+                        "Mustermann",
+                        Guid.CreateVersion7());
+        };
+
+        act.ThrowsException(UserErrorCodes.InvalidInput);
     }
 
     [Fact]
     public void CreateUser_ShouldThrowException_WhenUsernameIsWhitespace()
     {
-        var username = " ";
+        var act = () =>
+        {
+            return UserEntity.CreateAdmin(
+                        Guid.CreateVersion7(),
+                        "test@slais.de",
+                        "HashedPassword",
+                        " ",
+                        "Max",
+                        "Mustermann",
+                        Guid.CreateVersion7());
+        };
 
-        var act = () => UserEntity.CreateAdmin(
-            Guid.CreateVersion7(),
-            "test@slais.de",
-            "HashedPassword",
-            username,
-            "Max",
-            "Mustermann",
-            Guid.CreateVersion7());
-
-        act.ThrowsException(
-            UserErrorCodes.InvalidInput);
+        act.ThrowsException(UserErrorCodes.InvalidInput);
     }
 
     [Fact]
     public void CreateUser_ShouldThrowException_WhenUsernameIsToSmall()
     {
-        var username = "a";
+        var act = () =>
+        {
+            return UserEntity.CreateAdmin(
+                        Guid.CreateVersion7(),
+                        "test@slais.de",
+                        "HashedPassword",
+                        "a",
+                        "Max",
+                        "Mustermann",
+                        Guid.CreateVersion7());
+        };
 
-        var act = () => UserEntity.CreateAdmin(
-            Guid.CreateVersion7(),
-            "test@slais.de",
-            "HashedPassword",
-            username,
-            "Max",
-            "Mustermann",
-            Guid.CreateVersion7());
-
-        act.ThrowsException(
-            UserErrorCodes.InvalidInput);
+        act.ThrowsException(UserErrorCodes.InvalidInput);
     }
 
     #endregion
@@ -144,94 +235,85 @@ public class UserTests : UserTestBase
     [Fact]
     public void SetPassword_ShouldSetCorrectPassword()
     {
+        var user = UserTestData.CreateUser();
         var newPassword = "NewPassword";
 
-        // Act
-        _user.SetPassword(newPassword);
+        user.SetPassword(newPassword);
 
-        //Assert
-        _user.HashedPassword.Should().Be(newPassword);
+        user.HashedPassword.Should().Be(newPassword);
     }
 
     [Fact]
     public void SetPassword_ShouldThrowException_WhenPasswordIsInvalid()
     {
-        var newPassword = " ";
+        var user = UserTestData.CreateUser();
 
-        // Act
-        var act = () => _user.SetPassword(newPassword);
+        var act = () =>
+        {
+            user.SetPassword(" ");
+        };
 
-        //Assert
         act.ThrowsException(UserErrorCodes.InvalidPassword);
     }
 
     [Fact]
     public void SetPassword_ShouldThrowException_PasswordIsTheSame()
     {
-        // Act
-        var act = () => _user.SetPassword(_user.HashedPassword);
+        var user = UserTestData.CreateUser();
 
-        //Assert
+        var act = () =>
+        {
+            user.SetPassword(user.HashedPassword);
+        };
+
         act.ThrowsException(UserErrorCodes.InvalidPassword);
     }
-
 
     [Fact]
     public void IncrementWrongLoginAttempts_ShouldIncrementLoginAttempts()
     {
-        // Act
-        _user.IncrementWrongLoginAttempts();
+        var user = UserTestData.CreateUser();
 
-        // Assert
-        _user.LoginAttempts.Should().Be(1);
-        _user.IsBlocked.Should().BeFalse();
+        user.IncrementWrongLoginAttempts();
+
+        user.LoginAttempts.Should().Be(1);
+        user.IsBlocked.Should().BeFalse();
     }
 
     [Fact]
     public void IncrementWrongLoginAttempts_ShouldBlockUser()
     {
-        // Act
-        _user.IncrementWrongLoginAttempts();
-        _user.IncrementWrongLoginAttempts();
-        _user.IncrementWrongLoginAttempts();
-        _user.IncrementWrongLoginAttempts();
-        _user.IncrementWrongLoginAttempts();
+        var user = UserTestData.CreateUserWithLoginAttempts(4);
 
-        // Assert
-        _user.LoginAttempts.Should().Be(5);
-        _user.IsBlocked.Should().BeTrue();
+        user.IncrementWrongLoginAttempts();
+
+        user.LoginAttempts.Should().Be(5);
+        user.IsBlocked.Should().BeTrue();
     }
 
     [Fact]
     public void IncrementWrongLoginAttempts_ShouldThrowException_UserAlreadyBlocked()
     {
-        // Act
-        _user.IncrementWrongLoginAttempts();
-        _user.IncrementWrongLoginAttempts();
-        _user.IncrementWrongLoginAttempts();
-        _user.IncrementWrongLoginAttempts();
-        _user.IncrementWrongLoginAttempts();
+        var user = UserTestData.CreateBlockedUser();
 
-        var act = () => _user.IncrementWrongLoginAttempts();
+        var act = () =>
+        {
+            user.IncrementWrongLoginAttempts();
+        };
 
-        act.ThrowsException(
-            UserErrorCodes.UserIsBlocked);
-
+        act.ThrowsException(UserErrorCodes.UserIsBlocked);
     }
 
     [Fact]
     public void SetLoginAttemptsToZero_ShouldSetCorrectLoginAttempts()
     {
-        // Act
-        _user.IncrementWrongLoginAttempts();
-        _user.IncrementWrongLoginAttempts();
-        _user.IncrementWrongLoginAttempts();
-        _user.IncrementWrongLoginAttempts();
+        var user = UserTestData.CreateUserWithLoginAttempts(3);
 
-        _user.SetLoginAttemptsToZero();
+        user.IncrementWrongLoginAttempts();
 
-        // Assert
-        _user.LoginAttempts.Should().Be(0);
+        user.SetLoginAttemptsToZero();
+
+        user.LoginAttempts.Should().Be(0);
     }
 
     #endregion

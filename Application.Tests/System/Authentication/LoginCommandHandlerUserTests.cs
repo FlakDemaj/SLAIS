@@ -6,14 +6,10 @@ using Application.Authentication.Commands.Login;
 using Application.Common.Interfaces.Services;
 using Application.Common.Options;
 using Application.Interfaces;
-using Application.Tests.Common;
 using Application.Utils.Interfaces.Transaction;
 using Application.Utils.Logger;
 
-using AutoMapper;
-
 using Domain.Common.Exceptions;
-using Domain.Institutes;
 
 using FluentAssertions;
 
@@ -23,11 +19,13 @@ using NSubstitute;
 
 using SLAIS.Domain.Users;
 
+using Tests.Shared.TestDataCreator;
+
 using Xunit;
 
 namespace Application.Tests.System.Authentication;
 
-public class LoginCommandHandlerTests : TestBase
+public class LoginCommandHandlerUserTests
 {
     private readonly IUserRepository _userRepository;
 
@@ -37,36 +35,33 @@ public class LoginCommandHandlerTests : TestBase
 
     private readonly IUnitOfWork _unitOfWork;
 
-    private readonly IOptions<CommonOptions> _commonOptions;
+    private readonly LoginCommandHandlerUser _handlerUser;
 
-    private readonly LoginCommandHandler _handler;
-
-    public LoginCommandHandlerTests()
+    public LoginCommandHandlerUserTests()
     {
         _userRepository = Substitute.For<IUserRepository>();
         _tokenService = Substitute.For<ITokenService>();
         _passwordHasher = Substitute.For<IPasswordHasher>();
         _unitOfWork = Substitute.For<IUnitOfWork>();
-        var logger = Substitute.For<ISlaisLogger<LoginCommandHandler>>();
-        var mapper = Substitute.For<IMapper>();
+        var logger = Substitute.For<ISlaisLogger<LoginCommandHandlerUser>>();
 
         var refreshTokenOptions = Options.Create(new RefreshTokenOptions
         {
             ExpiresInDays = 7
         });
 
-        _commonOptions = Options.Create(new CommonOptions
+        var commonOptions = Options.Create(new CommonOptions
         {
             MaxLoginAttempts = 5
         });
 
-        _handler = new LoginCommandHandler(
+        _handlerUser = new LoginCommandHandlerUser(
             _userRepository,
             refreshTokenOptions,
             _tokenService,
             logger,
             _passwordHasher,
-            _commonOptions,
+            commonOptions,
             _unitOfWork);
     }
 
@@ -75,9 +70,8 @@ public class LoginCommandHandlerTests : TestBase
     [Fact]
     public async Task HandleAsync_ShouldReturnToken_WhenCredentialsAreValid()
     {
-        // Arrange
         var command = BuildValidCommand();
-        var user = BuildValidUser();
+        var user = UserTestData.CreateUser();
 
         _userRepository
             .GetUserByUsernameOrEmailWithRefreshTokenAsync(command.LoginName)
@@ -97,10 +91,8 @@ public class LoginCommandHandlerTests : TestBase
             .GenerateAccessToken(user)
             .Returns(expectedResult);
 
-        // Act
-        var result = await _handler.HandleAsync(command, CancellationToken.None);
+        var result = await _handlerUser.HandleAsync(command, CancellationToken.None);
 
-        // Assert
         result.Should().NotBeNull();
         result.GeneratedAccessToken.Should().Be(expectedResult);
         result.RefreshToken.Should().NotBeNull();
@@ -113,17 +105,17 @@ public class LoginCommandHandlerTests : TestBase
     [Fact]
     public async Task HandleAsync_ShouldThrowException_WhenUserDoesNotExist()
     {
-        // Arrange
         var command = BuildValidCommand();
 
         _userRepository
             .GetUserByUsernameOrEmailWithRefreshTokenAsync(command.LoginName)
             .Returns((UserEntity?)null);
 
-        // Act
-        var act = async () => await _handler.HandleAsync(command, CancellationToken.None);
+        var act = async () =>
+        {
+            return await _handlerUser.HandleAsync(command, CancellationToken.None);
+        };
 
-        // Assert
         await act.Should()
             .ThrowAsync<SlaisException>()
             .Where(x => x.ErrorCode == (int)AuthErrorCodes.NoUserWithThisName);
@@ -136,9 +128,8 @@ public class LoginCommandHandlerTests : TestBase
     [Fact]
     public async Task HandleAsync_ShouldThrowException_WhenPasswordIsWrong()
     {
-        // Arrange
         var command = BuildValidCommand();
-        var user = BuildValidUser();
+        var user = UserTestData.CreateUser();
 
         _userRepository
             .GetUserByUsernameOrEmailWithRefreshTokenAsync(command.LoginName)
@@ -148,10 +139,11 @@ public class LoginCommandHandlerTests : TestBase
             .Verify(command.Password, user.HashedPassword)
             .Returns(false);
 
-        // Act
-        var act = async () => await _handler.HandleAsync(command, CancellationToken.None);
+        var act = async () =>
+        {
+            return await _handlerUser.HandleAsync(command, CancellationToken.None);
+        };
 
-        // Assert
         await act.Should()
             .ThrowAsync<SlaisException>()
             .Where(x => x.ErrorCode == (int)AuthErrorCodes.WrongPassword);
@@ -164,9 +156,8 @@ public class LoginCommandHandlerTests : TestBase
     [Fact]
     public async Task HandleAsync_ShouldResetLoginAttempts_WhenPasswordIsCorrect()
     {
-        // Arrange
         var command = BuildValidCommand();
-        var user = BuildUserWithLoginAttempts(3);
+        var user = UserTestData.CreateUserWithLoginAttempts(3);
 
         _userRepository
             .GetUserByUsernameOrEmailWithRefreshTokenAsync(command.LoginName)
@@ -186,16 +177,14 @@ public class LoginCommandHandlerTests : TestBase
             .GenerateAccessToken(user)
             .Returns(expectedResult);
 
-        // Act
-        await _handler.HandleAsync(command, CancellationToken.None);
+        await _handlerUser.HandleAsync(command, CancellationToken.None);
 
-        // Assert
         user.LoginAttempts.Should().Be(0);
     }
 
     #endregion
 
-    #region Builders
+    #region Helpers
 
     private static LoginCommand BuildValidCommand()
     {
@@ -207,18 +196,6 @@ public class LoginCommandHandlerTests : TestBase
             DeviceName = "Test Device",
             IpAddress = IPAddress.Loopback
         };
-    }
-
-    private static UserEntity BuildUserWithLoginAttempts(int attempts)
-    {
-        var user = BuildValidUser();
-
-        for (var i = 0; i < attempts; i++)
-        {
-            user.IncrementWrongLoginAttempts(999);
-        }
-
-        return user;
     }
 
     #endregion

@@ -4,13 +4,22 @@ using Domain.System.RefreshToken;
 
 using SLAIS.Domain.Users;
 
-namespace ClassLibrary1.Builders;
+namespace Tests.Shared.Builders;
 
 public class RefreshTokenEntityBuilder
 {
     private Guid _deviceGuid = Guid.NewGuid();
     private string _deviceName = "Test Device";
-    private IPAddress _ipAddress = IPAddress.Loopback;
+    private readonly IPAddress _ipAddress = IPAddress.Loopback;
+    private DateTime _expirationDate = DateTime.UtcNow.AddDays(7);
+    private bool _revoked;
+    private Guid _refreshTokenGuid = Guid.CreateVersion7();
+    private readonly DateTime _createdDate = DateTime.UtcNow;
+    private readonly DateTime _lastUsedDate = DateTime.UtcNow;
+    private DateTime? _revokedDate;
+    private Guid _userGuid = Guid.NewGuid();
+
+    #region With Methods
 
     public RefreshTokenEntityBuilder WithDeviceGuid(Guid deviceGuid)
     {
@@ -24,64 +33,93 @@ public class RefreshTokenEntityBuilder
         return this;
     }
 
-    public RefreshTokenEntityBuilder WithIpAddress(IPAddress ipAddress)
+    public RefreshTokenEntityBuilder WithExpiresInDays(int expiresInDays)
     {
-        _ipAddress = ipAddress;
+        _expirationDate = DateTime.UtcNow.AddDays(expiresInDays);
         return this;
     }
 
-    private UserEntity Build(UserEntity user)
+    public RefreshTokenEntityBuilder WithExpired()
     {
-        user.CreateRefreshToken(
-            7,
-            _deviceGuid,
-            _deviceName,
-            _ipAddress);
-
-        return user;
+        _expirationDate = DateTime.UtcNow.AddDays(-1);
+        return this;
     }
 
-    public RefreshTokenEntity BuildExpired(UserEntity user)
+    public RefreshTokenEntityBuilder WithRevoked()
     {
-        var token = Build(user).RefreshTokens.Single();
+        _revoked = true;
+        _revokedDate = DateTime.UtcNow;
+        return this;
+    }
 
-        typeof(RefreshTokenEntity)
-            .GetProperty(nameof(RefreshTokenEntity.ExpirationDate))!
-            .SetValue(token, DateTime.UtcNow.AddDays(-1));
+    public RefreshTokenEntityBuilder WithRefreshTokenGuid(Guid guid)
+    {
+        _refreshTokenGuid = guid;
+        return this;
+    }
+
+    private void WithUserGuid(Guid userGuid)
+    {
+        _userGuid = userGuid;
+    }
+
+    #endregion
+
+    #region Build Methods
+
+    public RefreshTokenEntity Build()
+    {
+        var token = CreateEmptyInstance();
+
+        SetProperty(token, nameof(RefreshTokenEntity.RefreshToken), _refreshTokenGuid);
+        SetProperty(token, nameof(RefreshTokenEntity.ExpirationDate), _expirationDate);
+        SetProperty(token, nameof(RefreshTokenEntity.DeviceGuid), _deviceGuid);
+        SetProperty(token, nameof(RefreshTokenEntity.DeviceName), _deviceName);
+        SetProperty(token, nameof(RefreshTokenEntity.IpAddress), _ipAddress);
+        SetProperty(token, nameof(RefreshTokenEntity.Revoked), _revoked);
+        SetProperty(token, nameof(RefreshTokenEntity.CreatedDate), _createdDate);
+        SetProperty(token, nameof(RefreshTokenEntity.LastUsedDate), _lastUsedDate);
+        SetProperty(token, nameof(RefreshTokenEntity.RevokedDate), _revokedDate);
+        SetProperty(token, nameof(RefreshTokenEntity.UserGuid), _userGuid);
 
         return token;
     }
 
-    public RefreshTokenEntity BuildRevoked(UserEntity user)
+    public RefreshTokenEntity Build(UserEntity user)
     {
-        var token = Build(user).RefreshTokens.Single();
+        WithUserGuid(user.Guid);
 
-        typeof(RefreshTokenEntity)
-            .GetProperty(nameof(RefreshTokenEntity.Revoked))!
-            .SetValue(token, true);
+        var token = Build();
+
+        var refreshTokens = typeof(UserEntity)
+            .GetProperty(nameof(UserEntity.RefreshTokens))!
+            .GetValue(user) as ICollection<RefreshTokenEntity>;
+
+        refreshTokens?.Add(token);
 
         return token;
     }
 
-    public UserEntity BuildWithOwnRefreshTokenGuid(UserEntity user, Guid guid)
+    #endregion
+
+    #region Private
+
+    private static RefreshTokenEntity CreateEmptyInstance()
     {
-        var createdUser = Build(user);
-
-        typeof(RefreshTokenEntity)
-            .GetProperty(nameof(RefreshTokenEntity.RefreshToken))!
-            .SetValue(createdUser.RefreshTokens.First(), guid);
-
-        return createdUser;
+        return (RefreshTokenEntity)System.Runtime.CompilerServices
+            .RuntimeHelpers
+            .GetUninitializedObject(typeof(RefreshTokenEntity));
     }
 
-    public UserEntity BuildWithOwnRevokedGuidReturnsUserEntity(UserEntity user)
+    private static void SetProperty<TValue>(
+        RefreshTokenEntity entity,
+        string propertyName,
+        TValue value)
     {
-        var createdUser = Build(user);
-
         typeof(RefreshTokenEntity)
-            .GetProperty(nameof(RefreshTokenEntity.Revoked))!
-            .SetValue(createdUser.RefreshTokens.First(), true);
-
-        return createdUser;
+            .GetProperty(propertyName)!
+            .SetValue(entity, value);
     }
+
+    #endregion
 }

@@ -34,7 +34,7 @@ public class UserRefreshTokenTests : TestBase
         await _userTestRepository
             .CreateRefreshTokenForUserAsync(user);
 
-        var refreshToken = await _userTestRepository.GetRefreshTokenByUserGuid(user.Guid);
+        var refreshToken = await _userTestRepository.GetRefreshTokenByUserGuidAsync(user.Guid);
 
         Helpers.CheckCreatedRefreshToken(
             refreshToken,

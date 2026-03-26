@@ -1,15 +1,10 @@
-using System.Net;
-
 using Application.Authentication;
 using Application.Authentication.Commands.Login;
 using Application.Authentication.Commands.ValidateRefreshToken;
 using Application.Common.Interfaces.Services;
 using Application.Interfaces;
-using Application.Tests.Common;
 using Application.Utils.Interfaces.Transaction;
 using Application.Utils.Logger;
-
-using ClassLibrary1.Builders;
 
 using Domain.Common.Exceptions;
 
@@ -19,19 +14,17 @@ using NSubstitute;
 
 using SLAIS.Domain.Users;
 
+using Tests.Shared.TestDataCreator;
+
 using Xunit;
 
 namespace Application.Tests.System.Authentication;
 
-public class ValidateRefreshTokenCommandHandlerTests : TestBase
+public class ValidateRefreshTokenCommandHandlerTests
 {
     private readonly IUserRepository _userRepository;
 
     private readonly ITokenService _tokenService;
-
-    private readonly IUnitOfWork _unitOfWork;
-
-    private readonly ISlaisLogger<ValidateRefreshTokenCommandHandler> _logger;
 
     private readonly ValidateRefreshTokenCommandHandler _handler;
 
@@ -39,13 +32,13 @@ public class ValidateRefreshTokenCommandHandlerTests : TestBase
     {
         _userRepository = Substitute.For<IUserRepository>();
         _tokenService = Substitute.For<ITokenService>();
-        _unitOfWork = Substitute.For<IUnitOfWork>();
+        var unitOfWork = Substitute.For<IUnitOfWork>();
         var logger = Substitute.For<ISlaisLogger<ValidateRefreshTokenCommandHandler>>();
 
         _handler = new ValidateRefreshTokenCommandHandler(
             logger,
             _userRepository,
-            _unitOfWork,
+            unitOfWork,
             _tokenService);
     }
 
@@ -54,15 +47,14 @@ public class ValidateRefreshTokenCommandHandlerTests : TestBase
     [Fact]
     public async Task HandleAsync_ShouldReturnToken_WhenCredentialsAreValid()
     {
-        // Arrange
         var command = BuildValidCommand();
-        var user = BuildValidUserWithRefreshTokens(3);
-        var newUser = new RefreshTokenEntityBuilder()
-            .BuildWithOwnRefreshTokenGuid(user, command.RefreshToken);
+        var user = UserTestData.CreateUser();
+
+        UserTestData.CreateRefreshToken(user, refreshTokenGuid: command.RefreshToken);
 
         _userRepository
             .GetUserWithRefreshTokensByGuidAsync(command.RefreshToken)
-            .Returns(newUser);
+            .Returns(user);
 
         var expectedResult = new GeneratedAccessTokenResult
         {
@@ -74,10 +66,8 @@ public class ValidateRefreshTokenCommandHandlerTests : TestBase
             .GenerateAccessToken(user)
             .Returns(expectedResult);
 
-        // Act
         var result = await _handler.HandleAsync(command, CancellationToken.None);
 
-        // Assert
         result.Should().NotBeNull();
         result.AccessToken.Should().Be(expectedResult.AccessToken);
         result.AccessTokenExpiresInMinutes.Should().Be(expectedResult.AccessTokenExpiresInMinutes);
@@ -85,46 +75,69 @@ public class ValidateRefreshTokenCommandHandlerTests : TestBase
 
     #endregion
 
-    #region Handle Async - Failed
+    #region HandleAsync - Failed
 
     [Fact]
-    public async Task HandleAsync_ShouldReturnNoTokenWithThisUser_WhenTokenIsNotValid()
+    public async Task HandleAsync_ShouldThrowException_WhenUserNotFound()
     {
-        // Arrange
         var command = BuildValidCommand();
 
         _userRepository
             .GetUserWithRefreshTokensByGuidAsync(command.RefreshToken)
             .Returns((UserEntity?)null);
 
-        // Act
-        var result = async () => await _handler.HandleAsync(command, CancellationToken.None);
+        var act = async () =>
+        {
+            return await _handler.HandleAsync(command, CancellationToken.None);
+        };
 
-        // Assert
-        result
+        await act
             .Should()
             .ThrowAsync<SlaisException>()
             .Where(x => x.ErrorCode == (int)AuthErrorCodes.NoUserWithThisToken);
     }
 
     [Fact]
-    public async Task HandleAsync_ShouldReturnNoTokenWithThisUser_WhenTokenIsRevoked()
+    public async Task HandleAsync_ShouldThrowException_WhenTokenIsRevoked()
     {
-        // Arrange
         var command = BuildValidCommand();
-        var user = BuildValidUserWithRefreshTokens(3);
-        var newUser = new RefreshTokenEntityBuilder()
-            .BuildWithOwnRevokedGuidReturnsUserEntity(user);
+        var user = UserTestData.CreateUser();
+
+        UserTestData.CreateRevokedRefreshToken(user);
 
         _userRepository
             .GetUserWithRefreshTokensByGuidAsync(command.RefreshToken)
-            .Returns(newUser);
+            .Returns(user);
 
-        // Act
-        var result = async () => await _handler.HandleAsync(command, CancellationToken.None);
+        var act = async () =>
+        {
+            return await _handler.HandleAsync(command, CancellationToken.None);
+        };
 
-        // Assert
-        result
+        await act
+            .Should()
+            .ThrowAsync<SlaisException>()
+            .Where(x => x.ErrorCode == (int)AuthErrorCodes.NoValidTokenFound);
+    }
+
+    [Fact]
+    public async Task HandleAsync_ShouldThrowException_WhenTokenIsExpired()
+    {
+        var command = BuildValidCommand();
+        var user = UserTestData.CreateUser();
+
+        UserTestData.CreateExpiredRefreshToken(user);
+
+        _userRepository
+            .GetUserWithRefreshTokensByGuidAsync(command.RefreshToken)
+            .Returns(user);
+
+        var act = async () =>
+        {
+            return await _handler.HandleAsync(command, CancellationToken.None);
+        };
+
+        await act
             .Should()
             .ThrowAsync<SlaisException>()
             .Where(x => x.ErrorCode == (int)AuthErrorCodes.NoValidTokenFound);

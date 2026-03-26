@@ -6,8 +6,6 @@ using Application.Utils.Interfaces.Transaction;
 using Application.Utils.Logger;
 using Application.Utils.Mediator.Interfaces;
 
-using AutoMapper;
-
 using Domain.Common.Exceptions;
 
 using Microsoft.Extensions.Options;
@@ -16,8 +14,8 @@ using SLAIS.Domain.Users;
 
 namespace Application.Authentication.Commands.Login;
 
-public class LoginCommandHandler :
-    BaseHandler<LoginCommandHandler>,
+public class LoginCommandHandlerUser :
+    BaseHandler<LoginCommandHandlerUser>,
     IRequestHandler<LoginCommand, GeneratedTokenResult>,
     INoTransaction
 {
@@ -29,11 +27,11 @@ public class LoginCommandHandler :
     protected readonly CommonOptions _commonOptions;
 
 
-    public LoginCommandHandler(
+    public LoginCommandHandlerUser(
         IUserRepository userRepository,
         IOptions<RefreshTokenOptions> refreshTokenOptions,
         ITokenService tokenService,
-        ISlaisLogger<LoginCommandHandler> logger,
+        ISlaisLogger<LoginCommandHandlerUser> logger,
         IPasswordHasher passwordHasher,
         IOptions<CommonOptions> commonOptions,
         IUnitOfWork unitOfWork)
