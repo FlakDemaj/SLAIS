@@ -122,6 +122,7 @@ public class UserEntityBuilder
 
         while (type != null)
         {
+            // NOSONAR - Intentionally used in test helpers only
             var property = type.GetProperty(
                 propertyName,
                 BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
@@ -142,12 +143,11 @@ public class UserEntityBuilder
 
         while (type != null)
         {
+            // NOSONAR - Intentionally used in test helpers only
             var field = type.GetFields(
                     BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly)
                 .FirstOrDefault(f =>
-                {
-                    return f.FieldType == typeof(ICollection<RefreshTokenEntity>);
-                });
+                    f.FieldType == typeof(ICollection<RefreshTokenEntity>));
 
             if (field != null)
             {

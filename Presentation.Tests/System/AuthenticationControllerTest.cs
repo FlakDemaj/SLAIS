@@ -36,11 +36,13 @@ public class AuthenticationControllerTest : TestBase
             GeneratedAccessToken =
                 new GeneratedAccessTokenResult
                 {
-                    AccessToken = Guid.CreateVersion7().ToString(), AccessTokenExpiresInMinutes = 900
+                    AccessToken = Guid.CreateVersion7().ToString(),
+                    AccessTokenExpiresInMinutes = 900
                 },
             RefreshToken = new GeneratedRefreshTokenResult
             {
-                RefreshToken = Guid.CreateVersion7(), RefreshTokenExpiresInDays = 15
+                RefreshToken = Guid.CreateVersion7(),
+                RefreshTokenExpiresInDays = 15
             }
         };
 
