@@ -40,7 +40,7 @@ public class SlaisLogger<T> : ISlaisLogger<T>
 
     public void LogError(string message, Exception? exception)
     {
-        _logger.LogError(MessageTemplate, message);
+        _logger.LogError(MessageExceptionTemplate, message, exception);
     }
 
 }

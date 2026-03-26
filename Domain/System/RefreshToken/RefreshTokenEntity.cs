@@ -81,13 +81,18 @@ public class RefreshTokenEntity : RefreshTokenNavigationPropertyEntity
 
         if (ExpirationDate <= DateTime.UtcNow)
         {
-            Revoked = true;
-            RevokedDate = DateTime.UtcNow;
+            Revoke();
             return false;
         }
 
         LastUsedDate = DateTime.UtcNow;
         return true;
+    }
+
+    public void Revoke()
+    {
+        Revoked = true;
+        RevokedDate = DateTime.UtcNow;
     }
 
     public int GetExpirationInDays()

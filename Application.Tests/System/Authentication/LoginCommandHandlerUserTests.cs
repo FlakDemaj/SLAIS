@@ -6,6 +6,7 @@ using Application.Authentication.Commands.Login;
 using Application.Common.Interfaces.Services;
 using Application.Common.Options;
 using Application.Interfaces;
+using Application.System.Authentication.Commands.Login;
 using Application.Utils.Interfaces.Transaction;
 using Application.Utils.Logger;
 
@@ -180,6 +181,66 @@ public class LoginCommandHandlerUserTests
         await _handlerUser.HandleAsync(command, CancellationToken.None);
 
         user.LoginAttempts.Should().Be(0);
+    }
+
+    #endregion
+
+    #region HandleAsync - Revoke Refresh Token
+
+    [Fact]
+    public async Task HandleAsync_ShouldRevokeActiveRefreshToken_WhenGuidIsTheSame()
+    {
+        var command = BuildValidCommand();
+
+        var user = UserTestData.CreateUser();
+        UserTestData.CreateRefreshToken(
+            user,
+            deviceGuid: command.DeviceGuid);
+        UserTestData.CreateRefreshToken(
+            user,
+            deviceGuid: command.DeviceGuid);
+        UserTestData.CreateRefreshToken(
+            user);
+
+        _userRepository
+            .GetUserByUsernameOrEmailWithRefreshTokenAsync(command.LoginName)
+            .Returns(user);
+
+        _passwordHasher
+            .Verify(command.Password, user.HashedPassword)
+            .Returns(true);
+
+        var expectedResult = new GeneratedAccessTokenResult
+        {
+            AccessToken = "access-token",
+            AccessTokenExpiresInMinutes = 900
+        };
+
+        _tokenService
+            .GenerateAccessToken(user)
+            .Returns(expectedResult);
+
+        await _handlerUser.HandleAsync(command, CancellationToken.None);
+
+        var revokedRefreshTokensWithTheSameDeviceGuid = user
+            .RefreshTokens
+            .Where(rt => rt.DeviceGuid == command.DeviceGuid
+                         && rt.Revoked);
+
+        var notRevokedRefreshTokensWithTheSameDeviceGuid = user
+            .RefreshTokens
+            .Where(rt => rt.DeviceGuid == command.DeviceGuid
+                         && !rt.Revoked);
+
+        var notRevokedRefreshTokensWithDifferentDeviceGuid = user
+            .RefreshTokens
+            .Where(rt => rt.DeviceGuid != command.DeviceGuid
+                         && !rt.Revoked);
+
+        revokedRefreshTokensWithTheSameDeviceGuid.Count().Should().Be(2);
+        notRevokedRefreshTokensWithTheSameDeviceGuid.Count().Should().Be(1);
+        notRevokedRefreshTokensWithDifferentDeviceGuid.Count().Should().Be(1);
+
     }
 
     #endregion

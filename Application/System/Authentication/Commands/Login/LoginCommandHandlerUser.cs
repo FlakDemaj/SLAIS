@@ -1,3 +1,6 @@
+using Application.Authentication;
+using Application.Authentication.Commands;
+using Application.Authentication.Commands.Login;
 using Application.Common.Base;
 using Application.Common.Interfaces.Services;
 using Application.Common.Options;
@@ -12,7 +15,7 @@ using Microsoft.Extensions.Options;
 
 using SLAIS.Domain.Users;
 
-namespace Application.Authentication.Commands.Login;
+namespace Application.System.Authentication.Commands.Login;
 
 public class LoginCommandHandlerUser :
     BaseHandler<LoginCommandHandlerUser>,
@@ -24,7 +27,7 @@ public class LoginCommandHandlerUser :
     private readonly ITokenService _tokenService;
     private readonly IPasswordHasher _passwordHasher;
     private readonly IUnitOfWork _unitOfWork;
-    protected readonly CommonOptions _commonOptions;
+    private readonly CommonOptions _commonOptions;
 
 
     public LoginCommandHandlerUser(
@@ -50,6 +53,10 @@ public class LoginCommandHandlerUser :
         CancellationToken cancellationToken = default)
     {
         var user = await CheckUser(request.LoginName);
+
+        // Check if the user is already logged in with the same device.
+        // If so, revoke the old refresh token and create a new one.
+        user.RevokeRefreshTokens(request.DeviceGuid);
 
         await CheckPassword(user, request.Password, cancellationToken);
 

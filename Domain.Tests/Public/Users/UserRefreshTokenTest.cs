@@ -212,10 +212,7 @@ public class UserRefreshTokenTest
         var user = UserTestData.CreateBlockedUser();
         var token = UserTestData.CreateRefreshToken(user);
 
-        var act = () =>
-        {
-            return user.ValidateRefreshToken(token.RefreshToken);
-        };
+        var act = () => user.ValidateRefreshToken(token.RefreshToken);
 
         act.ThrowsException(UserErrorCodes.UserIsBlocked);
     }
@@ -250,6 +247,46 @@ public class UserRefreshTokenTest
         var isValid = user.ValidateRefreshToken(token.RefreshToken);
 
         isValid.Should().BeFalse();
+    }
+
+    #endregion
+
+    #region Revoke
+
+    [Fact]
+    public void RevokeRefreshToken_ShouldRevokeRefreshToken_WhenRefreshTokenForTheDeviceIsNotRevoked()
+    {
+        var user = UserTestData.CreateUser();
+
+        var deviceGuid = Guid.CreateVersion7();
+
+        UserTestData.CreateRefreshToken(
+            user,
+            deviceGuid: deviceGuid);
+
+        UserTestData.CreateRefreshToken(user);
+
+        user.RevokeRefreshTokens(deviceGuid);
+
+        var revokedRefreshToken = user
+            .RefreshTokens
+            .Where(rt => rt.DeviceGuid == deviceGuid)
+            .FirstOrDefault();
+
+        var notRevokedRefreshToken = user
+            .RefreshTokens
+            .Where(rt => rt.DeviceGuid != deviceGuid)
+            .FirstOrDefault();
+
+        revokedRefreshToken.Should().NotBeNull();
+        revokedRefreshToken.Revoked.Should().BeTrue();
+        revokedRefreshToken.RevokedDate.Should().BeCloseTo(
+            DateTime.UtcNow,
+            TimeSpan.FromSeconds(1));
+
+        notRevokedRefreshToken.Should().NotBeNull();
+        notRevokedRefreshToken.Revoked.Should().BeFalse();
+        revokedRefreshToken.RevokedDate.Should().NotBeNull();
     }
 
     #endregion

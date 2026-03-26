@@ -144,6 +144,20 @@ public class UserEntity : UserNavigationPropertyEntity
         return refreshToken.Validate();
     }
 
+    public void RevokeRefreshTokens(Guid deviceGuid)
+    {
+        var activeRefreshTokensInTheDevice =
+            RefreshTokens
+                .Where(rt => rt.DeviceGuid == deviceGuid
+                             && !rt.Revoked)
+                .ToList();
+
+        foreach (var refreshToken in activeRefreshTokensInTheDevice)
+        {
+            refreshToken.Revoke();
+        }
+    }
+
     #region Private
 
     private static void CheckInputs(
