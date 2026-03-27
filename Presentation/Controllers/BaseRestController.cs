@@ -26,9 +26,8 @@ public class BaseRestController : ControllerBase
             {
                 return userAuthentication;
             }
-#pragma warning disable S2344
-            throw new SlaisException(CommonErrorCodes.DefaultErrorCode);
-#pragma warning restore S2344            
+            
+            throw new SlaisException(CommonErrorCodes.DefaultErrorCode); // NOSONAR
         }
     }
 
