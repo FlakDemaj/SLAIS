@@ -6,8 +6,8 @@ using Application.Common.Options;
 using Infrastructure.Configurations;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Logging.Console;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging.Console;
 using Microsoft.IdentityModel.Tokens;
 
 using Presentation.Middlewares;
