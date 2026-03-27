@@ -1,131 +1,293 @@
 using System.Net;
 
-using Domain.System.RefreshToken;
+using Domain.Public.Users;
 using Domain.Systems.RefreshToken;
 using Domain.Tests.Utils.Extensions;
 
 using FluentAssertions;
 
+using Tests.Shared.TestDataCreator;
+
 using Xunit;
 
 namespace Domain.Tests.Public.Users;
 
-public class UserRefreshTokenTest : UserTestBase
+public class UserRefreshTokenTest
 {
-    private RefreshTokenEntity _refreshTokenEntity;
-
-    public UserRefreshTokenTest()
-    {
-        _refreshTokenEntity = _user.CreateRefreshToken(
-            30,
-            Guid.CreateVersion7(),
-            "Iphone Galaxy S8 Ultra",
-            IPAddress.Loopback);
-    }
-
     #region Create
 
     [Fact]
     public void CreateRefreshTokenForUser_NotBeNull()
     {
-        _user.RefreshTokens.Should().NotBeEmpty();
-        _user.RefreshTokens.Should().ContainSingle();
-        _user.RefreshTokens.First().Should().BeEquivalentTo(_refreshTokenEntity);
+        var user = UserTestData.CreateUser();
+        var token = user.CreateRefreshToken(
+            30,
+            Guid.CreateVersion7(),
+            "Iphone Galaxy S8 Ultra",
+            IPAddress.Loopback);
+
+        user.RefreshTokens.Should().NotBeEmpty();
+        user.RefreshTokens.Should().ContainSingle();
+        user.RefreshTokens.First().Should().BeEquivalentTo(token);
     }
 
     [Fact]
     public void CreateRefreshTokenForUser_ShouldSetCorrectUserGuid()
     {
-        _refreshTokenEntity.UserGuid.Should().Be(_user.Guid);
+        var user = UserTestData.CreateUser();
+        var token = user.CreateRefreshToken(
+            7,
+            Guid.CreateVersion7(),
+            "Test Device",
+            IPAddress.Loopback);
+
+        token.UserGuid.Should().Be(user.Guid);
     }
 
     [Fact]
     public void CreateRefreshTokenForUser_ShouldSetCorrectRefreshTokenGuid()
     {
-        _refreshTokenEntity.RefreshToken.Should().NotBeEmpty();
+        var user = UserTestData.CreateUser();
+        var token = user.CreateRefreshToken(
+            7,
+            Guid.CreateVersion7(),
+            "Test Device",
+            IPAddress.Loopback);
+
+        token.RefreshToken.Should().NotBeEmpty();
     }
 
     [Fact]
     public void CreateRefreshTokenForUser_ShouldSetCorrectDeviceAttributes()
     {
-        _refreshTokenEntity.DeviceName.Should().Be("Iphone Galaxy S8 Ultra");
-        _refreshTokenEntity.DeviceGuid.Should().NotBeEmpty();
+        var user = UserTestData.CreateUser();
+        var token = user.CreateRefreshToken(
+            7,
+            Guid.CreateVersion7(),
+            "Iphone Galaxy S8 Ultra",
+            IPAddress.Loopback);
+
+        token.DeviceName.Should().Be("Iphone Galaxy S8 Ultra");
+        token.DeviceGuid.Should().NotBeEmpty();
     }
 
     [Fact]
     public void CreateRefreshTokenForUser_ShouldSetCorrectUser()
     {
-        _refreshTokenEntity.UserGuid.Should().Be(_user.Guid);
+        var user = UserTestData.CreateUser();
+        var token = user.CreateRefreshToken(
+            7,
+            Guid.CreateVersion7(),
+            "Test Device",
+            IPAddress.Loopback);
+
+        token.UserGuid.Should().Be(user.Guid);
     }
 
     [Fact]
     public void CreateRefreshTokenForUser_ShouldSetCorrectDateTimes()
     {
-        _refreshTokenEntity.CreatedDate.Should().BeAfter(DateTime.MinValue);
-        _refreshTokenEntity.ExpirationDate.Should().BeAfter(DateTime.UtcNow);
-        _refreshTokenEntity.LastUsedDate.Should().BeAfter(DateTime.MinValue);
-        _refreshTokenEntity.RevokedDate.Should().BeNull();
+        var user = UserTestData.CreateUser();
+        var token = user.CreateRefreshToken(
+            30,
+            Guid.CreateVersion7(),
+            "Test Device",
+            IPAddress.Loopback);
+
+        token.CreatedDate.Should().BeAfter(DateTime.MinValue);
+        token.ExpirationDate.Should().BeAfter(DateTime.UtcNow);
+        token.LastUsedDate.Should().BeAfter(DateTime.MinValue);
+        token.RevokedDate.Should().BeNull();
     }
 
     [Fact]
     public void CreateRefreshTokenForUser_ShouldSetCorrectRevoke()
     {
-        _refreshTokenEntity.Revoked.Should().BeFalse();
+        var user = UserTestData.CreateUser();
+        var token = user.CreateRefreshToken(
+            7,
+            Guid.CreateVersion7(),
+            "Test Device",
+            IPAddress.Loopback);
+
+        token.Revoked.Should().BeFalse();
     }
 
     [Fact]
     public void CreateRefreshTokenForUser_ShouldSetCorrectIpAddress()
     {
-        _refreshTokenEntity.IpAddress.Should().Be(IPAddress.Loopback);
-    }
-
-    [Fact]
-    public void CreateRefreshToken_ShouldThrowExtension_ExpireDaysIsZero()
-    {
-        var expiresInDays = 0;
-
-        var act = () => _refreshTokenEntity = _user.CreateRefreshToken(
-            expiresInDays,
+        var user = UserTestData.CreateUser();
+        var token = user.CreateRefreshToken(
+            7,
             Guid.CreateVersion7(),
-            "Iphone Galaxy S8 Ultra",
+            "Test Device",
             IPAddress.Loopback);
 
-        act.ThrowsException(
-            RefreshTokenErrorCodes.InvalidExpiration);
+        token.IpAddress.Should().Be(IPAddress.Loopback);
     }
 
     [Fact]
-    public void CreateRefreshToken_ShouldThrowExtension_DeviceGuidIsEmpty()
+    public void CreateRefreshToken_ShouldThrowException_WhenExpireDaysIsZero()
     {
-        var act = () => _refreshTokenEntity = _user.CreateRefreshToken(
-            30,
-            Guid.Empty,
-            "Iphone Galaxy S8 Ultra",
-            IPAddress.Loopback);
+        var user = UserTestData.CreateUser();
 
-        act.ThrowsException(
-            RefreshTokenErrorCodes.InvalidDeviceGuid);
+        var act = () =>
+        {
+            return user.CreateRefreshToken(
+                        0,
+                        Guid.CreateVersion7(),
+                        "Test Device",
+                        IPAddress.Loopback);
+        };
+
+        act.ThrowsException(RefreshTokenErrorCodes.InvalidExpiration);
     }
 
     [Fact]
-    public void CreateRefreshToken_ShouldThrowExtension_DeviceNameIsEmpty()
+    public void CreateRefreshToken_ShouldThrowException_WhenDeviceGuidIsEmpty()
     {
-        var act = () => _refreshTokenEntity = _user.CreateRefreshToken(
-            30,
-            Guid.CreateVersion7(),
-            " ",
-            IPAddress.Loopback);
+        var user = UserTestData.CreateUser();
 
-        act.ThrowsException(
-            RefreshTokenErrorCodes.InvalidDeviceName);
+        var act = () =>
+        {
+            return user.CreateRefreshToken(
+                        7,
+                        Guid.Empty,
+                        "Test Device",
+                        IPAddress.Loopback);
+        };
+
+        act.ThrowsException(RefreshTokenErrorCodes.InvalidDeviceGuid);
+    }
+
+    [Fact]
+    public void CreateRefreshToken_ShouldThrowException_WhenDeviceNameIsEmpty()
+    {
+        var user = UserTestData.CreateUser();
+
+        var act = () =>
+        {
+            return user.CreateRefreshToken(
+                        7,
+                        Guid.CreateVersion7(),
+                        " ",
+                        IPAddress.Loopback);
+        };
+
+        act.ThrowsException(RefreshTokenErrorCodes.InvalidDeviceName);
     }
 
     #endregion
 
+    #region Get
+
     [Fact]
     public void GetRefreshTokenExpireDate_ShouldReturnCorrectExpireDate()
     {
-        _refreshTokenEntity.GetExpirationInDays().Should().Be(29);
+        var user = UserTestData.CreateUser();
+        var token = UserTestData.CreateRefreshToken(user, expiresInDays: 30);
+
+        token.GetExpirationInDays().Should().Be(30);
     }
 
+    #endregion
+
+    #region Validate
+
+    [Fact]
+    public void ValidateRefreshToken_ShouldReturnTrue()
+    {
+        var user = UserTestData.CreateUser();
+        var token = UserTestData.CreateRefreshToken(user);
+
+        var isValid = user.ValidateRefreshToken(token.RefreshToken);
+
+        isValid.Should().BeTrue();
+        token.LastUsedDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
+    }
+
+    [Fact]
+    public void ValidateRefreshToken_ShouldThrowException_WhenUserIsBlocked()
+    {
+        var user = UserTestData.CreateBlockedUser();
+        var token = UserTestData.CreateRefreshToken(user);
+
+        var act = () => user.ValidateRefreshToken(token.RefreshToken);
+
+        act.ThrowsException(UserErrorCodes.UserIsBlocked);
+    }
+
+    [Fact]
+    public void ValidateRefreshToken_ShouldReturnFalse_WhenTokenIsNotFound()
+    {
+        var user = UserTestData.CreateUser();
+
+        var isValid = user.ValidateRefreshToken(Guid.CreateVersion7());
+
+        isValid.Should().BeFalse();
+    }
+
+    [Fact]
+    public void ValidateRefreshToken_ShouldReturnFalse_WhenTokenIsRevoked()
+    {
+        var user = UserTestData.CreateUser();
+        var token = UserTestData.CreateRevokedRefreshToken(user);
+
+        var isValid = user.ValidateRefreshToken(token.RefreshToken);
+
+        isValid.Should().BeFalse();
+    }
+
+    [Fact]
+    public void ValidateRefreshToken_ShouldReturnFalse_WhenTokenIsExpired()
+    {
+        var user = UserTestData.CreateUser();
+        var token = UserTestData.CreateExpiredRefreshToken(user);
+
+        var isValid = user.ValidateRefreshToken(token.RefreshToken);
+
+        isValid.Should().BeFalse();
+    }
+
+    #endregion
+
+    #region Revoke
+
+    [Fact]
+    public void RevokeRefreshToken_ShouldRevokeRefreshToken_WhenRefreshTokenForTheDeviceIsNotRevoked()
+    {
+        var user = UserTestData.CreateUser();
+
+        var deviceGuid = Guid.CreateVersion7();
+
+        UserTestData.CreateRefreshToken(
+            user,
+            deviceGuid: deviceGuid);
+
+        UserTestData.CreateRefreshToken(user);
+
+        user.RevokeRefreshTokens(deviceGuid);
+
+        var revokedRefreshToken = user
+            .RefreshTokens
+            .Where(rt => rt.DeviceGuid == deviceGuid)
+            .FirstOrDefault();
+
+        var notRevokedRefreshToken = user
+            .RefreshTokens
+            .Where(rt => rt.DeviceGuid != deviceGuid)
+            .FirstOrDefault();
+
+        revokedRefreshToken.Should().NotBeNull();
+        revokedRefreshToken.Revoked.Should().BeTrue();
+        revokedRefreshToken.RevokedDate.Should().BeCloseTo(
+            DateTime.UtcNow,
+            TimeSpan.FromSeconds(1));
+
+        notRevokedRefreshToken.Should().NotBeNull();
+        notRevokedRefreshToken.Revoked.Should().BeFalse();
+        revokedRefreshToken.RevokedDate.Should().NotBeNull();
+    }
+
+    #endregion
 }

@@ -9,8 +9,6 @@ public class SlaisLogger<T> : ISlaisLogger<T>
 {
     private const string MessageTemplate = "{Message}";
 
-    private const string MessageExceptionTemplate = MessageTemplate + " With The Exception: {Exception}";
-
     private readonly ILogger<T> _logger;
 
     public SlaisLogger(ILogger<T> logger)
@@ -23,24 +21,26 @@ public class SlaisLogger<T> : ISlaisLogger<T>
         _logger.LogInformation(MessageTemplate, message);
     }
 
-    public void LogDebug(string message, Exception? exception)
-    {
-        _logger.LogDebug(MessageExceptionTemplate, message, exception);
-    }
-
     public void LogWarning(string message)
     {
         _logger.LogWarning(MessageTemplate, message);
     }
 
+    public void LogDebug(string message, Exception? exception)
+    {
+        _logger.LogDebug(exception, MessageTemplate, message);
+    }
+
     public void LogCritical(string message, Exception? exception)
     {
-        _logger.LogCritical(MessageExceptionTemplate, message, exception);
+        _logger.LogCritical(exception, MessageTemplate, message);
     }
 
     public void LogError(string message, Exception? exception)
     {
-        _logger.LogError(MessageTemplate, message);
+        _logger.LogError(exception, MessageTemplate, message);
     }
+
+
 
 }

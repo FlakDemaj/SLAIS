@@ -1,8 +1,12 @@
 using System.Net;
 
+using Application.Authentication;
 using Application.Authentication.Commands;
 using Application.Authentication.Commands.Login;
+using Application.Authentication.Commands.ValidateRefreshToken;
 using Application.Utils.Interfaces.Mediator;
+
+using Domain.Common.Exceptions;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,28 +23,53 @@ public class AuthenticationController : BaseRestController
 
     [HttpPost("login")]
     [AllowAnonymous]
-    public async Task<ActionResult<LoginResponseDto>> Login([FromBody] LoginRequest loginRequest)
+    public async Task<ActionResult<AccessTokenResponseDto>> LoginAsync([FromBody] LoginRequest loginRequest)
     {
         var loginCommand = MapLoginRequest(loginRequest, HttpContext);
         var tokens = await _mediator.SendAsync(loginCommand);
 
         HttpContext.Response.Cookies.Append(
             "RefreshToken",
-            tokens.RefreshToken.ToString(),
+            tokens.RefreshToken.RefreshToken.ToString(),
             new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Strict,
-                Expires = DateTime.UtcNow.AddDays(tokens.ExpiresIn)
+                Expires = DateTime.UtcNow.AddDays(tokens.RefreshToken.RefreshTokenExpiresInDays)
             });
 
         return Ok(
-            new LoginResponseDto
+            new AccessTokenResponseDto
             {
-                AccessToken = tokens.AccessToken
+                AccessToken = tokens.GeneratedAccessToken.AccessToken,
+                AccessTokenExpiresInMinutes = tokens.GeneratedAccessToken.AccessTokenExpiresInMinutes
             }
         );
+    }
+
+    [HttpGet]
+    [AllowAnonymous]
+    public async Task<ActionResult<AccessTokenResponseDto>> ValidateRefreshTokenAsync()
+    {
+        var refreshTokenCookie = HttpContext.Request.Cookies["RefreshToken"];
+
+        if (string.IsNullOrWhiteSpace(refreshTokenCookie))
+        {
+            throw new SlaisException(AuthErrorCodes.NoValidTokenFound);
+        }
+
+        if (!Guid.TryParse(refreshTokenCookie, out var refreshTokenGuid))
+        {
+            throw new SlaisException(AuthErrorCodes.NoValidTokenFound);
+        }
+
+        var refreshTokenCommand = new ValidateRefreshTokenCommand
+        {
+            RefreshToken = refreshTokenGuid
+        };
+
+        return await _mediator.SendAsync(refreshTokenCommand);
     }
 
     private static LoginCommand MapLoginRequest(

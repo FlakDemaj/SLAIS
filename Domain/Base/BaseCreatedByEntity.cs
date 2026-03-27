@@ -1,6 +1,7 @@
+using SLAIS.Domain.Commom;
 using SLAIS.Domain.Users;
 
-namespace SLAIS.Domain.Commom;
+namespace Domain.Base;
 
 public abstract class BaseCreatedByEntity : BaseGuidEntity
 {

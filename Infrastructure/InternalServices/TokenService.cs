@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
+using Application.Authentication.Commands.Login;
 using Application.Common.Interfaces.Services;
 
 using Infrastructure.Configurations;
@@ -28,7 +29,7 @@ public class TokenService : ITokenService
         _tokenHandler = new JwtSecurityTokenHandler();
     }
 
-    public string GenerateAccessToken(UserEntity user)
+    public GeneratedAccessTokenResult GenerateAccessToken(UserEntity user)
     {
         var claims = CreateUserClaims(user);
 
@@ -41,7 +42,13 @@ public class TokenService : ITokenService
         var token = CreateToken(
             claims, creds);
 
-        return _tokenHandler.WriteToken(token);
+        var accessToken = _tokenHandler.WriteToken(token);
+
+        return new GeneratedAccessTokenResult
+        {
+            AccessToken = accessToken,
+            AccessTokenExpiresInMinutes = _accessTokenOptions.ExpiresInMinutes
+        };
     }
 
     public Task<bool> ValidateRefreshTokenAsync(string refreshToken)
@@ -74,7 +81,7 @@ public class TokenService : ITokenService
             new(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
 
             new(ClaimTypes.Role, user.Role.ToString()),
-            new("InstituteGuid", user.InstituteUuid.ToString())
+            new("InstituteGuid", user.InstituteUuid.ToString()),
         };
 
         return claims;

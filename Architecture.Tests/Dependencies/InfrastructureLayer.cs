@@ -23,10 +23,16 @@ public class InfrastructureLayer : TestBase
         var referencedAssemblies = typeof(Infrastructure.IInfrastructureAssemblyMarker)
             .Assembly
             .GetReferencedAssemblies()
-            .Select(a => a.Name)
+            .Select(a =>
+            {
+                return a.Name;
+            })
             .ToList();
 
         Assert.True(_allowedAssembliesForInfrastructure
-            .All(allowed => referencedAssemblies.Contains(allowed)));
+            .All(allowed =>
+            {
+                return referencedAssemblies.Contains(allowed);
+            }));
     }
 }

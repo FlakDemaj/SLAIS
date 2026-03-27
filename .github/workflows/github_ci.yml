@@ -166,6 +166,8 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - run: dotnet restore
       - name: Run Infrastructure Tests
+        env:
+          TESTCONTAINERS_RYUK_DISABLED: true
         run: |
           dotnet test Infrastructure.Tests/Infrastructure.Tests.csproj \
             --configuration Release \

@@ -6,7 +6,7 @@ using Infrastructure.Tests.Common.Shared;
 
 using Xunit;
 
-namespace Infrastructure.Tests.RepositorysTests.Public.Institutes;
+namespace Infrastructure.Tests.RepositoryTests.Public.Institutes;
 
 public class InstitutesTests : TestBase
 {

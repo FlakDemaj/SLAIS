@@ -7,4 +7,6 @@ public interface IUserRepository : IBaseRepository<UserEntity>
     Task<UserEntity?> GetUserByGuidAsync(Guid userGuid);
 
     Task<UserEntity?> GetUserByUsernameOrEmailWithRefreshTokenAsync(string username);
+
+    Task<UserEntity?> GetUserWithRefreshTokensByGuidAsync(Guid refreshTokenGuid);
 }
