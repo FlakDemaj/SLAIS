@@ -4,15 +4,15 @@ namespace Presentation.Utils;
 
 public class Role
 {
-    public static class RoleConstants
+    protected static class RoleConstants
     {
-        public const string Server = nameof(Roles.Server);
+        protected const string Server = nameof(Roles.Server);
 
-        public const string Admin = nameof(Roles.Admin);
+        protected const string Admin = nameof(Roles.Admin);
 
-        public const string Teacher = nameof(Roles.Teacher);
+        protected const string Teacher = nameof(Roles.Teacher);
 
-        public const string Student = nameof(Roles.Student);
+        protected const string Student = nameof(Roles.Student);
 
     }
 }
