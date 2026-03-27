@@ -58,7 +58,7 @@ public static class Startup
                     ValidIssuer = configuration["AccessToken:Issuer"],
                     ValidAudience = configuration["AccessToken:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(configuration["AccessToken:Key"]!)) // NOSONAR
+                        Encoding.UTF8.GetBytes(configuration["AccessToken:Key"]!))
                 };
             });
     }

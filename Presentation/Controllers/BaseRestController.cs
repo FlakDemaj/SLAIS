@@ -26,8 +26,8 @@ public class BaseRestController : ControllerBase
             {
                 return userAuthentication;
             }
-            
-            throw new SlaisException(CommonErrorCodes.DefaultErrorCode); // NOSONAR
+
+            throw new SlaisException(CommonErrorCodes.DefaultErrorCode);
         }
     }
 
