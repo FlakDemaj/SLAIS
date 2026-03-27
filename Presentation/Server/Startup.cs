@@ -83,6 +83,7 @@ public static class Startup
             options.Debug = false;
             options.TracesSampleRate = 0.10;
             options.MinimumEventLevel = LogLevel.Warning;
+            options.AttachStacktrace = true;
         });
     }
 
