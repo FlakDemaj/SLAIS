@@ -7,6 +7,7 @@ using Infrastructure.Configurations;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging.Console;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 using Presentation.Middlewares;
@@ -40,7 +41,7 @@ public static class Startup
 
     private static void AddPresentationLayer(
         IServiceCollection services,
-        IConfiguration configuration)
+         ConfigurationManager configuration)
     {
         services.AddControllers();
         services.AddSwaggerGen();
