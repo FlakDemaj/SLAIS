@@ -46,7 +46,6 @@ public static class Startup
         services.AddControllers();
         services.AddSwaggerGen();
 
-#pragma warning disable S2068
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
@@ -59,10 +58,9 @@ public static class Startup
                     ValidIssuer = configuration["AccessToken:Issuer"],
                     ValidAudience = configuration["AccessToken:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(configuration["AccessToken:Key"]!))
+                        Encoding.UTF8.GetBytes(configuration["AccessToken:Key"]!)) // NOSONAR
                 };
             });
-#pragma warning restore S2068
     }
 
     private static void AddInfrastructureLayer(WebApplicationBuilder builder)
