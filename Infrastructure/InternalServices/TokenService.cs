@@ -81,7 +81,7 @@ public class TokenService : ITokenService
             new(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
 
             new(ClaimTypes.Role, user.Role.ToString()),
-            new("InstituteGuid", user.InstituteUuid.ToString())
+            new("InstituteGuid", user.InstituteUuid.ToString()),
         };
 
         return claims;

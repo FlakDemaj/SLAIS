@@ -1,9 +1,14 @@
+using System.Text;
+
 using Application;
 using Application.Common.Options;
 
 using Infrastructure.Configurations;
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Console;
+using Microsoft.IdentityModel.Tokens;
 
 using Presentation.Middlewares;
 
@@ -30,14 +35,32 @@ public static class Startup
     private static void ConfigureLayers(WebApplicationBuilder builder)
     {
         AddApplicationLayer(builder);
-        AddPresentationLayer(builder.Services);
+        AddPresentationLayer(builder.Services, builder.Configuration);
         AddInfrastructureLayer(builder);
     }
 
-    private static void AddPresentationLayer(IServiceCollection services)
+    private static void AddPresentationLayer(
+        IServiceCollection services,
+         ConfigurationManager configuration)
     {
         services.AddControllers();
         services.AddSwaggerGen();
+
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = configuration["AccessToken:Issuer"],
+                    ValidAudience = configuration["AccessToken:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(configuration["AccessToken:Key"]!))
+                };
+            });
     }
 
     private static void AddInfrastructureLayer(WebApplicationBuilder builder)
@@ -113,6 +136,7 @@ public static class Startup
     private static void EnableMiddlewares(IApplicationBuilder builder)
     {
         builder.UseMiddleware<ExceptionMiddleware>();
+        builder.UseMiddleware<AuthenticationMiddleware>();
     }
 
     private static void ConfigureOptions(WebApplicationBuilder builder)
