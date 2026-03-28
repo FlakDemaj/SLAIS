@@ -19,14 +19,12 @@ namespace Application.System.Authentication.Commands.Login;
 
 public class LoginCommandHandlerUser :
     BaseHandler<LoginCommandHandlerUser>,
-    IRequestHandler<LoginCommand, GeneratedTokenResult>,
-    INoTransaction
+    IRequestHandler<LoginCommand, GeneratedTokenResult>
 {
     private readonly IUserRepository _userRepository;
     private readonly RefreshTokenOptions _refreshTokenOptions;
     private readonly ITokenService _tokenService;
     private readonly IPasswordHasher _passwordHasher;
-    private readonly IUnitOfWork _unitOfWork;
     private readonly CommonOptions _commonOptions;
 
 
@@ -36,15 +34,13 @@ public class LoginCommandHandlerUser :
         ITokenService tokenService,
         ISlaisLogger<LoginCommandHandlerUser> logger,
         IPasswordHasher passwordHasher,
-        IOptions<CommonOptions> commonOptions,
-        IUnitOfWork unitOfWork)
+        IOptions<CommonOptions> commonOptions)
         : base(logger)
     {
         _userRepository = userRepository;
         _refreshTokenOptions = refreshTokenOptions.Value;
         _tokenService = tokenService;
         _passwordHasher = passwordHasher;
-        _unitOfWork = unitOfWork;
         _commonOptions = commonOptions.Value;
     }
 
@@ -58,7 +54,9 @@ public class LoginCommandHandlerUser :
         // If so, revoke the old refresh token and create a new one.
         user.RevokeRefreshTokens(request.DeviceGuid);
 
-        await CheckPassword(user, request.Password, cancellationToken);
+        CheckPassword(
+            user,
+            request.Password);
 
         return GenerateToken(
                 user,
@@ -79,10 +77,9 @@ public class LoginCommandHandlerUser :
         return user;
     }
 
-    private async Task CheckPassword(
+    private void CheckPassword(
         UserEntity user,
-        string password,
-        CancellationToken cancellationToken)
+        string password)
     {
         var checkPassword = _passwordHasher.Verify(password, user.HashedPassword);
 
@@ -93,7 +90,6 @@ public class LoginCommandHandlerUser :
         }
 
         user.IncrementWrongLoginAttempts(_commonOptions.MaxLoginAttempts);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         throw new SlaisException(AuthErrorCodes.WrongPassword);
     }
@@ -115,7 +111,7 @@ public class LoginCommandHandlerUser :
             GeneratedAccessToken = accessToken,
             RefreshToken = new GeneratedRefreshTokenResult
             {
-                RefreshToken = refreshToken.Guid,
+                RefreshToken = refreshToken.RefreshToken,
                 RefreshTokenExpiresInDays = _refreshTokenOptions.ExpiresInDays
             }
         };

@@ -42,9 +42,7 @@ public class PipelineTransactionBehavior<TRequest, TResponse> :
     {
         try
         {
-            var response = await next();
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-            return response;
+            return await next();
         }
         catch (SlaisException)
         {
@@ -54,6 +52,10 @@ public class PipelineTransactionBehavior<TRequest, TResponse> :
         {
             _logger.LogError($"An error occurred: {e}", e);
             throw new SlaisException(CommonErrorCodes.DefaultErrorCode, e);
+        }
+        finally
+        {
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
     }
 

@@ -12,8 +12,7 @@ namespace Application.Authentication.Commands.ValidateRefreshToken;
 
 public class ValidateRefreshTokenCommandHandler
     : BaseHandler<ValidateRefreshTokenCommandHandler>,
-        IRequestHandler<ValidateRefreshTokenCommand, AccessTokenResponseDto>,
-        INoTransaction
+        IRequestHandler<ValidateRefreshTokenCommand, AccessTokenResponseDto>
 {
     private readonly IUserRepository _userRepository;
 
