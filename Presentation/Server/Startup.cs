@@ -92,7 +92,8 @@ public static class Startup
         builder.Logging.ClearProviders();
         builder.Logging.AddSimpleConsole(options =>
         {
-            options.TimestampFormat = "[yyyy-MM-dd HH:mm:ss] ";
+            options.SingleLine = false;
+            options.TimestampFormat = "HH:mm:ss ";
             options.IncludeScopes = true;
             options.SingleLine = true;
             options.UseUtcTimestamp = true;

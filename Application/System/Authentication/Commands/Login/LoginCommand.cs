@@ -2,10 +2,11 @@ using System.Net;
 
 using Application.Authentication.Commands.Login;
 using Application.Utils.Interfaces.Mediator;
+using Application.Utils.Interfaces.Transaction;
 
 namespace Application.Authentication.Commands;
 
-public class LoginCommand : IRequest<GeneratedTokenResult>
+public class LoginCommand : IRequest<GeneratedTokenResult>, INoTransaction
 {
     public required string LoginName { get; init; }
 

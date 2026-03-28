@@ -25,7 +25,7 @@ public class UserRepository : BaseRepository<UserEntity>, IUserRepository
     public Task<UserEntity?> GetUserByUsernameOrEmailWithRefreshTokenAsync(string username)
     {
         return _context
-            .GetNoTrackingSet<UserEntity>()
+            .GetTrackingSet<UserEntity>()
             .Include(user => user.RefreshTokens)
             .FirstOrDefaultAsync(user => user.Email == username
                                          || user.Username == username);
