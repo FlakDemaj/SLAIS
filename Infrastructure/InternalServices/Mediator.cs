@@ -52,6 +52,6 @@ public class Mediator : IMediator
         return await (Task<TResponse>)pipelineMethod?
             .Invoke(pipeline, [request, (Func<Task<TResponse>?>)Next, cancellationToken])!;
 
-        Task<TResponse>? Next() => (Task<TResponse>)method?.Invoke(handler, [request, cancellationToken, authentication])!;
+        Task<TResponse>? Next() => (Task<TResponse>)method?.Invoke(handler, [request, authentication, cancellationToken])!;
     }
 }
