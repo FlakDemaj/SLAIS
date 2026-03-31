@@ -16,6 +16,6 @@ public class Authentication : IAuthentication
     {
         UserGuid = userGuid;
         UserRole = userRole;
-        InstitutionGuid  = institutionGuid;
+        InstitutionGuid = institutionGuid;
     }
 }

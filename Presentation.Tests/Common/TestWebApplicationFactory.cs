@@ -1,3 +1,5 @@
+using System.Text;
+
 using Application.Utils.Interfaces.Mediator;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -9,8 +11,6 @@ using Microsoft.IdentityModel.Tokens;
 using NSubstitute;
 
 using SLAIS.Presentation.Server;
-
-using System.Text;
 
 namespace Presentation.Tests.Common;
 

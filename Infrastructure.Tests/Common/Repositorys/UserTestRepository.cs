@@ -35,7 +35,7 @@ public class UserTestRepository
             createdByUserGuid,
             email ?? Guid.CreateVersion7() + "@test.com",
             password ?? "testpassword",
-            username ??  Guid.CreateVersion7().ToString(),
+            username ?? Guid.CreateVersion7().ToString(),
             firstName ?? "Max",
             lastName ?? "Mustermann",
             instituteGuid);
@@ -56,7 +56,7 @@ public class UserTestRepository
             createdByUserGuid,
             email ?? Guid.CreateVersion7() + "@test.com",
             password ?? "testpassword",
-            username ??  Guid.CreateVersion7().ToString(),
+            username ?? Guid.CreateVersion7().ToString(),
             firstName ?? "Max",
             lastName ?? "Mustermann",
             instituteGuid);
@@ -79,7 +79,7 @@ public class UserTestRepository
             createdByUserGuid,
             email ?? Guid.CreateVersion7() + "@test.com",
             password ?? "testpassword",
-            username ??  Guid.CreateVersion7().ToString(),
+            username ?? Guid.CreateVersion7().ToString(),
             firstName ?? "Max",
             lastName ?? "Mustermann",
             instituteGuid);
