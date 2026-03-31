@@ -1,6 +1,9 @@
+using Application.Common.Authentication;
 using Application.Utils.Interfaces.Mediator;
 using Application.Utils.Logger;
 using Application.Utils.Mediator.Interfaces;
+
+using Domain.Common;
 
 using Infrastructure.Transaction;
 
@@ -23,7 +26,8 @@ public class Mediator : IMediator
     }
 
     public async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        IAuthentication authentication = null)
     {
         var requestType = request.GetType();
 
@@ -51,7 +55,8 @@ public class Mediator : IMediator
 
         var pipelineMethod = pipelineType.GetMethod("HandleAsync");
 
-        return await (Task<TResponse>)pipelineMethod?.Invoke(pipeline, [request, (Func<Task<TResponse>?>)Next, cancellationToken])!;
+        return await (Task<TResponse>)pipelineMethod?
+            .Invoke(pipeline, [request, (Func<Task<TResponse>?>)Next, cancellationToken, authentication])!;
 
         Task<TResponse>? Next() => (Task<TResponse>)method?.Invoke(handler, [request, cancellationToken])!;
     }

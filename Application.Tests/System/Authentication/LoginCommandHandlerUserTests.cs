@@ -107,10 +107,7 @@ public class LoginCommandHandlerUserTests
             .GetUserByUsernameOrEmailWithRefreshTokenAsync(command.LoginName)
             .Returns((UserEntity?)null);
 
-        var act = async () =>
-        {
-            return await _handlerUser.HandleAsync(command, CancellationToken.None);
-        };
+        var act = async () => await _handlerUser.HandleAsync(command, CancellationToken.None);
 
         await act.Should()
             .ThrowAsync<SlaisException>()
@@ -135,10 +132,7 @@ public class LoginCommandHandlerUserTests
             .Verify(command.Password, user.HashedPassword)
             .Returns(false);
 
-        var act = async () =>
-        {
-            return await _handlerUser.HandleAsync(command, CancellationToken.None);
-        };
+        var act = async () => await _handlerUser.HandleAsync(command, CancellationToken.None);
 
         await act.Should()
             .ThrowAsync<SlaisException>()

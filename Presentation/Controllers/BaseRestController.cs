@@ -1,4 +1,5 @@
 using Application.Common;
+using Application.Common.Authentication;
 using Application.Common.Interfaces;
 using Application.Utils.Interfaces.Mediator;
 

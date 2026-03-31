@@ -9,7 +9,7 @@ internal static class UserEntityIndexExtension
 {
     internal static void AddIndexes(this EntityTypeBuilder<UserEntity> builder)
     {
-        builder.HasIndex(user => user.InstituteUuid)
+        builder.HasIndex(user => user.InstituteGuid)
             .HasDatabaseName("idx_users_institute_guid");
 
         builder

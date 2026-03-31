@@ -51,11 +51,6 @@ public class TokenService : ITokenService
         };
     }
 
-    public Task<bool> ValidateRefreshTokenAsync(string refreshToken)
-    {
-        throw new NotImplementedException();
-    }
-
     private JwtSecurityToken CreateToken(
         List<Claim> claims,
         SigningCredentials creds)
@@ -81,7 +76,7 @@ public class TokenService : ITokenService
             new(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
 
             new(ClaimTypes.Role, user.Role.ToString()),
-            new("InstituteGuid", user.InstituteUuid.ToString()),
+            new("InstituteGuid", user.InstituteGuid.ToString()),
         };
 
         return claims;

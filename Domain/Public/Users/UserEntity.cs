@@ -27,7 +27,7 @@ public class UserEntity : UserNavigationPropertyEntity
 
     public States State { get; private set; }
 
-    public Guid InstituteUuid { get; private set; }
+    public Guid InstituteGuid { get; private set; }
 
     private UserEntity(
         Guid? createdByUserGuid,
@@ -37,7 +37,7 @@ public class UserEntity : UserNavigationPropertyEntity
         string firstName,
         string lastName,
         Roles role,
-        Guid instituteUuid)
+        Guid instituteGuid)
         : base(createdByUserGuid)
     {
         Email = email;
@@ -49,7 +49,7 @@ public class UserEntity : UserNavigationPropertyEntity
         LoginAttempts = 0;
         IsBlocked = false;
         State = States.Active;
-        InstituteUuid = instituteUuid;
+        InstituteGuid = instituteGuid;
     }
 
     public static UserEntity CreateAdmin(
@@ -76,6 +76,62 @@ public class UserEntity : UserNavigationPropertyEntity
             firstName,
             lastName,
             Roles.Admin,
+            instituteGuid
+        );
+    }
+
+    public static UserEntity CreateTeacher(
+        Guid? createdByUserGuid,
+        string email,
+        string hashedPassword,
+        string username,
+        string firstName,
+        string lastName,
+        Guid instituteGuid)
+    {
+        CheckInputs(
+            email,
+            hashedPassword,
+            username,
+            firstName,
+            lastName);
+
+        return new UserEntity(
+            createdByUserGuid,
+            email,
+            hashedPassword,
+            username,
+            firstName,
+            lastName,
+            Roles.Teacher,
+            instituteGuid
+        );
+    }
+
+    public static UserEntity CreateStudent(
+        Guid? createdByUserGuid,
+        string email,
+        string hashedPassword,
+        string username,
+        string firstName,
+        string lastName,
+        Guid instituteGuid)
+    {
+        CheckInputs(
+            email,
+            hashedPassword,
+            username,
+            firstName,
+            lastName);
+
+        return new UserEntity(
+            createdByUserGuid,
+            email,
+            hashedPassword,
+            username,
+            firstName,
+            lastName,
+            Roles.Student,
             instituteGuid
         );
     }

@@ -68,7 +68,7 @@ internal sealed class UserEntityAttributeConfig : BaseIdEntityConfig<UserEntity>
             .HasDefaultValue(false);
 
         builder
-            .Property(u => u.InstituteUuid)
+            .Property(u => u.InstituteGuid)
             .HasColumnName("fk_institute_guid")
             .IsRequired();
 

@@ -1,5 +1,3 @@
-using Application.Utils.AutoMapper;
-
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,6 +17,6 @@ public static class DependencyInjection
 
     private static void AutoAutoMapper(IServiceCollection services)
     {
-        services.AddAutoMapper(typeof(AuthMappingProfile).Assembly);
+        services.AddAutoMapper(typeof(IApplicationAssemblyMarker).Assembly);
     }
 }

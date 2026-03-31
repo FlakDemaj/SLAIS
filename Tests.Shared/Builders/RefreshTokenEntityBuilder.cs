@@ -67,7 +67,7 @@ public class RefreshTokenEntityBuilder
 
     #region Build Methods
 
-    public RefreshTokenEntity Build()
+    private RefreshTokenEntity Build()
     {
         var token = CreateEmptyInstance();
 

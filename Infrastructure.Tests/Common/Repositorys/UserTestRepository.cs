@@ -23,7 +23,7 @@ public class UserTestRepository
         UserRepository = new UserRepository(_dbContext);
     }
 
-    public async Task<UserEntity> CreateUserAsync(
+    public async Task<UserEntity> CreateTeacherAsync(
         Guid instituteGuid,
         Guid? createdByUserGuid = null,
         string? email = null,
@@ -32,11 +32,11 @@ public class UserTestRepository
         string? username = null,
         string? password = null)
     {
-        var user = UserEntity.CreateAdmin(
+        var user = UserEntity.CreateTeacher(
             createdByUserGuid,
-            email ?? "test@test.com",
+            email ?? Guid.CreateVersion7() + "@test.com",
             password ?? "testpassword",
-            username ?? "max_mustermann69",
+            username ??  Guid.CreateVersion7().ToString(),
             firstName ?? "Max",
             lastName ?? "Mustermann",
             instituteGuid);
@@ -47,22 +47,68 @@ public class UserTestRepository
         return user;
     }
 
-    public async Task<RefreshTokenEntity> CreateRefreshTokenForUserAsync(
-        UserEntity user,
+    public async Task<UserEntity> CreateStudentAsync(
+        Guid instituteGuid,
+        Guid? createdByUserGuid = null,
+        string? email = null,
+        string? firstName = null,
+        string? lastName = null,
+        string? username = null,
+        string? password = null)
+    {
+        var user = UserEntity.CreateStudent(
+            createdByUserGuid,
+            email ?? Guid.CreateVersion7() + "@test.com",
+            password ?? "testpassword",
+            username ??  Guid.CreateVersion7().ToString(),
+            firstName ?? "Max",
+            lastName ?? "Mustermann",
+            instituteGuid);
+
+        user = await UserRepository.CreateAsync(user);
+        await _dbContext.SaveChangesAsync();
+
+        return user;
+    }
+
+
+    public async Task<UserEntity> CreateAdminAsync(
+        Guid instituteGuid,
+        Guid? createdByUserGuid = null,
+        string? email = null,
+        string? firstName = null,
+        string? lastName = null,
+        string? username = null,
+        string? password = null)
+    {
+        var user = UserEntity.CreateAdmin(
+            createdByUserGuid,
+            email ?? Guid.CreateVersion7() + "@test.com",
+            password ?? "testpassword",
+            username ??  Guid.CreateVersion7().ToString(),
+            firstName ?? "Max",
+            lastName ?? "Mustermann",
+            instituteGuid);
+
+        user = await UserRepository.CreateAsync(user);
+        await _dbContext.SaveChangesAsync();
+
+        return user;
+    }
+
+    public async Task CreateRefreshTokenForUserAsync(UserEntity user,
         IPAddress? ipAddress = null,
         int? expiresInDays = null,
         Guid? deviceGuid = null,
         string? deviceName = null)
     {
-        var refreshToken = user.CreateRefreshToken(
+        user.CreateRefreshToken(
             expiresInDays ?? 7,
             deviceGuid ?? Guid.CreateVersion7(),
             deviceName ?? "Test Device",
             ipAddress ?? IPAddress.Loopback);
 
         await _dbContext.SaveChangesAsync();
-
-        return refreshToken;
     }
 
     public async Task<RefreshTokenEntity?> GetRefreshTokenByUserGuidAsync(Guid userGuid)

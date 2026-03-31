@@ -30,7 +30,7 @@ public static class Helpers
         createdUser.HashedPassword.Should().Be(user.HashedPassword);
         createdUser.IsBlocked.Should().Be(user.IsBlocked);
         createdUser.LoginAttempts.Should().Be(user.LoginAttempts);
-        createdUser.InstituteUuid.Should().Be(instituteGuid);
+        createdUser.InstituteGuid.Should().Be(instituteGuid);
 
         createdUser.CreatedDate.Should().BeCloseTo(
             user.CreatedDate,

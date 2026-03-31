@@ -115,9 +115,9 @@ public static class Startup
 
         app.UseHttpsRedirection();
         app.UseSentryTracing();
-        EnableMiddlewares(app);
         app.UseAuthentication();
         app.UseAuthorization();
+        EnableMiddlewares(app);
         app.MapControllers();
     }
 

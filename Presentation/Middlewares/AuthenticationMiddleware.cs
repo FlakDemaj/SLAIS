@@ -1,6 +1,7 @@
 using System.Security.Claims;
 
 using Application.Common;
+using Application.Common.Authentication;
 using Application.Common.Interfaces;
 
 using Domain.Common;
@@ -34,9 +35,12 @@ public class AuthenticationMiddleware
 
         var userRole = CheckUserRole(context);
 
+        var instituteGuid = CheckInstituteGuid(context);
+
         var authentication = new Authentication(
             userGuid,
-            userRole);
+            userRole,
+            instituteGuid);
 
         context.Items.Add(nameof(IAuthentication), authentication);
 
@@ -50,7 +54,7 @@ public class AuthenticationMiddleware
                 .User
                 .Claims
                 .FirstOrDefault(c =>
-                    c.Type == JwtRegisteredClaimNames.Sub)?
+                    c.Type == ClaimTypes.NameIdentifier)?
                 .Value;
 
         if (string.IsNullOrWhiteSpace(userGuidString))
@@ -64,6 +68,27 @@ public class AuthenticationMiddleware
         }
 
         return userGuid;
+    }
+
+    private static Guid CheckInstituteGuid(HttpContext context)
+    {
+        var instituteGuidString = context
+            .User
+            .Claims
+            .FirstOrDefault(claim => claim.Type == "InstituteGuid")?
+            .Value;
+
+        if (string.IsNullOrWhiteSpace(instituteGuidString))
+        {
+            throw new SlaisException(CommonErrorCodes.DefaultErrorCode);
+        }
+
+        if (!Guid.TryParse(instituteGuidString, out var instituteGuid))
+        {
+            throw new SlaisException(CommonErrorCodes.DefaultErrorCode);
+        }
+
+        return instituteGuid;
     }
 
     private static Roles CheckUserRole(HttpContext context)

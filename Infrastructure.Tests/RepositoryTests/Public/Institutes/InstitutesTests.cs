@@ -42,7 +42,7 @@ public class InstitutesTests : TestBase
     {
         var firstInstitute = await _instituteTestRepository.CreateInstituteAsync();
 
-        var user = await _userTestRepository.CreateUserAsync(firstInstitute.Guid);
+        var user = await _userTestRepository.CreateAdminAsync(firstInstitute.Guid);
 
         var institute = InstituteEntity.Create(
             user.Guid, "test", "Health");

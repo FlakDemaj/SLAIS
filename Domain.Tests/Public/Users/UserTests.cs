@@ -141,7 +141,7 @@ public class UserTests
             "Mustermann",
             Guid.CreateVersion7());
 
-        user.InstituteUuid.Should().NotBeEmpty();
+        user.InstituteGuid.Should().NotBeEmpty();
     }
 
     [Fact]

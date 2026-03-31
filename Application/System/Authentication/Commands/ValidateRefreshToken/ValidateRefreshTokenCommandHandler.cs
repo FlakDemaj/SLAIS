@@ -1,4 +1,5 @@
 using Application.Authentication.Commands.Login;
+using Application.Common.Authentication;
 using Application.Common.Base;
 using Application.Common.Interfaces.Services;
 using Application.Interfaces;
@@ -6,6 +7,7 @@ using Application.Utils.Interfaces.Transaction;
 using Application.Utils.Logger;
 using Application.Utils.Mediator.Interfaces;
 
+using Domain.Common;
 using Domain.Common.Exceptions;
 
 namespace Application.Authentication.Commands.ValidateRefreshToken;
@@ -34,7 +36,8 @@ public class ValidateRefreshTokenCommandHandler
 
     public async Task<AccessTokenResponseDto> HandleAsync(
         ValidateRefreshTokenCommand request,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        IAuthentication authentication = null)
     {
         var user = await _userRepository.GetUserWithRefreshTokensByGuidAsync(request.RefreshToken);
 

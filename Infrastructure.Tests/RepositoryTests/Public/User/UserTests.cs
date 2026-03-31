@@ -1,3 +1,5 @@
+using Domain.Common.Enums;
+
 using FluentAssertions;
 
 using Infrastructure.Tests.Common;
@@ -65,7 +67,7 @@ public class UserTests : TestBase
             .CreateInstituteAsync();
 
         var user = await _userTestRepository
-            .CreateUserAsync(
+            .CreateAdminAsync(
             institute.Guid);
 
         var persistedUser = await _userTestRepository
@@ -85,7 +87,7 @@ public class UserTests : TestBase
             .CreateInstituteAsync();
 
         await _userTestRepository
-            .CreateUserAsync(
+            .CreateAdminAsync(
                 institute.Guid);
 
         var persistedUser = await _userTestRepository
@@ -102,7 +104,7 @@ public class UserTests : TestBase
             .CreateInstituteAsync();
 
         var user = await _userTestRepository
-            .CreateUserAsync(
+            .CreateAdminAsync(
             institute.Guid);
 
         var persistedUser = await _userTestRepository
@@ -122,7 +124,7 @@ public class UserTests : TestBase
             .CreateInstituteAsync();
 
         var user = await _userTestRepository
-            .CreateUserAsync(
+            .CreateAdminAsync(
                 institute.Guid);
 
         var persistedUser = await _userTestRepository
@@ -142,7 +144,7 @@ public class UserTests : TestBase
             .CreateInstituteAsync();
 
         await _userTestRepository
-            .CreateUserAsync(
+            .CreateAdminAsync(
                 institute.Guid);
 
         var persistedUser = await _userTestRepository
@@ -159,7 +161,7 @@ public class UserTests : TestBase
             .CreateInstituteAsync();
 
         await _userTestRepository
-            .CreateUserAsync(
+            .CreateAdminAsync(
                 institute.Guid);
 
         var persistedUser = await _userTestRepository
@@ -167,6 +169,298 @@ public class UserTests : TestBase
             .GetUserByUsernameOrEmailWithRefreshTokenAsync("userTest1234");
 
         persistedUser.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task GetAllUsers_ShouldReturnAllUsers_WhenUserIsSuperAdmin()
+    {
+        var slaisInstitute = await _instituteTestRepository.CreateInstituteAsync();
+
+        var anotherInstitute = await _instituteTestRepository.CreateInstituteAsync();
+
+        var adminUser = await _userTestRepository.CreateAdminAsync(
+            slaisInstitute.Guid);
+
+        await _userTestRepository.CreateAdminAsync(
+            anotherInstitute.Guid,
+            createdByUserGuid: adminUser.Guid);
+
+        await _userTestRepository.CreateTeacherAsync(
+            anotherInstitute.Guid,
+            createdByUserGuid: adminUser.Guid,
+            firstName: "Test",
+            lastName: "First");
+
+        await _userTestRepository.CreateTeacherAsync(
+            anotherInstitute.Guid,
+            createdByUserGuid: adminUser.Guid,
+            firstName: "Rest",
+            lastName: "Second");
+
+        await _userTestRepository.CreateStudentAsync(
+            anotherInstitute.Guid,
+            createdByUserGuid: adminUser.Guid,
+            firstName: "Fest",
+            lastName: "First");
+
+        await _userTestRepository.CreateAdminAsync(
+            anotherInstitute.Guid,
+            createdByUserGuid: adminUser.Guid,
+            firstName: "Rest",
+            lastName: "First");
+
+        await _userTestRepository.CreateStudentAsync(
+            anotherInstitute.Guid,
+            createdByUserGuid: adminUser.Guid,
+            firstName: "Johnny",
+            lastName: "Flair");
+
+        var users = await _userTestRepository.UserRepository.GetAllUsersFromInstitute(
+            anotherInstitute.Guid, Roles.SuperAdmin);
+
+        Assert.NotNull(users);
+        Assert.Equal(6, users.Count);
+
+        users[0].InstituteGuid.Should().Be(anotherInstitute.Guid);
+        users[0].Role.Should().Be(Roles.Admin);
+        users[0].CreatedByUser.Should().NotBeNull();
+        users[0].CreatedByUser!.Guid.Should().Be(adminUser.Guid);
+
+        users[1].FirstName.Should().Be("Test");
+        users[1].LastName.Should().Be("First");
+        users[1].InstituteGuid.Should().Be(anotherInstitute.Guid);
+        users[1].Role.Should().Be(Roles.Teacher);
+        users[1].CreatedByUser.Should().NotBeNull();
+        users[1].CreatedByUser!.Guid.Should().Be(adminUser.Guid);
+
+        users[2].FirstName.Should().Be("Rest");
+        users[2].LastName.Should().Be("Second");
+        users[2].InstituteGuid.Should().Be(anotherInstitute.Guid);
+        users[2].Role.Should().Be(Roles.Teacher);
+        users[2].CreatedByUser.Should().NotBeNull();
+        users[2].CreatedByUser!.Guid.Should().Be(adminUser.Guid);
+
+        users[3].FirstName.Should().Be("Fest");
+        users[3].LastName.Should().Be("First");
+        users[3].InstituteGuid.Should().Be(anotherInstitute.Guid);
+        users[3].Role.Should().Be(Roles.Student);
+        users[3].CreatedByUser.Should().NotBeNull();
+        users[3].CreatedByUser!.Guid.Should().Be(adminUser.Guid);
+
+        users[4].FirstName.Should().Be("Rest");
+        users[4].LastName.Should().Be("First");
+        users[4].InstituteGuid.Should().Be(anotherInstitute.Guid);
+        users[4].Role.Should().Be(Roles.Admin);
+        users[4].CreatedByUser.Should().NotBeNull();
+        users[4].CreatedByUser!.Guid.Should().Be(adminUser.Guid);
+
+        users[5].FirstName.Should().Be("Johnny");
+        users[5].LastName.Should().Be("Flair");
+        users[5].InstituteGuid.Should().Be(anotherInstitute.Guid);
+        users[5].Role.Should().Be(Roles.Student);
+        users[5].CreatedByUser.Should().NotBeNull();
+        users[5].CreatedByUser!.Guid.Should().Be(adminUser.Guid);
+
+        Assert.All(users, user => Assert.Equal(anotherInstitute.Guid, user.InstituteGuid));
+    }
+
+    [Fact]
+    public async Task GetAllUsers_ShouldReturnAllTeacherAndStudents_WhenUserIsAdmin()
+    {
+        var slaisInstitute = await _instituteTestRepository.CreateInstituteAsync();
+
+        var anotherInstitute = await _instituteTestRepository.CreateInstituteAsync();
+
+        var adminUser = await _userTestRepository.CreateAdminAsync(
+            slaisInstitute.Guid);
+
+        await _userTestRepository.CreateAdminAsync(
+            anotherInstitute.Guid,
+            createdByUserGuid: adminUser.Guid);
+
+        await _userTestRepository.CreateTeacherAsync(
+            anotherInstitute.Guid,
+            createdByUserGuid: adminUser.Guid,
+            firstName: "Test",
+            lastName: "First");
+
+        await _userTestRepository.CreateTeacherAsync(
+            anotherInstitute.Guid,
+            createdByUserGuid: adminUser.Guid,
+            firstName: "Rest",
+            lastName: "Second");
+
+        await _userTestRepository.CreateStudentAsync(
+            anotherInstitute.Guid,
+            createdByUserGuid: adminUser.Guid,
+            firstName: "Fest",
+            lastName: "First");
+
+        await _userTestRepository.CreateAdminAsync(
+            anotherInstitute.Guid,
+            createdByUserGuid: adminUser.Guid,
+            firstName: "Rest",
+            lastName: "First");
+
+        await _userTestRepository.CreateStudentAsync(
+            anotherInstitute.Guid,
+            createdByUserGuid: adminUser.Guid,
+            firstName: "Johnny",
+            lastName: "Flair");
+
+        var users = await _userTestRepository.UserRepository.GetAllUsersFromInstitute(
+            anotherInstitute.Guid, Roles.Admin);
+
+        Assert.NotNull(users);
+        Assert.Equal(4, users.Count);
+
+        users[0].FirstName.Should().Be("Test");
+        users[0].LastName.Should().Be("First");
+        users[0].InstituteGuid.Should().Be(anotherInstitute.Guid);
+        users[0].Role.Should().Be(Roles.Teacher);
+        users[0].CreatedByUser.Should().NotBeNull();
+        users[0].CreatedByUser!.Guid.Should().Be(adminUser.Guid);
+
+        users[1].FirstName.Should().Be("Rest");
+        users[1].LastName.Should().Be("Second");
+        users[1].InstituteGuid.Should().Be(anotherInstitute.Guid);
+        users[1].Role.Should().Be(Roles.Teacher);
+        users[1].CreatedByUser.Should().NotBeNull();
+        users[1].CreatedByUser!.Guid.Should().Be(adminUser.Guid);
+
+        users[2].FirstName.Should().Be("Fest");
+        users[2].LastName.Should().Be("First");
+        users[2].InstituteGuid.Should().Be(anotherInstitute.Guid);
+        users[2].Role.Should().Be(Roles.Student);
+        users[2].CreatedByUser.Should().NotBeNull();
+        users[2].CreatedByUser!.Guid.Should().Be(adminUser.Guid);
+
+        users[3].FirstName.Should().Be("Johnny");
+        users[3].LastName.Should().Be("Flair");
+        users[3].InstituteGuid.Should().Be(anotherInstitute.Guid);
+        users[3].Role.Should().Be(Roles.Student);
+        users[3].CreatedByUser.Should().NotBeNull();
+        users[3].CreatedByUser!.Guid.Should().Be(adminUser.Guid);
+
+        Assert.All(users, user => Assert.Equal(anotherInstitute.Guid, user.InstituteGuid));
+    }
+
+    [Fact]
+    public async Task GetAllUsers_ShouldReturnStudents_WhenUserIsTeacher()
+    {
+        var slaisInstitute = await _instituteTestRepository.CreateInstituteAsync();
+
+        var anotherInstitute = await _instituteTestRepository.CreateInstituteAsync();
+
+        var adminUser = await _userTestRepository.CreateAdminAsync(
+            slaisInstitute.Guid);
+
+        await _userTestRepository.CreateAdminAsync(
+            anotherInstitute.Guid,
+            createdByUserGuid: adminUser.Guid);
+
+        await _userTestRepository.CreateTeacherAsync(
+            anotherInstitute.Guid,
+            createdByUserGuid: adminUser.Guid,
+            firstName: "Test",
+            lastName: "First");
+
+        await _userTestRepository.CreateTeacherAsync(
+            anotherInstitute.Guid,
+            createdByUserGuid: adminUser.Guid,
+            firstName: "Rest",
+            lastName: "Second");
+
+        await _userTestRepository.CreateStudentAsync(
+            anotherInstitute.Guid,
+            createdByUserGuid: adminUser.Guid,
+            firstName: "Fest",
+            lastName: "First");
+
+        await _userTestRepository.CreateAdminAsync(
+            anotherInstitute.Guid,
+            createdByUserGuid: adminUser.Guid,
+            firstName: "Rest",
+            lastName: "First");
+
+        await _userTestRepository.CreateStudentAsync(
+            anotherInstitute.Guid,
+            createdByUserGuid: adminUser.Guid,
+            firstName: "Johnny",
+            lastName: "Flair");
+
+        var users = await _userTestRepository.UserRepository.GetAllUsersFromInstitute(
+            anotherInstitute.Guid, Roles.Teacher);
+
+        Assert.NotNull(users);
+        Assert.Equal(2, users.Count);
+
+        users[0].FirstName.Should().Be("Fest");
+        users[0].LastName.Should().Be("First");
+        users[0].InstituteGuid.Should().Be(anotherInstitute.Guid);
+        users[0].Role.Should().Be(Roles.Student);
+        users[0].CreatedByUser.Should().NotBeNull();
+        users[0].CreatedByUser!.Guid.Should().Be(adminUser.Guid);
+
+        users[1].FirstName.Should().Be("Johnny");
+        users[1].LastName.Should().Be("Flair");
+        users[1].InstituteGuid.Should().Be(anotherInstitute.Guid);
+        users[1].Role.Should().Be(Roles.Student);
+        users[1].CreatedByUser.Should().NotBeNull();
+        users[1].CreatedByUser!.Guid.Should().Be(adminUser.Guid);
+
+        Assert.All(users, user => Assert.Equal(anotherInstitute.Guid, user.InstituteGuid));
+    }
+
+    [Fact]
+    public async Task GetAllUsers_ShouldNoReturnUsers_WhenUserIsStudent()
+    {
+        var slaisInstitute = await _instituteTestRepository.CreateInstituteAsync();
+
+        var anotherInstitute = await _instituteTestRepository.CreateInstituteAsync();
+
+        var adminUser = await _userTestRepository.CreateAdminAsync(
+            slaisInstitute.Guid);
+
+        await _userTestRepository.CreateAdminAsync(
+            anotherInstitute.Guid,
+            createdByUserGuid: adminUser.Guid);
+
+        await _userTestRepository.CreateTeacherAsync(
+            anotherInstitute.Guid,
+            createdByUserGuid: adminUser.Guid,
+            firstName: "Test",
+            lastName: "First");
+
+        await _userTestRepository.CreateTeacherAsync(
+            anotherInstitute.Guid,
+            createdByUserGuid: adminUser.Guid,
+            firstName: "Rest",
+            lastName: "Second");
+
+        await _userTestRepository.CreateStudentAsync(
+            anotherInstitute.Guid,
+            createdByUserGuid: adminUser.Guid,
+            firstName: "Fest",
+            lastName: "First");
+
+        await _userTestRepository.CreateAdminAsync(
+            anotherInstitute.Guid,
+            createdByUserGuid: adminUser.Guid,
+            firstName: "Rest",
+            lastName: "First");
+
+        await _userTestRepository.CreateStudentAsync(
+            anotherInstitute.Guid,
+            createdByUserGuid: adminUser.Guid,
+            firstName: "Johnny",
+            lastName: "Flair");
+
+        var users = await _userTestRepository.UserRepository.GetAllUsersFromInstitute(
+            anotherInstitute.Guid, Roles.Student);
+
+        Assert.NotNull(users);
+        Assert.Equal(0, users.Count);
     }
 
     #endregion

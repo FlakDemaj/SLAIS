@@ -86,10 +86,7 @@ public class ValidateRefreshTokenCommandHandlerTests
             .GetUserWithRefreshTokensByGuidAsync(command.RefreshToken)
             .Returns((UserEntity?)null);
 
-        var act = async () =>
-        {
-            return await _handler.HandleAsync(command, CancellationToken.None);
-        };
+        var act = async () => await _handler.HandleAsync(command, CancellationToken.None);
 
         await act
             .Should()
@@ -109,10 +106,7 @@ public class ValidateRefreshTokenCommandHandlerTests
             .GetUserWithRefreshTokensByGuidAsync(command.RefreshToken)
             .Returns(user);
 
-        var act = async () =>
-        {
-            return await _handler.HandleAsync(command, CancellationToken.None);
-        };
+        var act = async () => await _handler.HandleAsync(command, CancellationToken.None);
 
         await act
             .Should()
@@ -132,10 +126,7 @@ public class ValidateRefreshTokenCommandHandlerTests
             .GetUserWithRefreshTokensByGuidAsync(command.RefreshToken)
             .Returns(user);
 
-        var act = async () =>
-        {
-            return await _handler.HandleAsync(command, CancellationToken.None);
-        };
+        var act = async () => await _handler.HandleAsync(command, CancellationToken.None);
 
         await act
             .Should()

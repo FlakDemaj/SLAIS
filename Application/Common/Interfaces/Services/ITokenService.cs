@@ -7,6 +7,4 @@ namespace Application.Common.Interfaces.Services;
 public interface ITokenService
 {
     GeneratedAccessTokenResult GenerateAccessToken(UserEntity user);
-
-    Task<bool> ValidateRefreshTokenAsync(string refreshToken);
 }

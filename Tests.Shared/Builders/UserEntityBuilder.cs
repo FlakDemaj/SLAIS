@@ -18,14 +18,21 @@ public class UserEntityBuilder
     private Guid _instituteGuid = Guid.NewGuid();
     private bool _isBlocked;
     private short _loginAttempts;
-    private readonly Roles _role = Roles.Admin;
+    private Roles _role = Roles.Admin;
     private readonly States _state = States.Active;
+    private UserEntity _createdByUser;
 
     #region With Methods
 
-    public UserEntityBuilder WithCreatedByUserGuid(Guid? createdByUserGuid)
+    public UserEntityBuilder WithCreatedByUserGuid(UserEntity? createdByUser)
     {
-        _createdByUserGuid = createdByUserGuid;
+        if (createdByUser == null)
+        {
+            return this;
+        }
+
+        _createdByUserGuid = createdByUser.Guid;
+        _createdByUser = createdByUser;
         return this;
     }
 
@@ -77,6 +84,12 @@ public class UserEntityBuilder
         return this;
     }
 
+    public UserEntityBuilder WithRole(Roles role)
+    {
+        _role = role;
+        return this;
+    }
+
     #endregion
 
     #region Build
@@ -90,12 +103,14 @@ public class UserEntityBuilder
         SetProperty(user, nameof(UserEntity.Username), _username);
         SetProperty(user, nameof(UserEntity.FirstName), _firstName);
         SetProperty(user, nameof(UserEntity.LastName), _lastName);
-        SetProperty(user, nameof(UserEntity.InstituteUuid), _instituteGuid);
+        SetProperty(user, nameof(UserEntity.InstituteGuid), _instituteGuid);
         SetProperty(user, nameof(UserEntity.IsBlocked), _isBlocked);
         SetProperty(user, nameof(UserEntity.LoginAttempts), _loginAttempts);
         SetProperty(user, nameof(UserEntity.Role), _role);
         SetProperty(user, nameof(UserEntity.State), _state);
         SetProperty(user, nameof(UserEntity.CreatedByUserGuid), _createdByUserGuid);
+        SetProperty(user, nameof(UserEntity.CreatedByUser), _createdByUser);
+        SetProperty(user, nameof(UserEntity.Id), 1);
 
         InitializeCollection(user);
 

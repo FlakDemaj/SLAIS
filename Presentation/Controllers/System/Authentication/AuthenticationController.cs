@@ -23,10 +23,12 @@ public class AuthenticationController : BaseRestController
 
     [HttpPost("login")]
     [AllowAnonymous]
-    public async Task<ActionResult<AccessTokenResponseDto>> LoginAsync([FromBody] LoginRequest loginRequest)
+    public async Task<ActionResult<AccessTokenResponseDto>> LoginAsync(
+        [FromBody] LoginRequest loginRequest,
+        CancellationToken cancellationToken)
     {
         var loginCommand = MapLoginRequest(loginRequest, HttpContext);
-        var tokens = await _mediator.SendAsync(loginCommand);
+        var tokens = await _mediator.SendAsync(loginCommand, cancellationToken);
 
         HttpContext.Response.Cookies.Append(
             "RefreshToken",
@@ -50,7 +52,8 @@ public class AuthenticationController : BaseRestController
 
     [HttpGet]
     [AllowAnonymous]
-    public async Task<ActionResult<AccessTokenResponseDto>> ValidateRefreshTokenAsync()
+    public async Task<ActionResult<AccessTokenResponseDto>> ValidateRefreshTokenAsync(
+        CancellationToken cancellationToken)
     {
         var refreshTokenCookie = HttpContext.Request.Cookies["RefreshToken"];
 
@@ -69,7 +72,7 @@ public class AuthenticationController : BaseRestController
             RefreshToken = refreshTokenGuid
         };
 
-        return await _mediator.SendAsync(refreshTokenCommand);
+        return await _mediator.SendAsync(refreshTokenCommand, cancellationToken);
     }
 
     private static LoginCommand MapLoginRequest(

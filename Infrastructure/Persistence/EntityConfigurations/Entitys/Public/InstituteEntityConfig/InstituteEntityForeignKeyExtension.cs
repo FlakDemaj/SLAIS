@@ -30,7 +30,7 @@ internal static class InstituteEntityForeignKeyExtension
         builder
             .HasMany(i => i.Users)
             .WithOne(u => u.Institute)
-            .HasForeignKey(u => u.InstituteUuid)
+            .HasForeignKey(u => u.InstituteGuid)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

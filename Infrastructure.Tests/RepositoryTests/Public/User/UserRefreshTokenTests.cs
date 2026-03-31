@@ -29,7 +29,7 @@ public class UserRefreshTokenTests : TestBase
         var institute = await _instituteTestRepository
             .CreateInstituteAsync();
 
-        var user = await _userTestRepository.CreateUserAsync(institute.Guid);
+        var user = await _userTestRepository.CreateAdminAsync(institute.Guid);
 
         await _userTestRepository
             .CreateRefreshTokenForUserAsync(user);
@@ -49,7 +49,7 @@ public class UserRefreshTokenTests : TestBase
     public async Task GetUserWithRefreshToken_ShouldReturnUser_WhenUserIsValid()
     {
         var institute = await _instituteTestRepository.CreateInstituteAsync();
-        var user = await _userTestRepository.CreateUserAsync(institute.Guid);
+        var user = await _userTestRepository.CreateAdminAsync(institute.Guid);
         await _userTestRepository.CreateRefreshTokenForUserAsync(user);
 
         var userWithToken = await _userTestRepository
@@ -73,7 +73,7 @@ public class UserRefreshTokenTests : TestBase
     public async Task GetUserWithRefreshToken_ShouldReturnNoUser_WhenUsernameIsFalse()
     {
         var institute = await _instituteTestRepository.CreateInstituteAsync();
-        var user = await _userTestRepository.CreateUserAsync(institute.Guid);
+        var user = await _userTestRepository.CreateAdminAsync(institute.Guid);
         await _userTestRepository.CreateRefreshTokenForUserAsync(user);
 
         var userWithToken = await _userTestRepository
@@ -87,7 +87,7 @@ public class UserRefreshTokenTests : TestBase
     public async Task GetUserWithRefreshTokenByGuid_ShouldReturnUser_WhenUserIsValid()
     {
         var institute = await _instituteTestRepository.CreateInstituteAsync();
-        var user = await _userTestRepository.CreateUserAsync(institute.Guid);
+        var user = await _userTestRepository.CreateAdminAsync(institute.Guid);
         await _userTestRepository.CreateRefreshTokenForUserAsync(user);
         await _userTestRepository.CreateRefreshTokenForUserAsync(user);
 
@@ -113,7 +113,7 @@ public class UserRefreshTokenTests : TestBase
     public async Task GetUserWithRefreshTokenByGuid_ShouldReturnNoTokens_WhenTokenGuidIsNotValid()
     {
         var institute = await _instituteTestRepository.CreateInstituteAsync();
-        var user = await _userTestRepository.CreateUserAsync(institute.Guid);
+        var user = await _userTestRepository.CreateAdminAsync(institute.Guid);
         await _userTestRepository.CreateRefreshTokenForUserAsync(user);
         await _userTestRepository.CreateRefreshTokenForUserAsync(user);
 

@@ -1,3 +1,4 @@
+using Domain.Common.Enums;
 using Domain.System.RefreshToken;
 
 using SLAIS.Domain.Users;
@@ -9,22 +10,24 @@ namespace Tests.Shared.TestDataCreator;
 public static class UserTestData
 {
     public static UserEntity CreateUser(
+        UserEntity? createdByUser = null,
         string? email = null,
         string? hashedPassword = null,
         string? username = null,
         string? firstName = null,
         string? lastName = null,
-        Guid? instituteGuid = null,
-        Guid? createdByUserGuid = null)
+        Roles? roles = null,
+        Guid? instituteGuid = null)
     {
         return new UserEntityBuilder()
-            .WithEmail(email ?? "test@slais.de")
+            .WithEmail(email ?? Guid.CreateVersion7() + "test@slais.de")
             .WithHashedPassword(hashedPassword ?? "HashedPassword")
-            .WithUsername(username ?? "testAdmin")
+            .WithUsername(username ?? Guid.CreateVersion7().ToString())
             .WithFirstName(firstName ?? "Max")
             .WithLastName(lastName ?? "Mustermann")
             .WithInstituteGuid(instituteGuid ?? Guid.NewGuid())
-            .WithCreatedByUserGuid(createdByUserGuid)
+            .WithCreatedByUserGuid(createdByUser)
+            .WithRole(roles ??  Roles.Teacher)
             .Build();
     }
 

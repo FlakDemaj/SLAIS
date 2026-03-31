@@ -1,6 +1,7 @@
 using Application.Authentication;
 using Application.Authentication.Commands;
 using Application.Authentication.Commands.Login;
+using Application.Common.Authentication;
 using Application.Common.Base;
 using Application.Common.Interfaces.Services;
 using Application.Common.Options;
@@ -9,6 +10,7 @@ using Application.Utils.Interfaces.Transaction;
 using Application.Utils.Logger;
 using Application.Utils.Mediator.Interfaces;
 
+using Domain.Common;
 using Domain.Common.Exceptions;
 
 using Microsoft.Extensions.Options;
@@ -46,7 +48,8 @@ public class LoginCommandHandlerUser :
 
     public async Task<GeneratedTokenResult> HandleAsync(
         LoginCommand request,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        IAuthentication authentication = null)
     {
         var user = await CheckUser(request.LoginName);
 
