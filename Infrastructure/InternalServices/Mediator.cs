@@ -56,8 +56,8 @@ public class Mediator : IMediator
         var pipelineMethod = pipelineType.GetMethod("HandleAsync");
 
         return await (Task<TResponse>)pipelineMethod?
-            .Invoke(pipeline, [request, (Func<Task<TResponse>?>)Next, cancellationToken, authentication])!;
+            .Invoke(pipeline, [request, (Func<Task<TResponse>?>)Next, cancellationToken])!;
 
-        Task<TResponse>? Next() => (Task<TResponse>)method?.Invoke(handler, [request, cancellationToken])!;
+        Task<TResponse>? Next() => (Task<TResponse>)method?.Invoke(handler, [request, cancellationToken, authentication])!;
     }
 }

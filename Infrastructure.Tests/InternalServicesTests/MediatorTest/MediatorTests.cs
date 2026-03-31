@@ -1,3 +1,4 @@
+using Application.Common.Authentication;
 using Application.Utils.Logger;
 using Application.Utils.Mediator.Interfaces;
 
@@ -45,7 +46,7 @@ public class MediatorTests
         var handler = Substitute.For<IRequestHandler<TestRequest, TestResponse>>();
 
         handler
-            .HandleAsync(request, Arg.Any<CancellationToken>())
+            .HandleAsync(request, Arg.Any<CancellationToken>(), Arg.Any<IAuthentication>())
             .Returns(expectedResult);
 
         var pipeline = Substitute.For<IPipelineTransactionBehavior<TestRequest, TestResponse>>();
@@ -55,7 +56,7 @@ public class MediatorTests
                 request,
                 Arg.Any<Func<Task<TestResponse>>>(),
                 Arg.Any<CancellationToken>())
-            .Returns(callInfo =>
+                    .Returns(callInfo =>
             {
                 var next = callInfo.ArgAt<Func<Task<TestResponse>>>(1);
                 return next();
@@ -93,10 +94,7 @@ public class MediatorTests
         var mediator = BuildMediator(serviceProvider);
 
         // Act
-        var act = async () =>
-        {
-            return await mediator.SendAsync(request, CancellationToken.None);
-        };
+        var act = async () => await mediator.SendAsync(request, CancellationToken.None, Arg.Any<IAuthentication>());
 
         // Assert
         await act.Should().ThrowAsync<InvalidOperationException>();
@@ -113,7 +111,7 @@ public class MediatorTests
         var handler = Substitute.For<IRequestHandler<TestRequest, TestResponse>>();
 
         handler
-            .HandleAsync(request, Arg.Any<CancellationToken>())
+            .HandleAsync(request, Arg.Any<CancellationToken>(), Arg.Any<IAuthentication>())
             .Returns(_ =>
             {
                 callOrder.Add("Handler");
@@ -144,7 +142,7 @@ public class MediatorTests
         var mediator = BuildMediator(serviceProvider);
 
         // Act
-        await mediator.SendAsync(request, CancellationToken.None);
+        await mediator.SendAsync(request, CancellationToken.None, null);
 
         // Assert
         callOrder.Should().ContainInOrder("Pipeline", "Handler");
