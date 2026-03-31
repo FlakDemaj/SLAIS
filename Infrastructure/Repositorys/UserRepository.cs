@@ -53,12 +53,8 @@ public class UserRepository : BaseRepository<UserEntity>, IUserRepository
         return await _context
             .GetTrackingSet<UserEntity>()
             .Include(user => user.RefreshTokens)
-            .FirstOrDefaultAsync(user
-                => user.RefreshTokens.Any(rt
-                    =>
-                {
-                    return rt.RefreshToken == refreshTokenGuid;
-                }));
+            .FirstOrDefaultAsync(user => user.RefreshTokens
+                .Any(rt => rt.RefreshToken == refreshTokenGuid));
     }
 
     private static IQueryable<UserEntity> ApplyRoleFilter(
