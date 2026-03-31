@@ -1,14 +1,13 @@
-using Domain.Common;
 using Domain.Common.Enums;
 
 namespace Application.Common.Authentication;
 
 public class Authentication : IAuthentication
 {
-    public Guid UserGuid { get; private set; }
+    public Guid UserGuid { get; }
 
-    public Guid InstitutionGuid { get; private set; }
-    public Roles UserRole { get; private set; }
+    public Guid InstitutionGuid { get; }
+    public Roles UserRole { get; }
 
     public Authentication(
         Guid userGuid,

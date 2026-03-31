@@ -12,9 +12,10 @@ namespace Presentation.Controllers.Public.Users;
 public class UserController : BaseRestController
 {
     public UserController(
-    IMediator mediator)
+        IMediator mediator)
         : base(mediator)
-    {}
+    {
+    }
 
     [HttpGet]
     [Authorize(Roles = $"{Role.Teacher},{Role.Admin},{Role.Server},{Role.SuperAdmin}")]

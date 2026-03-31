@@ -27,7 +27,7 @@ public static class UserTestData
             .WithLastName(lastName ?? "Mustermann")
             .WithInstituteGuid(instituteGuid ?? Guid.NewGuid())
             .WithCreatedByUserGuid(createdByUser)
-            .WithRole(roles ??  Roles.Teacher)
+            .WithRole(roles ?? Roles.Teacher)
             .Build();
     }
 

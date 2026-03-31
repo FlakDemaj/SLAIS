@@ -23,8 +23,7 @@ public class UserTestRepository
         UserRepository = new UserRepository(_dbContext);
     }
 
-    public async Task<UserEntity> CreateTeacherAsync(
-        Guid instituteGuid,
+    public async Task CreateTeacherAsync(Guid instituteGuid,
         Guid? createdByUserGuid = null,
         string? email = null,
         string? firstName = null,
@@ -41,14 +40,11 @@ public class UserTestRepository
             lastName ?? "Mustermann",
             instituteGuid);
 
-        user = await UserRepository.CreateAsync(user);
+        await UserRepository.CreateAsync(user);
         await _dbContext.SaveChangesAsync();
-
-        return user;
     }
 
-    public async Task<UserEntity> CreateStudentAsync(
-        Guid instituteGuid,
+    public async Task CreateStudentAsync(Guid instituteGuid,
         Guid? createdByUserGuid = null,
         string? email = null,
         string? firstName = null,
@@ -65,10 +61,8 @@ public class UserTestRepository
             lastName ?? "Mustermann",
             instituteGuid);
 
-        user = await UserRepository.CreateAsync(user);
+        await UserRepository.CreateAsync(user);
         await _dbContext.SaveChangesAsync();
-
-        return user;
     }
 
 
