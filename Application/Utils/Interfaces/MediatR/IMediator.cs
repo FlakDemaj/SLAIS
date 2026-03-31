@@ -1,7 +1,5 @@
 using Application.Common.Authentication;
 
-using Domain.Common;
-
 namespace Application.Utils.Interfaces.Mediator;
 
 public interface IMediator

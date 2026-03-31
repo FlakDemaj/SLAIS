@@ -14,57 +14,85 @@ public sealed class UserMappingProfile : Profile
         CreateMap<UserEntity, BaseAuditCreatedDto>()
             .ForMember(dto =>
                     dto.CreatedByFirstname,
-                    opt => opt.MapFrom(src =>
-                        src.CreatedByUser!.FirstName))
+                    opt =>
+                    {
+                        opt.MapFrom(src =>
+                                                src.CreatedByUser!.FirstName);
+                    })
             .ForMember(dto =>
                         dto.CreatedByLastname,
-                    opt => opt.MapFrom(src =>
-                        src.CreatedByUser!.LastName))
+                    opt =>
+                    {
+                        opt.MapFrom(src =>
+                                                src.CreatedByUser!.LastName);
+                    })
             .ForMember(dto =>
                         dto.CreationDate,
-                    opt => opt.MapFrom(src =>
-                        src.CreatedDate));
+                    opt =>
+                    {
+                        opt.MapFrom(src =>
+                                                src.CreatedDate);
+                    });
 
         CreateMap<UserEntity, BaseAuditUpdatedDto>()
             .ForMember(dto =>
                         dto.UpdatedByFirstname,
-                    opt => opt.MapFrom(src =>
-                        src.UpdatedByUser != null ? src.UpdatedByUser.FirstName : null))
+                    opt =>
+                    {
+                        opt.MapFrom(src =>
+                                                src.UpdatedByUser != null ? src.UpdatedByUser.FirstName : null);
+                    })
             .ForMember(dto =>
                         dto.UpdatedByLastname,
                     opt =>
-                        opt.MapFrom(src => src.UpdatedByUser != null ? src.UpdatedByUser.LastName : null))
+                    {
+                        opt.MapFrom(src => src.UpdatedByUser != null ? src.UpdatedByUser.LastName : null);
+                    })
             .ForMember(dto =>
                         dto.UpdatedDate,
                     opt =>
-                        opt.MapFrom(src => src.UpdateDate));
+                    {
+                        opt.MapFrom(src => src.UpdateDate);
+                    });
 
         CreateMap<UserEntity, BaseAuditDeletedDto>()
             .ForMember(dto =>
                         dto.DeletedByFirstname,
                     opt =>
-                        opt.MapFrom(src => src.DeletedByUser != null ? src.DeletedByUser.FirstName : null))
+                    {
+                        opt.MapFrom(src => src.DeletedByUser != null ? src.DeletedByUser.FirstName : null);
+                    })
             .ForMember(dto =>
                         dto.DeletedByLastname,
                     opt =>
-                        opt.MapFrom(src => src.DeletedByUser != null ? src.DeletedByUser.LastName : null))
+                    {
+                        opt.MapFrom(src => src.DeletedByUser != null ? src.DeletedByUser.LastName : null);
+                    })
             .ForMember(dto =>
                         dto.DeletedDate,
                     opt =>
-                        opt.MapFrom(src => src.DeleteDate));
+                    {
+                        opt.MapFrom(src => src.DeleteDate);
+                    });
 
         CreateMap<UserEntity, GetUserResponseDto>()
             .ForMember(dto =>
                         dto.CreatedBy,
                     opt =>
-                        opt.MapFrom(src => src))
+                    {
+                        opt.MapFrom(src => src);
+                    })
             .ForMember(dto =>
                         dto.UpdatedBy,
                     opt =>
-                        opt.MapFrom(src => src.UpdateDate == null ? null : src))
+                    {
+                        opt.MapFrom(src => src.UpdateDate == null ? null : src);
+                    })
             .ForMember(dto =>
                         dto.DeletedBy,
                     opt =>
-                        opt.MapFrom(src => src.DeleteDate == null ? null : src));
+                    {
+                        opt.MapFrom(src => src.DeleteDate == null ? null : src);
+                    });
     }
 }

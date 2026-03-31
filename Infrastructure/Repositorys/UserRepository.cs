@@ -55,8 +55,10 @@ public class UserRepository : BaseRepository<UserEntity>, IUserRepository
             .Include(user => user.RefreshTokens)
             .FirstOrDefaultAsync(user
                 => user.RefreshTokens.Any(rt
-                    => rt.RefreshToken == refreshTokenGuid
-                ));
+                    =>
+                {
+                    return rt.RefreshToken == refreshTokenGuid;
+                }));
     }
 
     private static IQueryable<UserEntity> ApplyRoleFilter(

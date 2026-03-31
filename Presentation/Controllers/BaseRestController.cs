@@ -1,9 +1,7 @@
 using Application.Common;
 using Application.Common.Authentication;
-using Application.Common.Interfaces;
 using Application.Utils.Interfaces.Mediator;
 
-using Domain.Common;
 using Domain.Common.Exceptions;
 
 using Microsoft.AspNetCore.Authorization;

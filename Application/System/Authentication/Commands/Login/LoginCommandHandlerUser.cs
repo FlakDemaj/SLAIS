@@ -6,11 +6,9 @@ using Application.Common.Base;
 using Application.Common.Interfaces.Services;
 using Application.Common.Options;
 using Application.Interfaces;
-using Application.Utils.Interfaces.Transaction;
 using Application.Utils.Logger;
 using Application.Utils.Mediator.Interfaces;
 
-using Domain.Common;
 using Domain.Common.Exceptions;
 
 using Microsoft.Extensions.Options;

@@ -6,8 +6,6 @@ using Application.Utils.Mediator.Interfaces;
 
 using AutoMapper;
 
-using Domain.Common;
-
 namespace Application.Public.Users.Commands.GetUsers;
 
 public class GetUsersCommandHandler :

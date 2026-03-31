@@ -47,7 +47,7 @@ public class AuthenticationControllerTest : TestBase
         };
 
         _factory.MediatorMock
-            .SendAsync(Arg.Any<LoginCommand>(),null, Arg.Any<CancellationToken>())
+            .SendAsync(Arg.Any<LoginCommand>(), null, Arg.Any<CancellationToken>())
             .Returns(expectedResult);
 
         var response = await _client.PostAsync(
@@ -62,7 +62,10 @@ public class AuthenticationControllerTest : TestBase
         result.AccessToken.Should().Be(expectedResult.GeneratedAccessToken.AccessToken);
 
         var setCookieHeader = response.Headers
-            .SingleOrDefault(h => h.Key == "Set-Cookie")
+            .SingleOrDefault(h =>
+            {
+                return h.Key == "Set-Cookie";
+            })
             .Value?
             .FirstOrDefault();
 
@@ -77,7 +80,7 @@ public class AuthenticationControllerTest : TestBase
     public async Task Login_ShouldReturnUnauthorized_WhenUserNotFound()
     {
         _factory.MediatorMock
-            .SendAsync(Arg.Any<LoginCommand>(),null, Arg.Any<CancellationToken>())
+            .SendAsync(Arg.Any<LoginCommand>(), null, Arg.Any<CancellationToken>())
             .ThrowsAsync(new SlaisException(AuthErrorCodes.NoUserWithThisName));
 
         var response = await _client.PostAsync(
@@ -97,7 +100,7 @@ public class AuthenticationControllerTest : TestBase
     public async Task Login_ShouldReturnUnauthorized_WhenPasswordIsFalse()
     {
         _factory.MediatorMock
-            .SendAsync(Arg.Any<LoginCommand>(),null, Arg.Any<CancellationToken>())
+            .SendAsync(Arg.Any<LoginCommand>(), null, Arg.Any<CancellationToken>())
             .ThrowsAsync(new SlaisException(AuthErrorCodes.WrongPassword));
 
         var response = await _client.PostAsync(
@@ -127,7 +130,7 @@ public class AuthenticationControllerTest : TestBase
         };
 
         _factory.MediatorMock
-            .SendAsync(Arg.Any<ValidateRefreshTokenCommand>(),null, Arg.Any<CancellationToken>())
+            .SendAsync(Arg.Any<ValidateRefreshTokenCommand>(), null, Arg.Any<CancellationToken>())
             .Returns(expectedResult);
 
         SetRefreshTokenCookie();
@@ -177,7 +180,7 @@ public class AuthenticationControllerTest : TestBase
     public async Task ValidateRefreshToken_ShouldReturnUnauthorized_WhenTokenHasNoUser()
     {
         _factory.MediatorMock
-            .SendAsync(Arg.Any<ValidateRefreshTokenCommand>(),null, Arg.Any<CancellationToken>())
+            .SendAsync(Arg.Any<ValidateRefreshTokenCommand>(), null, Arg.Any<CancellationToken>())
             .ThrowsAsync(new SlaisException(AuthErrorCodes.NoUserWithThisToken));
 
         SetRefreshTokenCookie();
@@ -197,7 +200,7 @@ public class AuthenticationControllerTest : TestBase
     public async Task ValidateRefreshToken_ShouldReturnUnauthorized_WhenTokenIsInvalid()
     {
         _factory.MediatorMock
-            .SendAsync(Arg.Any<ValidateRefreshTokenCommand>(),null, Arg.Any<CancellationToken>())
+            .SendAsync(Arg.Any<ValidateRefreshTokenCommand>(), null, Arg.Any<CancellationToken>())
             .ThrowsAsync(new SlaisException(AuthErrorCodes.NoValidTokenFound));
 
         SetRefreshTokenCookie();

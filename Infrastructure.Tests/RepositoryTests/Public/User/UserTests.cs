@@ -261,7 +261,10 @@ public class UserTests : TestBase
         users[5].CreatedByUser.Should().NotBeNull();
         users[5].CreatedByUser!.Guid.Should().Be(adminUser.Guid);
 
-        Assert.All(users, user => Assert.Equal(anotherInstitute.Guid, user.InstituteGuid));
+        Assert.All(users, user =>
+        {
+            Assert.Equal(anotherInstitute.Guid, user.InstituteGuid);
+        });
     }
 
     [Fact]
@@ -342,7 +345,10 @@ public class UserTests : TestBase
         users[3].CreatedByUser.Should().NotBeNull();
         users[3].CreatedByUser!.Guid.Should().Be(adminUser.Guid);
 
-        Assert.All(users, user => Assert.Equal(anotherInstitute.Guid, user.InstituteGuid));
+        Assert.All(users, user =>
+        {
+            Assert.Equal(anotherInstitute.Guid, user.InstituteGuid);
+        });
     }
 
     [Fact]
@@ -409,7 +415,10 @@ public class UserTests : TestBase
         users[1].CreatedByUser.Should().NotBeNull();
         users[1].CreatedByUser!.Guid.Should().Be(adminUser.Guid);
 
-        Assert.All(users, user => Assert.Equal(anotherInstitute.Guid, user.InstituteGuid));
+        Assert.All(users, user =>
+        {
+            Assert.Equal(anotherInstitute.Guid, user.InstituteGuid);
+        });
     }
 
     [Fact]
@@ -460,7 +469,7 @@ public class UserTests : TestBase
             anotherInstitute.Guid, Roles.Student);
 
         Assert.NotNull(users);
-        Assert.Equal(0, users.Count);
+        Assert.Empty(users);
     }
 
     #endregion

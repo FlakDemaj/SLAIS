@@ -27,7 +27,10 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
         builder.ConfigureServices(services =>
         {
             var mediatorDescriptor = services.SingleOrDefault(
-                d => d.ServiceType == typeof(IMediator));
+                d =>
+                {
+                    return d.ServiceType == typeof(IMediator);
+                });
 
             if (mediatorDescriptor != null)
             {
@@ -37,7 +40,10 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
             services.AddSingleton(MediatorMock);
 
             var jwtDescriptor = services.SingleOrDefault(
-                d => d.ServiceType == typeof(JwtBearerOptions));
+                d =>
+                {
+                    return d.ServiceType == typeof(JwtBearerOptions);
+                });
 
             if (jwtDescriptor != null)
             {

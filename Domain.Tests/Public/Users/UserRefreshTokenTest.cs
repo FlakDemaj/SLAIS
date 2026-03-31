@@ -212,7 +212,10 @@ public class UserRefreshTokenTest
         var user = UserTestData.CreateBlockedUser();
         var token = UserTestData.CreateRefreshToken(user);
 
-        var act = () => user.ValidateRefreshToken(token.RefreshToken);
+        var act = () =>
+        {
+            return user.ValidateRefreshToken(token.RefreshToken);
+        };
 
         act.ThrowsException(UserErrorCodes.UserIsBlocked);
     }
@@ -270,12 +273,18 @@ public class UserRefreshTokenTest
 
         var revokedRefreshToken = user
             .RefreshTokens
-            .Where(rt => rt.DeviceGuid == deviceGuid)
+            .Where(rt =>
+            {
+                return rt.DeviceGuid == deviceGuid;
+            })
             .FirstOrDefault();
 
         var notRevokedRefreshToken = user
             .RefreshTokens
-            .Where(rt => rt.DeviceGuid != deviceGuid)
+            .Where(rt =>
+            {
+                return rt.DeviceGuid != deviceGuid;
+            })
             .FirstOrDefault();
 
         revokedRefreshToken.Should().NotBeNull();

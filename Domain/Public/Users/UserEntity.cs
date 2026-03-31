@@ -204,8 +204,11 @@ public class UserEntity : UserNavigationPropertyEntity
     {
         var activeRefreshTokensInTheDevice =
             RefreshTokens
-                .Where(rt => rt.DeviceGuid == deviceGuid
-                             && !rt.Revoked)
+                .Where(rt =>
+                {
+                    return rt.DeviceGuid == deviceGuid
+                                                 && !rt.Revoked;
+                })
                 .ToList();
 
         foreach (var refreshToken in activeRefreshTokensInTheDevice)

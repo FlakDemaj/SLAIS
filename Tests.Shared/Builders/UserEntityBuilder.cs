@@ -164,7 +164,9 @@ public class UserEntityBuilder
             var field = type.GetFields(
                     BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly)
                 .FirstOrDefault(f =>
-                    f.FieldType == typeof(ICollection<RefreshTokenEntity>));
+                {
+                    return f.FieldType == typeof(ICollection<RefreshTokenEntity>);
+                });
 #pragma warning restore S3011
 
             if (field != null)

@@ -80,7 +80,7 @@ public class MediatorTests
 
         await handler
             .Received(1)
-            .HandleAsync(request, null,Arg.Any<CancellationToken>());
+            .HandleAsync(request, null, Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -94,7 +94,10 @@ public class MediatorTests
         var mediator = BuildMediator(serviceProvider);
 
         // Act
-        var act = async () => await mediator.SendAsync(request, Arg.Any<IAuthentication>(), CancellationToken.None);
+        var act = async () =>
+        {
+            return await mediator.SendAsync(request, Arg.Any<IAuthentication>(), CancellationToken.None);
+        };
 
         // Assert
         await act.Should().ThrowAsync<InvalidOperationException>();

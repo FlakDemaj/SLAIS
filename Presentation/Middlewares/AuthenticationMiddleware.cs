@@ -2,14 +2,11 @@ using System.Security.Claims;
 
 using Application.Common;
 using Application.Common.Authentication;
-using Application.Common.Interfaces;
 
-using Domain.Common;
 using Domain.Common.Enums;
 using Domain.Common.Exceptions;
 
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace Presentation.Middlewares;
 
@@ -54,7 +51,9 @@ public class AuthenticationMiddleware
                 .User
                 .Claims
                 .FirstOrDefault(c =>
-                    c.Type == ClaimTypes.NameIdentifier)?
+                {
+                    return c.Type == ClaimTypes.NameIdentifier;
+                })?
                 .Value;
 
         if (string.IsNullOrWhiteSpace(userGuidString))
@@ -75,7 +74,10 @@ public class AuthenticationMiddleware
         var instituteGuidString = context
             .User
             .Claims
-            .FirstOrDefault(claim => claim.Type == "InstituteGuid")?
+            .FirstOrDefault(claim =>
+            {
+                return claim.Type == "InstituteGuid";
+            })?
             .Value;
 
         if (string.IsNullOrWhiteSpace(instituteGuidString))
@@ -99,7 +101,9 @@ public class AuthenticationMiddleware
                 .Claims
                 .FirstOrDefault(
                     c =>
-                        c.Type == ClaimTypes.Role)?
+                    {
+                        return c.Type == ClaimTypes.Role;
+                    })?
                 .Value;
 
         if (string.IsNullOrWhiteSpace(userRoleString))
@@ -123,7 +127,10 @@ public class AuthenticationMiddleware
             return true;
         }
 
-        var allowAnonymous = endpoint.Metadata.Any(f => f is AllowAnonymousAttribute);
+        var allowAnonymous = endpoint.Metadata.Any(f =>
+        {
+            return f is AllowAnonymousAttribute;
+        });
         return allowAnonymous;
     }
 
