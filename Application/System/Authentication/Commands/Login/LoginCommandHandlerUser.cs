@@ -48,8 +48,8 @@ public class LoginCommandHandlerUser :
 
     public async Task<GeneratedTokenResult> HandleAsync(
         LoginCommand request,
-        CancellationToken cancellationToken = default,
-        IAuthentication authentication = null)
+        IAuthentication? authentication = null,
+        CancellationToken cancellationToken = default)
     {
         var user = await CheckUser(request.LoginName);
 

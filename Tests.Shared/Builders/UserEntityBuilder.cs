@@ -20,7 +20,7 @@ public class UserEntityBuilder
     private short _loginAttempts;
     private Roles _role = Roles.Admin;
     private readonly States _state = States.Active;
-    private UserEntity _createdByUser;
+    private UserEntity? _createdByUser;
 
     #region With Methods
 

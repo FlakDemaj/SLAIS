@@ -29,11 +29,12 @@ public class GetUsersCommandHandler :
     }
 
     public async Task<List<GetUserResponseDto>> HandleAsync(
-        GetUsersCommand request, CancellationToken cancellationToken = default,
-        IAuthentication authentication = null)
+        GetUsersCommand request,
+        IAuthentication? authentication = null,
+        CancellationToken cancellationToken = default)
     {
         var users = await _userRepository.GetAllUsersFromInstitute(
-            authentication.InstitutionGuid, authentication.UserRole);
+            authentication!.InstitutionGuid, authentication.UserRole);
 
         return _mapper.Map<List<GetUserResponseDto>>(users);
 

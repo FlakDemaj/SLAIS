@@ -46,7 +46,7 @@ public class MediatorTests
         var handler = Substitute.For<IRequestHandler<TestRequest, TestResponse>>();
 
         handler
-            .HandleAsync(request, Arg.Any<CancellationToken>(), Arg.Any<IAuthentication>())
+            .HandleAsync(request, Arg.Any<IAuthentication>(), Arg.Any<CancellationToken>())
             .Returns(expectedResult);
 
         var pipeline = Substitute.For<IPipelineTransactionBehavior<TestRequest, TestResponse>>();
@@ -72,7 +72,7 @@ public class MediatorTests
         var mediator = BuildMediator(serviceProvider);
 
         // Act
-        var result = await mediator.SendAsync(request, CancellationToken.None);
+        var result = await mediator.SendAsync(request, null, CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
@@ -80,7 +80,7 @@ public class MediatorTests
 
         await handler
             .Received(1)
-            .HandleAsync(request, Arg.Any<CancellationToken>());
+            .HandleAsync(request, null,Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -94,7 +94,7 @@ public class MediatorTests
         var mediator = BuildMediator(serviceProvider);
 
         // Act
-        var act = async () => await mediator.SendAsync(request, CancellationToken.None, Arg.Any<IAuthentication>());
+        var act = async () => await mediator.SendAsync(request, Arg.Any<IAuthentication>(), CancellationToken.None);
 
         // Assert
         await act.Should().ThrowAsync<InvalidOperationException>();
@@ -111,7 +111,7 @@ public class MediatorTests
         var handler = Substitute.For<IRequestHandler<TestRequest, TestResponse>>();
 
         handler
-            .HandleAsync(request, Arg.Any<CancellationToken>(), Arg.Any<IAuthentication>())
+            .HandleAsync(request, Arg.Any<IAuthentication>(), Arg.Any<CancellationToken>())
             .Returns(_ =>
             {
                 callOrder.Add("Handler");
@@ -142,7 +142,7 @@ public class MediatorTests
         var mediator = BuildMediator(serviceProvider);
 
         // Act
-        await mediator.SendAsync(request, CancellationToken.None, null);
+        await mediator.SendAsync(request, null, CancellationToken.None);
 
         // Assert
         callOrder.Should().ContainInOrder("Pipeline", "Handler");

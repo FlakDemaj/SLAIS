@@ -28,7 +28,7 @@ public class AuthenticationController : BaseRestController
         CancellationToken cancellationToken)
     {
         var loginCommand = MapLoginRequest(loginRequest, HttpContext);
-        var tokens = await _mediator.SendAsync(loginCommand, cancellationToken);
+        var tokens = await _mediator.SendAsync(loginCommand, null, cancellationToken);
 
         HttpContext.Response.Cookies.Append(
             "RefreshToken",
@@ -72,7 +72,7 @@ public class AuthenticationController : BaseRestController
             RefreshToken = refreshTokenGuid
         };
 
-        return await _mediator.SendAsync(refreshTokenCommand, cancellationToken);
+        return await _mediator.SendAsync(refreshTokenCommand, null, cancellationToken);
     }
 
     private static LoginCommand MapLoginRequest(

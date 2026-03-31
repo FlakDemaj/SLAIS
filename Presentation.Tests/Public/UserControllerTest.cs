@@ -64,8 +64,8 @@ public class UserControllerTest : TestBase
         _factory.MediatorMock
             .SendAsync(
                 Arg.Any<GetUsersCommand>(),
-                Arg.Any<CancellationToken>(),
-                Arg.Any<IAuthentication>())
+                Arg.Any<IAuthentication>(),
+                Arg.Any<CancellationToken>())
             .Returns(expectedResult);
 
         AuthenticateAs(
@@ -139,8 +139,8 @@ public class UserControllerTest : TestBase
         _factory.MediatorMock
             .SendAsync(
                 Arg.Any<GetUsersCommand>(),
-                Arg.Any<CancellationToken>(),
-                Arg.Any<IAuthentication>())
+                Arg.Any<IAuthentication>(),
+                Arg.Any<CancellationToken>())
             .Returns(result);
 
         AuthenticateAs(
@@ -161,8 +161,8 @@ public class UserControllerTest : TestBase
         _factory.MediatorMock
             .SendAsync(
                 Arg.Any<GetUsersCommand>(),
-                Arg.Any<CancellationToken>(),
-                Arg.Any<IAuthentication>())
+                Arg.Any<IAuthentication>(),
+                Arg.Any<CancellationToken>())
             .Returns(expectedResult);
 
         AuthenticateAs(

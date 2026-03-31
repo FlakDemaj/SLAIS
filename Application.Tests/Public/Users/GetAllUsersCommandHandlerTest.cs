@@ -59,8 +59,8 @@ public class GetAllUsersCommandHandlerTest
 
         var request = await _getUsersCommandHandler.HandleAsync(
             new GetUsersCommand(),
-            CancellationToken.None,
-            authentication);
+            authentication,
+            CancellationToken.None);
 
         request.Should().NotBeNull();
         request.Count.Should().Be(result.Count);

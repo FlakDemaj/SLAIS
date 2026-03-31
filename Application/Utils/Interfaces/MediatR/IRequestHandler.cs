@@ -10,6 +10,6 @@ public interface IRequestHandler<TRequest, TResponse>
 {
     Task<TResponse> HandleAsync(
         TRequest request,
-        CancellationToken cancellationToken = default,
-        IAuthentication authentication = null);
+        IAuthentication? authentication = null,
+        CancellationToken cancellationToken = default);
 }

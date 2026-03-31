@@ -3,8 +3,6 @@ using Application.Utils.Interfaces.Mediator;
 using Application.Utils.Logger;
 using Application.Utils.Mediator.Interfaces;
 
-using Domain.Common;
-
 using Infrastructure.Transaction;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -25,9 +23,10 @@ public class Mediator : IMediator
         _logger = logger;
     }
 
-    public async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request,
-        CancellationToken cancellationToken = default,
-        IAuthentication authentication = null)
+    public async Task<TResponse> SendAsync<TResponse>(
+        IRequest<TResponse> request,
+        IAuthentication? authentication = null,
+        CancellationToken cancellationToken = default)
     {
         var requestType = request.GetType();
 
@@ -35,11 +34,6 @@ public class Mediator : IMediator
             .MakeGenericType(requestType, typeof(TResponse));
 
         var handler = _serviceProvider.GetRequiredService(handlerType);
-
-        if (handler == null)
-        {
-            _logger.LogError($"Handler not found for type {handlerType}", null);
-        }
 
         var method = handlerType.GetMethod("HandleAsync");
 

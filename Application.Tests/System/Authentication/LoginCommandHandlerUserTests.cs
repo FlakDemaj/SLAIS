@@ -87,7 +87,7 @@ public class LoginCommandHandlerUserTests
             .GenerateAccessToken(user)
             .Returns(expectedResult);
 
-        var result = await _handlerUser.HandleAsync(command, CancellationToken.None);
+        var result = await _handlerUser.HandleAsync(command, null, CancellationToken.None);
 
         result.Should().NotBeNull();
         result.GeneratedAccessToken.Should().Be(expectedResult);
@@ -107,7 +107,7 @@ public class LoginCommandHandlerUserTests
             .GetUserByUsernameOrEmailWithRefreshTokenAsync(command.LoginName)
             .Returns((UserEntity?)null);
 
-        var act = async () => await _handlerUser.HandleAsync(command, CancellationToken.None);
+        var act = async () => await _handlerUser.HandleAsync(command, null, CancellationToken.None);
 
         await act.Should()
             .ThrowAsync<SlaisException>()
@@ -132,7 +132,7 @@ public class LoginCommandHandlerUserTests
             .Verify(command.Password, user.HashedPassword)
             .Returns(false);
 
-        var act = async () => await _handlerUser.HandleAsync(command, CancellationToken.None);
+        var act = async () => await _handlerUser.HandleAsync(command,null, CancellationToken.None);
 
         await act.Should()
             .ThrowAsync<SlaisException>()
@@ -163,7 +163,7 @@ public class LoginCommandHandlerUserTests
             .GenerateAccessToken(user)
             .Returns(expectedResult);
 
-        await _handlerUser.HandleAsync(command, CancellationToken.None);
+        await _handlerUser.HandleAsync(command,null, CancellationToken.None);
 
         user.LoginAttempts.Should().Be(0);
     }
@@ -205,7 +205,7 @@ public class LoginCommandHandlerUserTests
             .GenerateAccessToken(user)
             .Returns(expectedResult);
 
-        await _handlerUser.HandleAsync(command, CancellationToken.None);
+        await _handlerUser.HandleAsync(command, null, CancellationToken.None);
 
         var revokedRefreshTokensWithTheSameDeviceGuid = user
             .RefreshTokens

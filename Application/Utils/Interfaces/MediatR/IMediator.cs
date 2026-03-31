@@ -8,6 +8,6 @@ public interface IMediator
 {
     Task<TResponse> SendAsync<TResponse>(
         IRequest<TResponse> request,
-        CancellationToken cancellationToken = default,
-        IAuthentication authentication = null);
+        IAuthentication? authentication = null,
+        CancellationToken cancellationToken = default);
 }

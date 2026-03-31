@@ -23,7 +23,7 @@ public class UserController : BaseRestController
     {
         return await _mediator.SendAsync(
             new GetUsersCommand(),
-            cancellationToken,
-            Authentication);
+            Authentication,
+            cancellationToken);
     }
 }
