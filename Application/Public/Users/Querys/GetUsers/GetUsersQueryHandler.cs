@@ -6,35 +6,32 @@ using Application.Utils.Mediator.Interfaces;
 
 using AutoMapper;
 
-namespace Application.Public.Users.Commands.GetUsers;
+namespace Application.Public.Users.Querys.GetUsers;
 
-public class GetUsersCommandHandler :
-    BaseHandler<GetUsersCommandHandler>,
-    IRequestHandler<GetUsersCommand, List<GetUserResponseDto>>
+public class GetUsersQueryHandler :
+    BaseHandler<GetUsersQueryHandler>,
+    IRequestHandler<GetUsersQuery, List<GetUsersResponseDto>>
 {
     private readonly IUserRepository _userRepository;
 
-    private readonly IMapper _mapper;
-
-    public GetUsersCommandHandler(
-        ISlaisLogger<GetUsersCommandHandler> logger,
+    public GetUsersQueryHandler(
+        ISlaisLogger<GetUsersQueryHandler> logger,
         IUserRepository userRepository,
         IMapper mapper)
-        : base(logger)
+        : base(mapper, logger)
     {
         _userRepository = userRepository;
-        _mapper = mapper;
     }
 
-    public async Task<List<GetUserResponseDto>> HandleAsync(
-        GetUsersCommand request,
+    public async Task<List<GetUsersResponseDto>> HandleAsync(
+        GetUsersQuery request,
         IAuthentication? authentication = null,
         CancellationToken cancellationToken = default)
     {
         var users = await _userRepository.GetAllUsersFromInstitute(
             authentication!.InstitutionGuid, authentication.UserRole);
 
-        return _mapper.Map<List<GetUserResponseDto>>(users);
+        return _mapper.Map<List<GetUsersResponseDto>>(users);
 
     }
 }

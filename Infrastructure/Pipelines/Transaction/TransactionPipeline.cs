@@ -4,16 +4,16 @@ using Application.Utils.Logger;
 
 using Domain.Common.Exceptions;
 
-namespace Infrastructure.Transaction;
+namespace Infrastructure.Pipelines.Transaction;
 
-public class PipelineTransactionBehavior<TRequest, TResponse> :
-    IPipelineTransactionBehavior<TRequest, TResponse>
+public class TransactionPipeline<TRequest, TResponse> :
+    IPipelineBehavior<TRequest, TResponse>
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly ISlaisLogger<PipelineTransactionBehavior<TRequest, TResponse>> _logger;
+    private readonly ISlaisLogger<TransactionPipeline<TRequest, TResponse>> _logger;
 
-    public PipelineTransactionBehavior(IUnitOfWork unitOfWork,
-        ISlaisLogger<PipelineTransactionBehavior<TRequest, TResponse>> logger)
+    public TransactionPipeline(IUnitOfWork unitOfWork,
+        ISlaisLogger<TransactionPipeline<TRequest, TResponse>> logger)
     {
         _unitOfWork = unitOfWork;
         _logger = logger;

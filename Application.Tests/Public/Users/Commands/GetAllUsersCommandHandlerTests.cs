@@ -1,6 +1,6 @@
 using Application.Common.Mappers.Public;
 using Application.Interfaces;
-using Application.Public.Users.Commands.GetUsers;
+using Application.Public.Users.Querys.GetUsers;
 using Application.Utils.Logger;
 
 using AutoMapper;
@@ -17,26 +17,26 @@ using Tests.Shared.TestDataCreator;
 
 using Xunit;
 
-namespace Application.Tests.Public.Users;
+namespace Application.Tests.Public.Users.Commands;
 
-public class GetAllUsersCommandHandlerTest
+public class GetAllUsersCommandHandlerTests
 {
     private readonly IUserRepository _userRepository;
 
-    private readonly GetUsersCommandHandler _getUsersCommandHandler;
+    private readonly GetUsersQueryHandler _getUsersQueryHandler;
 
-    public GetAllUsersCommandHandlerTest()
+    public GetAllUsersCommandHandlerTests()
     {
         _userRepository = Substitute.For<IUserRepository>();
 
-        var logger = Substitute.For<ISlaisLogger<GetUsersCommandHandler>>();
+        var logger = Substitute.For<ISlaisLogger<GetUsersQueryHandler>>();
 
         var mapper = new MapperConfiguration(config =>
         {
             config.AddProfile<UserMappingProfile>();
         }).CreateMapper();
 
-        _getUsersCommandHandler = new GetUsersCommandHandler(
+        _getUsersQueryHandler = new GetUsersQueryHandler(
             logger,
             _userRepository,
             mapper);
@@ -57,8 +57,8 @@ public class GetAllUsersCommandHandlerTest
             Roles.Admin,
             Guid.CreateVersion7());
 
-        var request = await _getUsersCommandHandler.HandleAsync(
-            new GetUsersCommand(),
+        var request = await _getUsersQueryHandler.HandleAsync(
+            new GetUsersQuery(),
             authentication,
             CancellationToken.None);
 
@@ -71,13 +71,7 @@ public class GetAllUsersCommandHandlerTest
             request[i].Id.Should().Be(result[i].Id);
             request[i].Role.Should().Be(result[i].Role);
             request[i].Username.Should().Be(result[i].Username);
-            request[i].CreatedBy.Should().NotBeNull();
-            request[i].CreatedBy.CreationDate.Should()
-                .BeCloseTo(result[i].CreatedDate, TimeSpan.FromSeconds(1));
-            request[i].CreatedBy.CreatedByFirstname.Should().NotBeNull();
-            request[i].CreatedBy.CreatedByLastname.Should().NotBeNull();
-            request[i].UpdatedBy.Should().BeNull();
-            request[i].DeletedBy.Should().BeNull();
+            request[i].State.Should().Be(result[i].State);
         }
     }
 

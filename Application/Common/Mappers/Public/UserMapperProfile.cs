@@ -1,3 +1,4 @@
+using Application.Common.DTOs;
 using Application.Common.DTOs.Base;
 using Application.Public.Users;
 
@@ -75,24 +76,24 @@ public sealed class UserMappingProfile : Profile
                         opt.MapFrom(src => src.DeleteDate);
                     });
 
+        CreateMap<UserEntity, GetUsersResponseDto>();
         CreateMap<UserEntity, GetUserResponseDto>()
             .ForMember(dto =>
-                        dto.CreatedBy,
-                    opt =>
-                    {
-                        opt.MapFrom(src => src);
-                    })
+                    dto.BaseAuditCreated,
+                opt =>
+                {
+                    opt.MapFrom(src => src);
+                })
             .ForMember(dto =>
-                        dto.UpdatedBy,
-                    opt =>
-                    {
-                        opt.MapFrom(src => src.UpdateDate == null ? null : src);
-                    })
+                    dto.BaseAuditUpdated,
+                opt =>
+                {
+                    opt.MapFrom(src => src.UpdatedByUser != null ? src : null);
+                })
             .ForMember(dto =>
-                        dto.DeletedBy,
-                    opt =>
-                    {
-                        opt.MapFrom(src => src.DeleteDate == null ? null : src);
-                    });
-    }
+                    dto.BaseAuditDeleted,
+                opt =>
+                {
+                    opt.MapFrom(src => src.DeletedByUser != null ? src : null);
+                });    }
 }

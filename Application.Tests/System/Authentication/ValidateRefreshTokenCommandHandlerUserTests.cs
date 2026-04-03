@@ -7,6 +7,8 @@ using Application.System.Authentication.Commands.ValidateRefreshToken;
 using Application.Utils.Interfaces.Transaction;
 using Application.Utils.Logger;
 
+using AutoMapper;
+
 using Domain.Common.Exceptions;
 
 using FluentAssertions;
@@ -35,9 +37,11 @@ public class ValidateRefreshTokenCommandHandlerTests
         _tokenService = Substitute.For<ITokenService>();
         var unitOfWork = Substitute.For<IUnitOfWork>();
         var logger = Substitute.For<ISlaisLogger<ValidateRefreshTokenCommandHandler>>();
+        var mapper = Substitute.For<IMapper>();
 
         _handler = new ValidateRefreshTokenCommandHandler(
             logger,
+            mapper,
             _userRepository,
             unitOfWork,
             _tokenService);

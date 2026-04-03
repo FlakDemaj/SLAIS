@@ -3,6 +3,7 @@ using System.Text;
 using Application;
 using Application.Common.Options;
 
+using Infrastructure;
 using Infrastructure.Configurations;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,8 +11,6 @@ using Microsoft.Extensions.Logging.Console;
 using Microsoft.IdentityModel.Tokens;
 
 using Presentation.Middlewares;
-
-using SLAIS.Infrastructure.DependencyInjection;
 
 namespace Presentation.Server;
 

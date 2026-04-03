@@ -1,6 +1,6 @@
-namespace Infrastructure.Transaction;
+namespace Infrastructure.Pipelines;
 
-public interface IPipelineTransactionBehavior<TRequest, TResponse>
+public interface IPipelineBehavior<TRequest, TResponse>
 {
     Task<TResponse> HandleAsync(
         TRequest request,

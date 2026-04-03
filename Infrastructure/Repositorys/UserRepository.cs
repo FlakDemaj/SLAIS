@@ -21,6 +21,9 @@ public class UserRepository : BaseRepository<UserEntity>, IUserRepository
     {
         return _context
                .GetTrackingSet<UserEntity>()
+               .Include(user => user.CreatedByUser)
+               .Include(user => user.UpdatedByUser)
+               .Include(user => user.DeletedByUser)
                .FirstOrDefaultAsync(user => user.Guid == userGuid);
     }
 
@@ -33,9 +36,6 @@ public class UserRepository : BaseRepository<UserEntity>, IUserRepository
         query = ApplyRoleFilter(query, userRole);
 
         return await query
-            .Include(user => user.CreatedByUser)
-            .Include(user => user.UpdatedByUser)
-            .Include(user => user.DeletedByUser)
             .ToListAsync();
     }
 

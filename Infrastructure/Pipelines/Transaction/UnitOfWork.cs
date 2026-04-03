@@ -2,7 +2,7 @@ using Application.Utils.Interfaces.Transaction;
 
 using Infrastructure.Persistence.Context;
 
-namespace Infrastructure.Transaction;
+namespace Infrastructure.Pipelines.Transaction;
 
 public class UnitOfWork : IUnitOfWork
 {

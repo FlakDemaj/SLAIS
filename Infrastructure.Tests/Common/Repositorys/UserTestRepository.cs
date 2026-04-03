@@ -23,7 +23,7 @@ public class UserTestRepository
         UserRepository = new UserRepository(_dbContext);
     }
 
-    public async Task CreateTeacherAsync(Guid instituteGuid,
+    public async Task<UserEntity> CreateTeacherAsync(Guid instituteGuid,
         Guid? createdByUserGuid = null,
         string? email = null,
         string? firstName = null,
@@ -42,6 +42,8 @@ public class UserTestRepository
 
         await UserRepository.CreateAsync(user);
         await _dbContext.SaveChangesAsync();
+
+        return user;
     }
 
     public async Task CreateStudentAsync(Guid instituteGuid,

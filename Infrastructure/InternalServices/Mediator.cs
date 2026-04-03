@@ -3,7 +3,8 @@ using Application.Utils.Interfaces.Mediator;
 using Application.Utils.Logger;
 using Application.Utils.Mediator.Interfaces;
 
-using Infrastructure.Transaction;
+using Infrastructure.Pipelines;
+using Infrastructure.Pipelines.Transaction;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -42,7 +43,7 @@ public class Mediator : IMediator
             _logger.LogError($"Handler method not found for type {handlerType}", null);
         }
 
-        var pipelineType = typeof(IPipelineTransactionBehavior<,>)
+        var pipelineType = typeof(IPipelineBehavior<,>)
             .MakeGenericType(requestType, typeof(TResponse));
 
         var pipeline = _serviceProvider.GetRequiredService(pipelineType);

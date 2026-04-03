@@ -5,8 +5,9 @@ using Application.Utils.Mediator.Interfaces;
 using FluentAssertions;
 
 using Infrastructure.InternalServices;
+using Infrastructure.Pipelines;
+using Infrastructure.Pipelines.Transaction;
 using Infrastructure.Tests.InternalServicesTests.MediatorTest.Helpers;
-using Infrastructure.Transaction;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -49,7 +50,7 @@ public class MediatorTests
             .HandleAsync(request, Arg.Any<IAuthentication>(), Arg.Any<CancellationToken>())
             .Returns(expectedResult);
 
-        var pipeline = Substitute.For<IPipelineTransactionBehavior<TestRequest, TestResponse>>();
+        var pipeline = Substitute.For<IPipelineBehavior<TestRequest, TestResponse>>();
 
         pipeline
             .HandleAsync(
@@ -121,7 +122,7 @@ public class MediatorTests
                 return expectedResult;
             });
 
-        var pipeline = Substitute.For<IPipelineTransactionBehavior<TestRequest, TestResponse>>();
+        var pipeline = Substitute.For<IPipelineBehavior<TestRequest, TestResponse>>();
 
         pipeline
             .HandleAsync(

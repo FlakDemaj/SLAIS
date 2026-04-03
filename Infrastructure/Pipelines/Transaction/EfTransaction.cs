@@ -2,7 +2,7 @@ using Application.Utils.Interfaces.Transaction;
 
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Infrastructure.Transaction;
+namespace Infrastructure.Pipelines.Transaction;
 
 public class EfTransaction : ITransaction
 {

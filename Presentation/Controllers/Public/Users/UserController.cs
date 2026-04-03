@@ -1,5 +1,7 @@
+using Application.Common.DTOs;
 using Application.Public.Users;
-using Application.Public.Users.Commands.GetUsers;
+using Application.Public.Users.Querys.GetUser;
+using Application.Public.Users.Querys.GetUsers;
 using Application.Utils.Interfaces.Mediator;
 
 using Microsoft.AspNetCore.Authorization;
@@ -19,10 +21,22 @@ public class UserController : BaseRestController
 
     [HttpGet]
     [Authorize(Roles = $"{Role.Teacher},{Role.Admin},{Role.Server},{Role.SuperAdmin}")]
-    public async Task<ActionResult<List<GetUserResponseDto>>> GetUsersAsync(CancellationToken cancellationToken)
+    public async Task<ActionResult<List<GetUsersResponseDto>>> GetUsersAsync(CancellationToken cancellationToken)
     {
         return await _mediator.SendAsync(
-            new GetUsersCommand(),
+            new GetUsersQuery(),
+            Authentication,
+            cancellationToken);
+    }
+
+    [HttpGet("{publicId:int}")]
+    [Authorize(Roles = $"{Role.Teacher},{Role.Admin},{Role.Server},{Role.SuperAdmin}")]
+    public async Task<ActionResult<GetUserResponseDto>> GetUserByIdAsync(
+        [FromRoute] int publicId,
+        CancellationToken cancellationToken)
+    {
+        return await _mediator.SendAsync(
+            new GetUserQuery { PublicId = publicId },
             Authentication,
             cancellationToken);
     }

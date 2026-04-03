@@ -9,6 +9,8 @@ using Application.Utils.Interfaces.Transaction;
 using Application.Utils.Logger;
 using Application.Utils.Mediator.Interfaces;
 
+using AutoMapper;
+
 using Domain.Common.Exceptions;
 
 namespace Application.System.Authentication.Commands.ValidateRefreshToken;
@@ -25,10 +27,11 @@ public class ValidateRefreshTokenCommandHandler
 
     public ValidateRefreshTokenCommandHandler(
         ISlaisLogger<ValidateRefreshTokenCommandHandler> logger,
+        IMapper mapper,
         IUserRepository userRepository,
         IUnitOfWork unitOfWork,
         ITokenService tokenService)
-        : base(logger)
+        : base(mapper, logger)
     {
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;

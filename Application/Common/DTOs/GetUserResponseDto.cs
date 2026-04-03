@@ -2,9 +2,9 @@ using Application.Common.DTOs.Base;
 
 using Domain.Common.Enums;
 
-namespace Application.Public.Users;
+namespace Application.Common.DTOs;
 
-public class GetUserResponseDto : BaseIdDto
+public class GetUserResponseDto
 {
     public required string Username { get; set; }
 
@@ -12,10 +12,11 @@ public class GetUserResponseDto : BaseIdDto
 
     public required Roles Role { get; set; }
 
-    public required BaseAuditCreatedDto CreatedBy { get; set; }
+    public States State { get; set; }
 
-    public BaseAuditUpdatedDto? UpdatedBy { get; set; }
+    public BaseAuditCreatedDto BaseAuditCreated { get; set; }
 
-    public BaseAuditDeletedDto? DeletedBy { get; set; }
+    public BaseAuditUpdatedDto? BaseAuditUpdated { get; set; }
 
+    public BaseAuditDeletedDto? BaseAuditDeleted { get; set; }
 }

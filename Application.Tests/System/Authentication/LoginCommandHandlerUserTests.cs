@@ -9,6 +9,8 @@ using Application.Interfaces;
 using Application.System.Authentication.Commands.Login;
 using Application.Utils.Logger;
 
+using AutoMapper;
+
 using Domain.Common.Exceptions;
 
 using FluentAssertions;
@@ -52,11 +54,14 @@ public class LoginCommandHandlerUserTests
             MaxLoginAttempts = 5
         });
 
+        var mapper = Substitute.For<IMapper>();
+
         _handlerUser = new LoginCommandHandlerUser(
             _userRepository,
             refreshTokenOptions,
             _tokenService,
             logger,
+            mapper,
             _passwordHasher,
             commonOptions);
     }

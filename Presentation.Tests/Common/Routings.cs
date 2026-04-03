@@ -6,5 +6,5 @@ public static class Routings
 
     internal const string RestAuthenticationRouting = BaseRestString + "Authentication/";
 
-    internal const string RestUserRouting = BaseRestString + "User/";
+    internal const string RestUserRouting = BaseRestString + "User";
 }

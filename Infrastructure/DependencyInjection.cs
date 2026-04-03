@@ -11,14 +11,16 @@ using Application.Utils.Mediator.Interfaces;
 using Infrastructure.InternalServices;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.Context;
+using Infrastructure.Pipelines;
+using Infrastructure.Pipelines.GuidResolver;
+using Infrastructure.Pipelines.Transaction;
 using Infrastructure.Repositorys;
-using Infrastructure.Transaction;
 
 using Microsoft.Extensions.DependencyInjection;
 
 using SLAIS.Infrastructure.InternalServices.Logging;
 
-namespace SLAIS.Infrastructure.DependencyInjection;
+namespace Infrastructure;
 
 public static class DependencyInjection
 {
@@ -60,23 +62,14 @@ public static class DependencyInjection
 
         var handlers = Assembly.GetAssembly(typeof(IApplicationAssemblyMarker))
             ?.GetTypes()
-            .Where(t =>
-            {
-                return t is { IsAbstract: false, IsInterface: false };
-            })
+            .Where(t => t is { IsAbstract: false, IsInterface: false })
             .SelectMany(t =>
             {
                 return t.GetInterfaces()
-                                    .Where(i =>
-                                    {
-                                        return i.IsGenericType &&
-                                               i.GetGenericTypeDefinition() == handlerInterface;
-                                    });
+                                    .Where(i => i.IsGenericType &&
+                                                i.GetGenericTypeDefinition() == handlerInterface);
             },
-                (type, iface) =>
-                {
-                    return new { type, iface };
-                });
+                (type, iface) => new { type, iface });
 
         if (handlers == null)
         {
@@ -89,7 +82,8 @@ public static class DependencyInjection
         }
 
         services.AddScoped<IMediator, Mediator>();
-        services.AddTransient(typeof(IPipelineTransactionBehavior<,>), typeof(PipelineTransactionBehavior<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(GuidResolverPipeline<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionPipeline<,>));
     }
 
 }

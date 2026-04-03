@@ -66,9 +66,13 @@ public class UserTests : TestBase
         var institute = await _instituteTestRepository
             .CreateInstituteAsync();
 
-        var user = await _userTestRepository
-            .CreateAdminAsync(
+        var creator = await _userTestRepository.CreateAdminAsync(
             institute.Guid);
+
+        var user = await _userTestRepository
+            .CreateTeacherAsync(
+                institute.Guid,
+                createdByUserGuid: creator.Guid);
 
         var persistedUser = await _userTestRepository
             .UserRepository
@@ -78,6 +82,8 @@ public class UserTests : TestBase
             persistedUser,
             user,
             institute.Guid);
+
+        persistedUser!.CreatedByUser.Should().Be(user);
     }
 
     [Fact]

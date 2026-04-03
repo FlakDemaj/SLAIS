@@ -9,6 +9,8 @@ using Application.Interfaces;
 using Application.Utils.Logger;
 using Application.Utils.Mediator.Interfaces;
 
+using AutoMapper;
+
 using Domain.Common.Exceptions;
 
 using Microsoft.Extensions.Options;
@@ -33,9 +35,10 @@ public class LoginCommandHandlerUser :
         IOptions<RefreshTokenOptions> refreshTokenOptions,
         ITokenService tokenService,
         ISlaisLogger<LoginCommandHandlerUser> logger,
+        IMapper mapper,
         IPasswordHasher passwordHasher,
         IOptions<CommonOptions> commonOptions)
-        : base(logger)
+        : base(mapper, logger)
     {
         _userRepository = userRepository;
         _refreshTokenOptions = refreshTokenOptions.Value;
