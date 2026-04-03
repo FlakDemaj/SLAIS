@@ -76,7 +76,7 @@ public class UserTests : TestBase
 
         var persistedUser = await _userTestRepository
             .UserRepository
-            .GetUserByGuidAsync(user.Guid);
+            .GetUserByGuidAsync(user.Guid, institute.Guid);
 
         Helpers.CheckCreatedUser(
             persistedUser,
@@ -84,6 +84,27 @@ public class UserTests : TestBase
             institute.Guid);
 
         persistedUser!.CreatedByUser.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task GetUserByGuidAsync_ShouldReturnNull_WhenUserIsNotInInstitute()
+    {
+        var institute = await _instituteTestRepository
+            .CreateInstituteAsync();
+
+        var creator = await _userTestRepository.CreateAdminAsync(
+            institute.Guid);
+
+        var user = await _userTestRepository
+            .CreateTeacherAsync(
+                institute.Guid,
+                createdByUserGuid: creator.Guid);
+
+        var persistedUser = await _userTestRepository
+            .UserRepository
+            .GetUserByGuidAsync(user.Guid, Guid.CreateVersion7());
+
+       persistedUser.Should().BeNull();
     }
 
     [Fact]
@@ -98,7 +119,7 @@ public class UserTests : TestBase
 
         var persistedUser = await _userTestRepository
             .UserRepository
-            .GetUserByGuidAsync(Guid.CreateVersion7());
+            .GetUserByGuidAsync(Guid.CreateVersion7(), Guid.CreateVersion7());
 
         persistedUser.Should().BeNull();
     }

@@ -51,7 +51,7 @@ public class GetUserQueryHandlerTests
         var targetUser = UserTestData.CreateUser();
 
         _userRepository
-            .GetUserByGuidAsync(Arg.Any<Guid>())
+            .GetUserByGuidAsync(Arg.Any<Guid>(), Arg.Any<Guid>())
             .Returns((UserEntity?)null);
 
         var authentication = new Common.Authentication.Authentication(
@@ -64,13 +64,10 @@ public class GetUserQueryHandlerTests
             Guid = targetUser.Guid
         };
 
-        var act = async () =>
-        {
-            return await _getUserQueryHandler.HandleAsync(
-                        request,
-                        authentication,
-                        CancellationToken.None);
-        };
+        var act = async () => await _getUserQueryHandler.HandleAsync(
+            request,
+            authentication,
+            CancellationToken.None);
 
         await act.Should().ThrowAsync<SlaisException>()
             .Where(e => e.ErrorCode == (int)UserErrorCodes.UserNotFound);
@@ -97,7 +94,7 @@ public class GetUserQueryHandlerTests
         var targetUser = UserTestData.CreateUser(roles: targetRole);
 
         _userRepository
-            .GetUserByGuidAsync(Arg.Any<Guid>())
+            .GetUserByGuidAsync(Arg.Any<Guid>(), Arg.Any<Guid>())
             .Returns(targetUser);
 
         var authentication = new Common.Authentication.Authentication(
@@ -110,13 +107,10 @@ public class GetUserQueryHandlerTests
             Guid = targetUser.Guid
         };
 
-        var act = async () =>
-        {
-            return await _getUserQueryHandler.HandleAsync(
-                        request,
-                        authentication,
-                        CancellationToken.None);
-        };
+        var act = async () => await _getUserQueryHandler.HandleAsync(
+            request,
+            authentication,
+            CancellationToken.None);
 
         await act.Should().ThrowAsync<SlaisException>()
             .Where(e => e.ErrorCode == (int)UserErrorCodes.Forbidden);
@@ -145,7 +139,7 @@ public class GetUserQueryHandlerTests
         var targetUser = UserTestData.CreateUser(roles: targetRole);
 
         _userRepository
-            .GetUserByGuidAsync(Arg.Any<Guid>())
+            .GetUserByGuidAsync(Arg.Any<Guid>(), Arg.Any<Guid>())
             .Returns(targetUser);
 
         var authentication = new Common.Authentication.Authentication(
@@ -183,7 +177,7 @@ public class GetUserQueryHandlerTests
             createdByUser: createdByUser);
 
         _userRepository
-            .GetUserByGuidAsync(Arg.Any<Guid>())
+            .GetUserByGuidAsync(Arg.Any<Guid>(), Arg.Any<Guid>())
             .Returns(targetUser);
 
         var authentication = new Common.Authentication.Authentication(

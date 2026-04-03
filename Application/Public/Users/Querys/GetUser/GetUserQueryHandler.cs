@@ -33,7 +33,7 @@ public class GetUserQueryHandler :
         CancellationToken cancellationToken = default)
     {
         var user = await _userRepository
-            .GetUserByGuidAsync(request.Guid);
+            .GetUserByGuidAsync(request.Guid, authentication!.InstitutionGuid);
 
         if (user == null)
         {

@@ -17,14 +17,15 @@ public class UserRepository : BaseRepository<UserEntity>, IUserRepository
     {
     }
 
-    public Task<UserEntity?> GetUserByGuidAsync(Guid userGuid)
+    public Task<UserEntity?> GetUserByGuidAsync(Guid userGuid, Guid instituteGuid)
     {
         return _context
                .GetTrackingSet<UserEntity>()
                .Include(user => user.CreatedByUser)
                .Include(user => user.UpdatedByUser)
                .Include(user => user.DeletedByUser)
-               .FirstOrDefaultAsync(user => user.Guid == userGuid);
+               .FirstOrDefaultAsync(user => user.Guid == userGuid
+               && user.InstituteGuid == instituteGuid);
     }
 
     public async Task<List<UserEntity>> GetAllUsersFromInstitute(Guid instituteGuid, Roles userRole)
