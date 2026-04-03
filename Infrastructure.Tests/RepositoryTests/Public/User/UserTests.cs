@@ -104,7 +104,7 @@ public class UserTests : TestBase
             .UserRepository
             .GetUserByGuidAsync(user.Guid, Guid.CreateVersion7());
 
-       persistedUser.Should().BeNull();
+        persistedUser.Should().BeNull();
     }
 
     [Fact]
