@@ -64,10 +64,13 @@ public class GetUserQueryHandlerTests
             Guid = targetUser.Guid
         };
 
-        var act = async () => await _getUserQueryHandler.HandleAsync(
-            request,
-            authentication,
-            CancellationToken.None);
+        var act = async () =>
+        {
+            return await _getUserQueryHandler.HandleAsync(
+                        request,
+                        authentication,
+                        CancellationToken.None);
+        };
 
         await act.Should().ThrowAsync<SlaisException>()
             .Where(e => e.ErrorCode == (int)UserErrorCodes.UserNotFound);
@@ -107,10 +110,13 @@ public class GetUserQueryHandlerTests
             Guid = targetUser.Guid
         };
 
-        var act = async () => await _getUserQueryHandler.HandleAsync(
-            request,
-            authentication,
-            CancellationToken.None);
+        var act = async () =>
+        {
+            return await _getUserQueryHandler.HandleAsync(
+                        request,
+                        authentication,
+                        CancellationToken.None);
+        };
 
         await act.Should().ThrowAsync<SlaisException>()
             .Where(e => e.ErrorCode == (int)UserErrorCodes.Forbidden);

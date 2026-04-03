@@ -6,7 +6,6 @@ using FluentAssertions;
 
 using Infrastructure.InternalServices;
 using Infrastructure.Pipelines;
-using Infrastructure.Pipelines.Transaction;
 using Infrastructure.Tests.InternalServicesTests.MediatorTest.Helpers;
 
 using Microsoft.Extensions.DependencyInjection;

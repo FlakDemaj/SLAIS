@@ -62,14 +62,23 @@ public static class DependencyInjection
 
         var handlers = Assembly.GetAssembly(typeof(IApplicationAssemblyMarker))
             ?.GetTypes()
-            .Where(t => t is { IsAbstract: false, IsInterface: false })
+            .Where(t =>
+            {
+                return t is { IsAbstract: false, IsInterface: false };
+            })
             .SelectMany(t =>
             {
                 return t.GetInterfaces()
-                                    .Where(i => i.IsGenericType &&
-                                                i.GetGenericTypeDefinition() == handlerInterface);
+                                    .Where(i =>
+                                    {
+                                        return i.IsGenericType &&
+                                                                                        i.GetGenericTypeDefinition() == handlerInterface;
+                                    });
             },
-                (type, iface) => new { type, iface });
+                (type, iface) =>
+                {
+                    return new { type, iface };
+                });
 
         if (handlers == null)
         {

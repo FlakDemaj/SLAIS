@@ -95,5 +95,6 @@ public sealed class UserMappingProfile : Profile
                 opt =>
                 {
                     opt.MapFrom(src => src.DeletedByUser != null ? src : null);
-                });    }
+                });
+    }
 }

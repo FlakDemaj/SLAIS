@@ -4,7 +4,6 @@ using Application.Utils.Logger;
 using Application.Utils.Mediator.Interfaces;
 
 using Infrastructure.Pipelines;
-using Infrastructure.Pipelines.Transaction;
 
 using Microsoft.Extensions.DependencyInjection;
 
