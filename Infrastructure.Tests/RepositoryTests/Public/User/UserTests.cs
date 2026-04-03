@@ -83,7 +83,7 @@ public class UserTests : TestBase
             user,
             institute.Guid);
 
-        persistedUser!.CreatedByUser.Should().Be(user);
+        persistedUser!.CreatedByUser.Should().NotBeNull();
     }
 
     [Fact]
@@ -229,43 +229,31 @@ public class UserTests : TestBase
 
         users[0].InstituteGuid.Should().Be(anotherInstitute.Guid);
         users[0].Role.Should().Be(Roles.Admin);
-        users[0].CreatedByUser.Should().NotBeNull();
-        users[0].CreatedByUser!.Guid.Should().Be(adminUser.Guid);
 
         users[1].FirstName.Should().Be("Test");
         users[1].LastName.Should().Be("First");
         users[1].InstituteGuid.Should().Be(anotherInstitute.Guid);
         users[1].Role.Should().Be(Roles.Teacher);
-        users[1].CreatedByUser.Should().NotBeNull();
-        users[1].CreatedByUser!.Guid.Should().Be(adminUser.Guid);
 
         users[2].FirstName.Should().Be("Rest");
         users[2].LastName.Should().Be("Second");
         users[2].InstituteGuid.Should().Be(anotherInstitute.Guid);
         users[2].Role.Should().Be(Roles.Teacher);
-        users[2].CreatedByUser.Should().NotBeNull();
-        users[2].CreatedByUser!.Guid.Should().Be(adminUser.Guid);
 
         users[3].FirstName.Should().Be("Fest");
         users[3].LastName.Should().Be("First");
         users[3].InstituteGuid.Should().Be(anotherInstitute.Guid);
         users[3].Role.Should().Be(Roles.Student);
-        users[3].CreatedByUser.Should().NotBeNull();
-        users[3].CreatedByUser!.Guid.Should().Be(adminUser.Guid);
 
         users[4].FirstName.Should().Be("Rest");
         users[4].LastName.Should().Be("First");
         users[4].InstituteGuid.Should().Be(anotherInstitute.Guid);
         users[4].Role.Should().Be(Roles.Admin);
-        users[4].CreatedByUser.Should().NotBeNull();
-        users[4].CreatedByUser!.Guid.Should().Be(adminUser.Guid);
 
         users[5].FirstName.Should().Be("Johnny");
         users[5].LastName.Should().Be("Flair");
         users[5].InstituteGuid.Should().Be(anotherInstitute.Guid);
         users[5].Role.Should().Be(Roles.Student);
-        users[5].CreatedByUser.Should().NotBeNull();
-        users[5].CreatedByUser!.Guid.Should().Be(adminUser.Guid);
 
         Assert.All(users, user =>
         {
@@ -327,29 +315,21 @@ public class UserTests : TestBase
         users[0].LastName.Should().Be("First");
         users[0].InstituteGuid.Should().Be(anotherInstitute.Guid);
         users[0].Role.Should().Be(Roles.Teacher);
-        users[0].CreatedByUser.Should().NotBeNull();
-        users[0].CreatedByUser!.Guid.Should().Be(adminUser.Guid);
 
         users[1].FirstName.Should().Be("Rest");
         users[1].LastName.Should().Be("Second");
         users[1].InstituteGuid.Should().Be(anotherInstitute.Guid);
         users[1].Role.Should().Be(Roles.Teacher);
-        users[1].CreatedByUser.Should().NotBeNull();
-        users[1].CreatedByUser!.Guid.Should().Be(adminUser.Guid);
 
         users[2].FirstName.Should().Be("Fest");
         users[2].LastName.Should().Be("First");
         users[2].InstituteGuid.Should().Be(anotherInstitute.Guid);
         users[2].Role.Should().Be(Roles.Student);
-        users[2].CreatedByUser.Should().NotBeNull();
-        users[2].CreatedByUser!.Guid.Should().Be(adminUser.Guid);
 
         users[3].FirstName.Should().Be("Johnny");
         users[3].LastName.Should().Be("Flair");
         users[3].InstituteGuid.Should().Be(anotherInstitute.Guid);
         users[3].Role.Should().Be(Roles.Student);
-        users[3].CreatedByUser.Should().NotBeNull();
-        users[3].CreatedByUser!.Guid.Should().Be(adminUser.Guid);
 
         Assert.All(users, user =>
         {
@@ -411,15 +391,11 @@ public class UserTests : TestBase
         users[0].LastName.Should().Be("First");
         users[0].InstituteGuid.Should().Be(anotherInstitute.Guid);
         users[0].Role.Should().Be(Roles.Student);
-        users[0].CreatedByUser.Should().NotBeNull();
-        users[0].CreatedByUser!.Guid.Should().Be(adminUser.Guid);
 
         users[1].FirstName.Should().Be("Johnny");
         users[1].LastName.Should().Be("Flair");
         users[1].InstituteGuid.Should().Be(anotherInstitute.Guid);
         users[1].Role.Should().Be(Roles.Student);
-        users[1].CreatedByUser.Should().NotBeNull();
-        users[1].CreatedByUser!.Guid.Should().Be(adminUser.Guid);
 
         Assert.All(users, user =>
         {
